@@ -8,6 +8,7 @@
 import Foundation
 
 /// A description of the modules that the app can present.
-enum Module: String, Identifiable, CaseIterable, Equatable {
-}
+///  error 주석 처리 - Fine
+//enum Module: String, Identifiable, CaseIterable, Equatable {
+//}
 
