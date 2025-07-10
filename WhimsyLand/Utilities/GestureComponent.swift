@@ -109,19 +109,16 @@ public struct GestureComponent: Component, Codable {
 
         let entity = value.entity
 
+        // 회전 시작 시 orientation 저장
         if !state.isRotating {
-            state.isDragging = true // 회전 시작 시 드래그 플래그도 설정
-            state.startOrientation = .init(entity.orientation(relativeTo: nil)) // 시작 방향 저장
+            state.isRotating = true
+            state.startOrientation = .init(entity.orientation(relativeTo: nil))
         }
 
-        let rotation = value.rotation
-
-        // 새 회전값 생성
-        let newRotation = Rotation3D(angle: rotation.angle, axis: RotationAxis3D(x: rotation.axis.x, y: rotation.axis.y, z: rotation.axis.z))
-
-        // 시작 방향에 회전값을 적용하여 새로운 방향 계산
-        let newOrentation = state.startOrientation.rotated(by: newRotation)
-        entity.setOrientation(.init(newOrentation), relativeTo: nil) // 엔티티 방향 적용
+        let rotation = value.rotation // Rotation3D
+        // 누적 회전값 계산: 시작 orientation에 현재 회전값을 곱함
+        let newOrientation = state.startOrientation.rotated(by: rotation)
+        entity.transform.rotation = simd_quatf(newOrientation)
     }
 
     /// RotateGesture3D가 끝났을 때 호출되는 함수
