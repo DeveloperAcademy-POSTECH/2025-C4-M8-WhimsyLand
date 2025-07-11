@@ -12,7 +12,6 @@ import RealityKitContent
 struct ContentView: View {
 
 // RealityView 내 3D 콘텐츠의 확대 여부를 관리하는 상태 변수
-// enlarge 만이 아니라 drag & drop, magnify, rotate 제스처를 위해 enlarge 부분 삭제 - Fine
 //    @State private var enlarge = false
     // RealityView에 추가된 엔티티를 추적할 수 있도록 상태 변수 추가
     @State private var sceneEntity: Entity? = nil
@@ -21,12 +20,11 @@ struct ContentView: View {
         RealityView { content in
             // RealityKit 콘텐츠 초기화(최초 1회 실행)
             if let scene = try? await Entity(named: "Scene", in: realityKitContentBundle) {
-// scene에 대해 제스처 적용이 가능하도록 함 - Fine
+// scene에 대해 제스처 적용이 가능하도록 함
                 enableGesturesRecursively(for: scene)
                 content.add(scene) // RealityKit 씬을 RealityView에 추가
                 sceneEntity = scene
             }
-// enlarge 부분 삭제 - Fine
 //        } update: { content in
 //            // SwiftUI 상태(enlarge)가 변경될 때 RealityKit 콘텐츠를 업데이트
 //            if let scene = content.entities.first {
@@ -39,7 +37,7 @@ struct ContentView: View {
 //            enlarge.toggle()
 //        })
         
-// 모든 엔티티에 대해 Tap, Drag, magnify, rotate 제스처 추가 - Fine
+// 모든 엔티티에 대해 Tap, Drag, magnify, rotate 제스처 추가
         .gesture(
             TapGesture()
                 .targetedToAnyEntity()
@@ -87,7 +85,6 @@ struct ContentView: View {
                     }
                 }
 
-// enlarge 부분 삭제 - Fine
 //                VStack (spacing: 12) {
 //                    // 확대/축소 토글 버튼
 //                    Button {

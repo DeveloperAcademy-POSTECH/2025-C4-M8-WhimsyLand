@@ -102,30 +102,6 @@ public struct GestureComponent: Component, Codable {
         state.targetEntity = nil // 타겟 초기화
     }
 
-    /// RotateGesture3D가 변경될 때 호출되는 함수
-    mutating func onChanged(value: EntityTargetValue<RotateGesture3D.Value>) {
-        let state = GestureComponent.shared
-        guard canRotate, !state.isDragging else { return } // 회전 불가 또는 드래그 중이면 무시
-
-        let entity = value.entity
-
-        // 회전 시작 시 orientation 저장
-        if !state.isRotating {
-            state.isRotating = true
-            state.startOrientation = .init(entity.orientation(relativeTo: nil))
-        }
-
-        let rotation = value.rotation // Rotation3D
-        // 누적 회전값 계산: 시작 orientation에 현재 회전값을 곱함
-        let newOrientation = state.startOrientation.rotated(by: rotation)
-        entity.transform.rotation = simd_quatf(newOrientation)
-    }
-
-    /// RotateGesture3D가 끝났을 때 호출되는 함수
-    mutating func onEnded(value: EntityTargetValue<RotateGesture3D.Value>) {
-        GestureComponent.shared.isRotating = false // 회전 종료
-    }
-
     /// MagnifyGesture(핀치 제스처) 변경 시 호출되는 함수
     mutating func onChanged(value: EntityTargetValue<MagnifyGesture.Value>) {
         // 크기 조절 시작 시 초기 스케일을 저장
@@ -160,6 +136,30 @@ public struct GestureComponent: Component, Codable {
     mutating func onEnded(value: EntityTargetValue<MagnifyGesture.Value>) {
         // 제스처 종료 시 초기 스케일 리셋
         GestureComponent.shared.initialScale = nil
+    }
+    
+    /// RotateGesture3D가 변경될 때 호출되는 함수
+    mutating func onChanged(value: EntityTargetValue<RotateGesture3D.Value>) {
+        let state = GestureComponent.shared
+        guard canRotate, !state.isDragging else { return } // 회전 불가 또는 드래그 중이면 무시
+
+        let entity = value.entity
+
+        // 회전 시작 시 orientation 저장
+        if !state.isRotating {
+            state.isRotating = true
+            state.startOrientation = .init(entity.orientation(relativeTo: nil))
+        }
+
+        let rotation = value.rotation // Rotation3D
+        // 누적 회전값 계산: 시작 orientation에 현재 회전값을 곱함
+        let newOrientation = state.startOrientation.rotated(by: rotation)
+        entity.transform.rotation = simd_quatf(newOrientation)
+    }
+
+    /// RotateGesture3D가 끝났을 때 호출되는 함수
+    mutating func onEnded(value: EntityTargetValue<RotateGesture3D.Value>) {
+        GestureComponent.shared.isRotating = false // 회전 종료
     }
     
     func enableGesturesRecursively(for entity: Entity) {
@@ -199,4 +199,3 @@ func enableGesturesRecursively(for entity: Entity) {
         enableGesturesRecursively(for: child)
     }
 }
-
