@@ -10,7 +10,13 @@ import RealityKit
 import RealityKitContent
 
 struct ContentView: View {
-
+    //임시 코드
+    let appState: AppState
+    let immersiveSpaceIdentifier: String
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    //임시코드
+    
     @State private var enlarge = false
 
     var body: some View {
@@ -41,13 +47,29 @@ struct ContentView: View {
                     .fontWeight(.semibold)
 
                     ToggleImmersiveSpaceButton()
+                    
+                    Button("Enter") {
+                        Task {
+                            switch await openImmersiveSpace(id: immersiveSpaceIdentifier) {
+                            case .opened:
+                                break
+                            case .error:
+                                print("An error occurred when trying to open the immersive space \(immersiveSpaceIdentifier)")
+                            case .userCancelled:
+                                print("The user declined opening immersive space \(immersiveSpaceIdentifier)")
+                            @unknown default:
+                                break
+                            }
+                        }
+                    }
+                    .disabled(!appState.canEnterImmersiveSpace)
                 }
             }
         }
     }
 }
 
-#Preview(windowStyle: .volumetric) {
-    ContentView()
-        .environment(AppModel())
-}
+//#Preview(windowStyle: .volumetric) {
+//    ContentView()
+//        .environment(AppModel())
+//}

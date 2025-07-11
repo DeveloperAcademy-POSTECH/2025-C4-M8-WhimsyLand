@@ -7,14 +7,25 @@
 
 import SwiftUI
 
+
+private enum UIIdentifier {
+    static let immersiveSpace = "Object Placement"
+}
+
 @main
 struct WhimsyLandApp: App {
-
+    @State private var appState = AppState()
     @State private var appModel = AppModel()
+    
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(
+                appState: appState,
+                immersiveSpaceIdentifier: UIIdentifier.immersiveSpace
+            )
                 .environment(appModel)
         }
         .windowStyle(.volumetric)
@@ -30,5 +41,20 @@ struct WhimsyLandApp: App {
                 }
         }
         .immersionStyle(selection: .constant(.progressive), in: .progressive)
+        
+        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
+            ObjectPlacementRealityView(appState: appState)
+        }
+        .onChange(of: scenePhase, initial: true) {
+            if scenePhase != .active {
+                // Leave the immersive space when the user dismisses the app.
+                if appState.immersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        appState.didLeaveImmersiveSpace()
+                    }
+                }
+            }
+        }
     }
 }
