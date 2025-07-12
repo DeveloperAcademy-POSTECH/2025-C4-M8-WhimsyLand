@@ -43,7 +43,8 @@ struct WhimsyLandApp: App {
         .immersionStyle(selection: .constant(.progressive), in: .progressive)
         
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-            ObjectPlacementRealityView(appState: appState)
+            ObjectPlacementRealityView()
+                .environment(appState)
         }
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {

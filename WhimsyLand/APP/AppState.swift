@@ -125,36 +125,4 @@ class AppState {
             }
         }
     }
-    
-    // MARK: - Xcode Previews
-
-    fileprivate var previewPlacementManager: PlacementManager? = nil
-
-    /// An initial app state for previews in Xcode.
-    @MainActor
-    static func previewAppState(immersiveSpaceOpened: Bool = false, selectedIndex: Int? = nil) -> AppState {
-        let state = AppState()
-
-        state.setPlaceableObjects([previewObject(named: "White sphere"),
-                                   previewObject(named: "Red cube"),
-                                   previewObject(named: "Blue cylinder")])
-
-        if let selectedIndex, selectedIndex < state.modelDescriptors.count {
-            state.selectedFileName = state.modelDescriptors[selectedIndex].fileName
-        }
-
-        if immersiveSpaceOpened {
-            state.previewPlacementManager = PlacementManager()
-            state.placementManager = state.previewPlacementManager
-        }
-
-        return state
-    }
-    
-    @MainActor
-    private static func previewObject(named fileName: String) -> PlaceableObject {
-        return PlaceableObject(descriptor: ModelDescriptor(fileName: fileName),
-                               renderContent: ModelEntity(),
-                               previewEntity: ModelEntity())
-    }
 }

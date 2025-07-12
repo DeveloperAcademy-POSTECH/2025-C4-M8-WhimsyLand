@@ -10,10 +10,8 @@ import SwiftUI
 
 @MainActor
 struct ObjectPlacementRealityView: View {
-    var appState: AppState
-    
+    @Environment(AppState.self) private var appState
     @State private var placementManager = PlacementManager()
-    
     @State private var collisionBeganSubscription: EventSubscription? = nil
     @State private var collisionEndedSubscription: EventSubscription? = nil
     
@@ -32,10 +30,10 @@ struct ObjectPlacementRealityView: View {
                 placementManager.addPlacementTooltip(placementTooltipAttachment)
             }
               
-//            if let deleteButtonAttachment = attachments.entity(for: Attachments.deleteButton) {
-//                placementManager.deleteButton = deleteButtonAttachment
-//            }
-//            
+            if let deleteButtonAttachment = attachments.entity(for: Attachments.deleteButton) {
+                placementManager.deleteButton = deleteButtonAttachment
+            }
+            
             collisionBeganSubscription = content.subscribe(to: CollisionEvents.Began.self) {  [weak placementManager] event in
                 placementManager?.collisionBegan(event)
             }
