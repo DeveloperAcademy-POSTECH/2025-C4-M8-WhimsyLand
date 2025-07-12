@@ -68,7 +68,7 @@ class AppState {
     }
     
     // 이 기기에서 world tracking과 plane detection을 지원하는지 확인
-    var allRequiredProviderAreSupported: Bool {
+    var allRequiredProvidersAreSupported: Bool {
         WorldTrackingProvider.isSupported && PlaneDetectionProvider.isSupported
     }
     
@@ -76,7 +76,7 @@ class AppState {
     // 두 조건을 모두 만족하는 경우에만 immersiveSpace로 진입 허용
     // 이 값은 Enter 버튼 활성 여부에 활용
     var canEnterImmersiveSpace: Bool {
-        allRequiredAuthorizationsAreGranted && allRequiredProviderAreSupported
+        allRequiredAuthorizationsAreGranted && allRequiredProvidersAreSupported
     }
     
     // world sensing 관련한 권한 요청
@@ -87,7 +87,7 @@ class AppState {
     }
     
     // 현재 권한 상태 조회
-    func queryWorldSensingAuthorixation() async {
+    func queryWorldSensingAuthorization() async {
         let authorizationResult = await arkitSession.queryAuthorization(for: [.worldSensing])
         worldSensingAuthorizationStatus = authorizationResult[.worldSensing]!
     }

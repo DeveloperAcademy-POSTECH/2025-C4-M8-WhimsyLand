@@ -47,7 +47,6 @@ struct WhimsyLandApp: App {
         }
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {
-                // Leave the immersive space when the user dismisses the app.
                 if appState.immersiveSpaceOpened {
                     Task {
                         await dismissImmersiveSpace()
