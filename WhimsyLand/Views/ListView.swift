@@ -1,0 +1,80 @@
+//
+//  ListView.swift
+//  WhimsyLand
+//
+//  Created by changhyen yun on 7/13/25.
+//
+
+import SwiftUI
+
+struct ListView: View {
+    @State private var searchText = ""
+    var module: Module
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Text("Object(10)")
+                    .font(.largeTitle)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                // Search Bar
+                HStack {
+                    Image(systemName: "mic.fill")
+                        .foregroundColor(.gray)
+                    
+                    TextField("Search", text: $searchText)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.black.opacity(0.3))
+                .cornerRadius(20)
+                .frame(width: 300)
+            }
+            .padding(.horizontal, 40)
+            .padding(.top, 20)
+            
+            Spacer()
+            
+            // Book Grid
+            ScrollView {
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 20),
+                    GridItem(.flexible(), spacing: 20),
+                    GridItem(.flexible(), spacing: 20)
+                ], spacing: 30) {
+                
+                    // Additional placeholder books for scrolling
+                    ForEach(1..<10) { index in
+                        VStack(spacing: 20) {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.gray.opacity(0.6))
+                                .frame(width:304, height: 328)
+                            
+                            Text("Book Title \(index)")
+                                .font(.title3)
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                }
+                .padding(.horizontal, 40)
+            }
+        }
+        .frame(width:1020, height: 678)
+        .cornerRadius(20)
+    }
+}
+
+#Preview("ThreeLittlePigs") {
+    NavigationStack {
+        ListView(module: .threeLittlePigs)
+    }
+}

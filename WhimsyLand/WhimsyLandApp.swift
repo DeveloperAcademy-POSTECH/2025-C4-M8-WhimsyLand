@@ -9,26 +9,15 @@ import SwiftUI
 
 @main
 struct WhimsyLandApp: App {
-
-    @State private var appModel = AppModel()
+    // view model
+    @State private var model = ViewModel()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(appModel)
+            HomeView()
+                .environment(model)
         }
-        .windowStyle(.volumetric)
-
-        ImmersiveSpace(id: appModel.immersiveSpaceID) {
-            ImmersiveView()
-                .environment(appModel)
-                .onAppear {
-                    appModel.immersiveSpaceState = .open
-                }
-                .onDisappear {
-                    appModel.immersiveSpaceState = .closed
-                }
-        }
-        .immersionStyle(selection: .constant(.progressive), in: .progressive)
+        .windowStyle(.plain)
+        .defaultSize(width: 1020, height: 540)
     }
 }
