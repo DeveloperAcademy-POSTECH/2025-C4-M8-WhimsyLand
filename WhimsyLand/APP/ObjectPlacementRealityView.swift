@@ -29,6 +29,10 @@ struct ObjectPlacementRealityView: View {
             if let placementTooltipAttachment = attachments.entity(for: Attachments.placementTooltip) {
                 placementManager.addPlacementTooltip(placementTooltipAttachment)
             }
+            
+            if let dragTooltipAttachment = attachments.entity(for: Attachments.dragTooltip) {
+                placementManager.dragTooltip = dragTooltipAttachment
+            }
               
             if let deleteButtonAttachment = attachments.entity(for: Attachments.deleteButton) {
                 placementManager.deleteButton = deleteButtonAttachment
@@ -62,19 +66,19 @@ struct ObjectPlacementRealityView: View {
                 selectedObject.isPreviewActive = placementState.isPlacementPossible
             }
         } attachments: {
-//            Attachment(id: Attachments.placementTooltip) {
-//                PlacementTooltip(placementState: placementManager.placementState)
-//            }
-//            Attachment(id: Attachments.dragTooltip) {
-//                TooltipView(text: "Drag to reposition.")
-//            }
-//            Attachment(id: Attachments.deleteButton) {
-//                DeleteButton {
-//                    Task {
-//                        await placementManager.removeHighlightedObject()
-//                    }
-//                }
-//            }
+            Attachment(id: Attachments.placementTooltip) {
+                PlacementTooltip(placementState: placementManager.placementState)
+            }
+            Attachment(id: Attachments.dragTooltip) {
+                TooltipView(text: "Drag to reposition.")
+            }
+            Attachment(id: Attachments.deleteButton) {
+                DeleteButton {
+                    Task {
+                        await placementManager.removeHighlightedObject()
+                    }
+                }
+            }
         }
         .task {
             // Monitor ARKit anchor updates once the user opens the immersive space.
@@ -126,4 +130,96 @@ struct ObjectPlacementRealityView: View {
             appState.didLeaveImmersiveSpace()
         }
     }
+}
+
+// To-do 추후 View 따로 리펙토링하기
+struct TooltipView: View {
+    var text: String
+
+    var body: some View {
+        Text(text)
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: 220)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 12)
+            .glassBackgroundEffect()
+            .allowsHitTesting(false) // Prevent the tooltip from blocking spatial tap gestures.
+    }
+}
+
+#Preview(windowStyle: .plain) {
+    VStack {
+        TooltipView(text: "Text")
+    }
+}
+
+struct PlacementTooltip: View {
+    var placementState: PlacementState
+
+    var body: some View {
+        if let message {
+            TooltipView(text: message)
+        }
+    }
+
+    var message: String? {
+        // Decide on a message to display, in order of importance.
+        if !placementState.planeToProjectOnFound {
+            return "Point the device at a horizontal surface nearby."
+        }
+        if placementState.collisionDetected {
+            return "The space is occupied."
+        }
+        if !placementState.userPlacedAnObject {
+            return "Tap to place objects."
+        }
+        return nil
+    }
+}
+
+#Preview(windowStyle: .plain) {
+    VStack {
+        PlacementTooltip(placementState: PlacementState())
+        PlacementTooltip(placementState: PlacementState().withPlaneFound())
+        PlacementTooltip(placementState:
+            PlacementState()
+                .withPlaneFound()
+                .withCollisionDetected()
+        )
+    }
+}
+
+private extension PlacementState {
+    func withPlaneFound() -> PlacementState {
+        planeToProjectOnFound = true
+        return self
+    }
+
+    func withCollisionDetected() -> PlacementState {
+        activeCollisions = 1
+        return self
+    }
+}
+
+
+struct DeleteButton: View {
+    var deletionHandler: (() -> Void)?
+
+    var body: some View {
+        Button {
+            if let deletionHandler {
+                deletionHandler()
+            }
+        } label: {
+            Image(systemName: "trash")
+        }
+        .accessibilityLabel("Delete object")
+        .glassBackgroundEffect()
+    }
+}
+
+#Preview(windowStyle: .plain) {
+    DeleteButton()
 }
