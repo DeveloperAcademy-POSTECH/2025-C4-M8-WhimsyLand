@@ -24,9 +24,11 @@ struct WhimsyLandApp: App {
                 .environment(appModel)
                 .onAppear {
                     appModel.immersiveSpaceState = .open
+                    appModel.showSphere = false
                 }
                 .onDisappear {
                     appModel.immersiveSpaceState = .closed
+                    appModel.showSphere = true
                 }
         }
         .immersionStyle(selection: .constant(.progressive), in: .progressive)
@@ -46,5 +48,19 @@ struct WhimsyLandApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(.infinity)
+        
+        ImmersiveSpace(id: "newImmersive") {
+            ImmersiveView()
+                .environment(appModel)
+                .onAppear {
+                    appModel.showSphere = false
+                    appModel.isFullImmersiveSpaceShown = true
+                }
+                .onDisappear {
+                    appModel.showSphere = true
+                    appModel.isFullImmersiveSpaceShown = false
+                }
+        }
+        .immersionStyle(selection: .constant(.full), in: .full)
     }
 }

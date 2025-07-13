@@ -20,6 +20,7 @@ struct ContentView: View {
     @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
     
     @Environment(\.openWindow) private var openWindow
+    @Environment(AppModel.self) private var appModel
 
     var body: some View {
         RealityView { content in
@@ -32,6 +33,8 @@ struct ContentView: View {
             if let scene = content.entities.first {
                 let uniformScale: Float = enlarge ? 1.4 : 1.0
                 scene.transform.scale = [uniformScale, uniformScale, uniformScale]
+                
+                scene.isEnabled = appModel.showSphere
             }
         }
         .gesture(TapGesture().targetedToAnyEntity().onEnded { _ in
@@ -56,7 +59,25 @@ struct ContentView: View {
                     .fontWeight(.semibold)
 
                     ToggleImmersiveSpaceButton()
+                    if appModel.isFullImmersiveSpaceShown {
+                        Button("Close Immersive Space") {
+                            Task {
+                                await dismissImmersiveSpace()
+                            }
+                        }
+                    } else {
+                        Button("New Immersive Space") {
+                            Task {
+                                await openImmersiveSpace(id: "newImmersive")
                 }
+            }
+        }
+    }
+}
+        }
+        .onDisappear {
+            Task {
+                await dismissImmersiveSpace()
             }
         }
     }

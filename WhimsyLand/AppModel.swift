@@ -18,4 +18,6 @@ class AppModel {
         case open
     }
     var immersiveSpaceState = ImmersiveSpaceState.closed
+    var showSphere: Bool = true
+    var isFullImmersiveSpaceShown: Bool = false
 }
