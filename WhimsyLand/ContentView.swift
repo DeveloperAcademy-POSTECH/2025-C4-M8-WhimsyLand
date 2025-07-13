@@ -12,6 +12,14 @@ import RealityKitContent
 struct ContentView: View {
 
     @State private var enlarge = false
+    
+    @State private var showImmersiveSpace = false
+    @State private var immersiveSpaceIsShown = false
+
+    @Environment(\.openImmersiveSpace) var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
+    
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         RealityView { content in
@@ -32,6 +40,13 @@ struct ContentView: View {
         .toolbar {
             ToolbarItemGroup(placement: .bottomOrnament) {
                 VStack (spacing: 12) {
+                    Button("First View") {
+                        openWindow(id: "first")
+                    }
+                    
+                    Button("Second View") {
+                        openWindow(id: "second")
+                    }
                     Button {
                         enlarge.toggle()
                     } label: {
