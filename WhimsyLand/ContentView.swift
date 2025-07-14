@@ -61,7 +61,7 @@ struct ContentView: View {
         )
         .toolbar {
             ToolbarItemGroup(placement: .bottomOrnament) {
-                ToggleImmersiveSpaceButton()
+//                ToggleImmersiveSpaceButton()
                 Button("Rotate +90° Y") {
                     // 씬의 첫 번째 자식(혹은 원하는 엔티티)에 회전 적용
                     if let entity = sceneEntity?.children.first {
@@ -104,7 +104,7 @@ struct ContentView: View {
 //}
 
 // 미리보기용 코드 (volumetric window 스타일로 ContentView 미리보기)
-#Preview(windowStyle: .volumetric) {
-    ContentView()
-        .environment(AppModel())
-}
+//#Preview(windowStyle: .volumetric) {
+//    ContentView()
+//        .environment(AppModel())
+//}
