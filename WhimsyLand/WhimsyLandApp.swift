@@ -14,33 +14,29 @@ private enum UIIdentifier {
 
 @main
 struct WhimsyLandApp: App {
+    @State private var model = ViewModel()
     @State private var appState = AppState()
-    @State private var appModel = AppModel()
     
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.scenePhase) private var scenePhase
-
+    
     var body: some Scene {
+        WindowGroup {
+            HomeView()
+                .environment(model)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 1020, height: 540)
+        
+        
         WindowGroup {
             ContentView(
                 appState: appState,
                 immersiveSpaceIdentifier: UIIdentifier.immersiveSpace
             )
-                .environment(appModel)
+            .environment(appState)
         }
         .windowStyle(.volumetric)
-
-        ImmersiveSpace(id: appModel.immersiveSpaceID) {
-            ImmersiveView()
-                .environment(appModel)
-                .onAppear {
-                    appModel.immersiveSpaceState = .open
-                }
-                .onDisappear {
-                    appModel.immersiveSpaceState = .closed
-                }
-        }
-        .immersionStyle(selection: .constant(.progressive), in: .progressive)
         
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
             ObjectPlacementRealityView()

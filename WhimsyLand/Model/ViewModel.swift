@@ -12,5 +12,5 @@ import SwiftUI
 class ViewModel {
     
     // MARK: - Navigation
-    
+    var navigationPath: [Module] = []
 }
