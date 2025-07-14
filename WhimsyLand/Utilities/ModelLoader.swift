@@ -7,6 +7,7 @@ The class that loads available USDZs and reports loading progress.
 
 import Foundation
 import RealityKit
+import RealityKitContent
 
 @MainActor
 @Observable
@@ -43,9 +44,26 @@ final class ModelLoader {
 
         // Get a list of all USDZ files in this app’s main bundle and attempt to load them.
         var usdzFiles: [String] = []
-        if let resourcesPath = Bundle.main.resourcePath {
-            try? usdzFiles = FileManager.default.contentsOfDirectory(atPath: resourcesPath).filter { $0.hasSuffix(".usdz") }
+        
+        if let resourceURL = realityKitContentBundle.url(forResource: "RealityKitContent", withExtension: "rkassets") {
+            do {
+                let fileURLs = try FileManager.default.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
+                let usdzFiles = fileURLs.filter { $0.pathExtension == "usdz" }.map { $0.deletingPathExtension().lastPathComponent }
+                self.fileCount = usdzFiles.count
+
+                await withTaskGroup(of: Void.self) { group in
+                    for fileName in usdzFiles {
+                        group.addTask {
+                            await self.loadObject(fileName)
+                            await self.updateProgress()
+                        }
+                    }
+                }
+            } catch {
+                print("Error loading USDZ files: \(error)")
+            }
         }
+
         
         assert(!usdzFiles.isEmpty, "Add USDZ files to the '3D models' group of this Xcode project.")
         
