@@ -11,16 +11,20 @@ import Foundation
 import ARKit
 import RealityKit
 
+enum ImmersiveMode {
+    case editing
+    case viewing
+}
+
 @Observable
 class AppState {
     var immersiveSpaceOpened: Bool { placementManager != nil }
-    private(set) weak var placementManager: PlacementManager? = nil
-
-    // 배치 가능한 오브젝트 저장 및 오브젝트 파일명
-    private(set) var placeableObjectsByFileName: [String: PlaceableObject] = [:]
-    private(set) var modelDescriptors: [ModelDescriptor] = []
+    var immersiveMode: ImmersiveMode = .viewing
     var selectedFileName: String?
-
+    private(set) weak var placementManager: PlacementManager? = nil
+    private(set) var placeableObjectsByFileName: [String: PlaceableObject] = [:] // 배치 가능한 오브젝트 저장 및 오브젝트 파일명
+    private(set) var modelDescriptors: [ModelDescriptor] = []
+    
     // MARK: immersive 환경 오픈, 종료 함수
     func immersiveSpaceOpened(with manager: PlacementManager) {
         placementManager = manager
@@ -68,7 +72,7 @@ class AppState {
     }
     
     // 이 기기에서 world tracking과 plane detection을 지원하는지 확인
-    var allRequiredProviderAreSupported: Bool {
+    var allRequiredProvidersAreSupported: Bool {
         WorldTrackingProvider.isSupported && PlaneDetectionProvider.isSupported
     }
     
@@ -76,7 +80,7 @@ class AppState {
     // 두 조건을 모두 만족하는 경우에만 immersiveSpace로 진입 허용
     // 이 값은 Enter 버튼 활성 여부에 활용
     var canEnterImmersiveSpace: Bool {
-        allRequiredAuthorizationsAreGranted && allRequiredProviderAreSupported
+        allRequiredAuthorizationsAreGranted && allRequiredProvidersAreSupported
     }
     
     // world sensing 관련한 권한 요청
@@ -87,7 +91,7 @@ class AppState {
     }
     
     // 현재 권한 상태 조회
-    func queryWorldSensingAuthorixation() async {
+    func queryWorldSensingAuthorization() async {
         let authorizationResult = await arkitSession.queryAuthorization(for: [.worldSensing])
         worldSensingAuthorizationStatus = authorizationResult[.worldSensing]!
     }
@@ -124,37 +128,5 @@ class AppState {
                 print("An unknown event occured \(event)")
             }
         }
-    }
-    
-    // MARK: - Xcode Previews
-
-    fileprivate var previewPlacementManager: PlacementManager? = nil
-
-    /// An initial app state for previews in Xcode.
-    @MainActor
-    static func previewAppState(immersiveSpaceOpened: Bool = false, selectedIndex: Int? = nil) -> AppState {
-        let state = AppState()
-
-        state.setPlaceableObjects([previewObject(named: "White sphere"),
-                                   previewObject(named: "Red cube"),
-                                   previewObject(named: "Blue cylinder")])
-
-        if let selectedIndex, selectedIndex < state.modelDescriptors.count {
-            state.selectedFileName = state.modelDescriptors[selectedIndex].fileName
-        }
-
-        if immersiveSpaceOpened {
-            state.previewPlacementManager = PlacementManager()
-            state.placementManager = state.previewPlacementManager
-        }
-
-        return state
-    }
-    
-    @MainActor
-    private static func previewObject(named fileName: String) -> PlaceableObject {
-        return PlaceableObject(descriptor: ModelDescriptor(fileName: fileName),
-                               renderContent: ModelEntity(),
-                               previewEntity: ModelEntity())
     }
 }

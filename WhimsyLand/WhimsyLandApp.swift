@@ -7,19 +7,27 @@
 
 import SwiftUI
 
+private enum UIIdentifier {
+    static let immersiveSpace = "Object Placement"
+}
+
 @main
 struct WhimsyLandApp: App {
-    // view model
     @State private var model = ViewModel()
-    
+
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
-
+    @State private var appState = AppState()
+    @State private var modelLoader = ModelLoader()
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             HomeView()
                 .environment(model)
+                .environment(appState)
+                .environment(modelLoader)
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
@@ -34,5 +42,21 @@ struct WhimsyLandApp: App {
                     model.isShowBrickHouse = false
                 }
         }.immersionStyle(selection: $houseImmersionStyle, in: .full)
+
+        
+        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
+            ObjectPlacementRealityView()
+                .environment(appState)
+        }
+        .onChange(of: scenePhase, initial: true) {
+            if scenePhase != .active {
+                if appState.immersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        appState.didLeaveImmersiveSpace()
+                    }
+                }
+            }
+        }
     }
 }
