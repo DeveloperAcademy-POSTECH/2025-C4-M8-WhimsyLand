@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct ListView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(AppState.self) private var appState
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @State private var searchText = ""
+    let immersiveSpaceIdentifier: String
     var module: Module
     
     var body: some View {
@@ -21,6 +25,26 @@ struct ListView: View {
                     .foregroundColor(.white)
                 
                 Spacer()
+                
+                // Mixed Immersive Enter Button
+                Button("Try Enter") {
+                    Task {
+                        await appState.requestWorldSensingAuthorization()
+                        
+                        switch await openImmersiveSpace(id: immersiveSpaceIdentifier) {
+                        case .opened:
+                            print("Immersive space opened successfully: \(immersiveSpaceIdentifier)")
+                            break
+                        case .error:
+                            print("An error occurred when trying to open the immersive space \(immersiveSpaceIdentifier)")
+                        case .userCancelled:
+                            print("The user declined opening immersive space \(immersiveSpaceIdentifier)")
+                        @unknown default:
+                            break
+                        }
+                    }
+                }
+                .disabled(!appState.canEnterImmersiveSpace)
                 
                 // Search Bar
                 HStack {
@@ -75,6 +99,10 @@ struct ListView: View {
 
 #Preview("ThreeLittlePigs") {
     NavigationStack {
-        ListView(module: .threeLittlePigs)
+        ListView(
+            immersiveSpaceIdentifier: "Object Placement",
+            module: .threeLittlePigs
+        )
+        .environment(AppState())
     }
 }

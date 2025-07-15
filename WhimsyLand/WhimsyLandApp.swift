@@ -29,15 +29,15 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
         
-        
-        WindowGroup {
-            ContentView(
-                appState: appState,
-                immersiveSpaceIdentifier: UIIdentifier.immersiveSpace
-            )
-            .environment(appState)
-        }
-        .windowStyle(.volumetric)
+//        
+//        WindowGroup {
+//            ContentView(
+//                appState: appState,
+//                immersiveSpaceIdentifier: UIIdentifier.immersiveSpace
+//            )
+//            .environment(appState)
+//        }
+//        .windowStyle(.volumetric)
         
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
             ObjectPlacementRealityView()

@@ -1,13 +1,12 @@
 /*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-The class that loads available USDZs and reports loading progress.
-*/
+ See the LICENSE.txt file for this sample’s licensing information.
+ 
+ Abstract:
+ The class that loads available USDZs and reports loading progress.
+ */
 
 import Foundation
 import RealityKit
-import RealityKitContent
 
 @MainActor
 @Observable
@@ -36,43 +35,25 @@ final class ModelLoader {
             progress = Float(filesLoaded) / Float(fileCount)
         }
     }
-
+    
     func loadObjects() async {
         // Only allow one loading operation at any given time.
         guard !didStartLoading else { return }
         didStartLoading.toggle()
-
+        
         // Get a list of all USDZ files in this app’s main bundle and attempt to load them.
         var usdzFiles: [String] = []
-        
-        if let resourceURL = realityKitContentBundle.url(forResource: "RealityKitContent", withExtension: "rkassets") {
-            do {
-                let fileURLs = try FileManager.default.contentsOfDirectory(at: resourceURL, includingPropertiesForKeys: nil)
-                let usdzFiles = fileURLs.filter { $0.pathExtension == "usdz" }.map { $0.deletingPathExtension().lastPathComponent }
-                self.fileCount = usdzFiles.count
-
-                await withTaskGroup(of: Void.self) { group in
-                    for fileName in usdzFiles {
-                        group.addTask {
-                            await self.loadObject(fileName)
-                            await self.updateProgress()
-                        }
-                    }
-                }
-            } catch {
-                print("Error loading USDZ files: \(error)")
-            }
+        if let urls = Bundle.main.urls(forResourcesWithExtension: "usdz", subdirectory: nil) {
+            usdzFiles = urls.map { $0.deletingPathExtension().lastPathComponent }
         }
-
         
-        assert(!usdzFiles.isEmpty, "Add USDZ files to the '3D models' group of this Xcode project.")
+        assert(!usdzFiles.isEmpty, "Add USDZ files to this Xcode project.")
         
         fileCount = usdzFiles.count
         await withTaskGroup(of: Void.self) { group in
             for usdz in usdzFiles {
-                let fileName = URL(string: usdz)!.deletingPathExtension().lastPathComponent
                 group.addTask {
-                    await self.loadObject(fileName)
+                    await self.loadObject(usdz)
                     await self.updateProgress()
                 }
             }
@@ -92,20 +73,20 @@ final class ModelLoader {
         } catch {
             fatalError("Failed to load model \(fileName)")
         }
-
+        
         // Set a collision component for the model so the app can detect whether the preview overlaps with existing placed objects.
         do {
             let shape = try await ShapeResource.generateConvex(from: modelEntity.model!.mesh)
             previewEntity.components.set(CollisionComponent(shapes: [shape], isStatic: false,
                                                             filter: CollisionFilter(group: PlaceableObject.previewCollisionGroup, mask: .all)))
-
+            
             // Ensure the preview only accepts indirect input (for tap gestures).
             let previewInput = InputTargetComponent(allowedInputTypes: [.indirect])
             previewEntity.components[InputTargetComponent.self] = previewInput
         } catch {
             fatalError("Failed to generate shape resource for model \(fileName)")
         }
-
+        
         let descriptor = ModelDescriptor(fileName: fileName, displayName: modelEntity.displayName)
         placeableObjects.append(PlaceableObject(descriptor: descriptor, renderContent: modelEntity, previewEntity: previewEntity))
     }

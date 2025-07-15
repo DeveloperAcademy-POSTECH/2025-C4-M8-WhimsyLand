@@ -18,8 +18,6 @@ struct HomeView: View {
     @Environment(ViewModel.self) private var model
     @Environment(AppState.self) private var appState
     @Environment(ModelLoader.self) private var modelLoader
-    
-    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.scenePhase) private var scenePhase
     
@@ -28,8 +26,6 @@ struct HomeView: View {
     @GestureState private var dragOffset: CGSize = .zero
     
     var body: some View {
-        //        @Bindable var model = model
-        
         NavigationStack{
             VStack {
                 // Header
@@ -61,7 +57,10 @@ struct HomeView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 20) {
                         ForEach(Module.allCases) { module in
-                            NavigationLink(destination: ListView(module: module)) {
+                            NavigationLink(destination: ListView(
+                                immersiveSpaceIdentifier: "Object Placement",
+                                module: module)
+                            ) {
                                 FairyTaleCard(module: module)
                             }.buttonBorderShape(.roundedRectangle(radius: 20))
                                 .frame(width: 276, height: 344)
@@ -110,13 +109,6 @@ struct HomeView: View {
             await modelLoader.loadObjects()
             await MainActor.run {
                 appState.setPlaceableObjects(modelLoader.placeableObjects)
-            }
-        }
-        .task {
-            guard appState.canEnterImmersiveSpace else { return }
-            let result = await openImmersiveSpace(id: "Object Placement")
-            if case .opened = result {
-                print("immersiveSpace opened successfully.")
             }
         }
     }
