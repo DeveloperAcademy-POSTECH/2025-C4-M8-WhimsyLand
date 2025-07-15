@@ -11,6 +11,7 @@ import SwiftUI
 struct WhimsyLandApp: App {
     // view model
     @State private var model = ViewModel()
+    @State private var extractedObject: ObjectModule? = nil
 
     var body: some Scene {
         WindowGroup {
@@ -19,5 +20,13 @@ struct WhimsyLandApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
+
+        WindowGroup(id: "ExtractedObject") {
+            if let object = extractedObject {
+                Reality3DView(objectName: object.rawValue)
+            }
+        }
+        .defaultSize(width: 0.4, height: 0.4, depth: 0.4, in: .meters)
+        .windowStyle(.volumetric)
     }
 }
