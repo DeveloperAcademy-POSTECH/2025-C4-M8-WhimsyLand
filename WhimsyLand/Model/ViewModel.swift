@@ -8,9 +8,13 @@
 import SwiftUI
 
 /// The data that the app uses to configure its views.
+@MainActor
 @Observable
 class ViewModel {
     
     // MARK: - Navigation
     var navigationPath: [Module] = []
+    
+    // MARK: - threeLittlePigs
+    var isShowBrickHouse = false
 }

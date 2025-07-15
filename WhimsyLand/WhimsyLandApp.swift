@@ -11,6 +11,10 @@ import SwiftUI
 struct WhimsyLandApp: App {
     // view model
     @State private var model = ViewModel()
+    
+    // item에 따라 다른 immersion 스타일
+    @State private var houseImmersionStyle: ImmersionStyle = .full
+
 
     var body: some Scene {
         WindowGroup {
@@ -19,5 +23,16 @@ struct WhimsyLandApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
+        
+        // scene 일부분을 immersive space로 정의
+        ImmersiveSpace(id: Module.threeLittlePigs.name ) {
+            House()
+                .onAppear {
+                    model.isShowBrickHouse = true
+                }
+                .onDisappear {
+                    model.isShowBrickHouse = false
+                }
+        }.immersionStyle(selection: $houseImmersionStyle, in: .full)
     }
 }

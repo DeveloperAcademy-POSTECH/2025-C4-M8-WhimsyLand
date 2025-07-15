@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct ListView: View {
+    
     @State private var searchText = ""
+    
+    @Environment(ViewModel.self) private var model
+    
     var module: Module
     
     var body: some View {
