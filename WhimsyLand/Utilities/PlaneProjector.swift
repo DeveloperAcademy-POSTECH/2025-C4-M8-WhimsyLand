@@ -83,26 +83,12 @@ extension Array where Element == PlaneAnchor {
             // 2. For each triangle of the plane geometry, check whether the given point lies inside of the triangle.
             let faceCount = anchor.geometry.meshFaces.count
             for faceIndex in 0 ..< faceCount {
-            
-                // ❗️ 더미
-                let vertexIndicesForThisFace: [Int] = [0, 1, 2]
-                let vertex1 = SIMD3<Float>(0, 0, 0)
-                let vertex2 = SIMD3<Float>(1, 0, 0)
-                let vertex3 = SIMD3<Float>(0, 0, 1)
-                
-                let vertex1_2D = SIMD2<Float>(vertex1.x, vertex1.z)
-                let vertex2_2D = SIMD2<Float>(vertex2.x, vertex2.z)
-                let vertex3_2D = SIMD2<Float>(vertex3.x, vertex3.z)
+                let vertexIndicesForThisFace = anchor.geometry.meshFaces[faceIndex]
+                let vertex1 = anchor.geometry.meshVertices[vertexIndicesForThisFace[0]]
+                let vertex2 = anchor.geometry.meshVertices[vertexIndicesForThisFace[1]]
+                let vertex3 = anchor.geometry.meshVertices[vertexIndicesForThisFace[2]]
 
-                insidePlaneGeometry = planeAnchorFromPoint2D.isInsideOf(vertex1_2D, vertex2_2D, vertex3_2D)
-                //  더미 ❗️
-                
-//                let vertexIndicesForThisFace = anchor.geometry.meshFaces[faceIndex]
-//                let vertex1 = anchor.geometry.meshVertices[vertexIndicesForThisFace[0]]
-//                let vertex2 = anchor.geometry.meshVertices[vertexIndicesForThisFace[1]]
-//                let vertex3 = anchor.geometry.meshVertices[vertexIndicesForThisFace[2]]
-
-//                insidePlaneGeometry = planeAnchorFromPoint2D.isInsideOf([vertex1.0, vertex1.2], [vertex2.0, vertex2.2], [vertex3.0, vertex3.2])
+                insidePlaneGeometry = planeAnchorFromPoint2D.isInsideOf([vertex1.0, vertex1.2], [vertex2.0, vertex2.2], [vertex3.0, vertex3.2])
                 if insidePlaneGeometry {
                     matchingPlanes.append(anchor)
                     break

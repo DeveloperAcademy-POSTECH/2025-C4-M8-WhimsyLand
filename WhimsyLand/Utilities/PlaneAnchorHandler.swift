@@ -47,11 +47,10 @@ class PlaneAnchorHandler {
         entity.setTransformMatrix(anchor.originFromAnchorTransform, relativeTo: nil)
         
         // Generate a mesh for the plane (for occlusion).
-        // Occlusion 처리 코드 수정 필요 (물체 뒤에 숨기기)
         var meshResource: MeshResource? = nil
         do {
-//            let contents = MeshResource.Contents(planeGeometry: anchor.geometry)
-//            meshResource = try MeshResource.generate(from: contents)
+            let contents = MeshResource.Contents(planeGeometry: anchor.geometry)
+            meshResource = try MeshResource.generate(from: contents)
         } catch {
             print("Failed to create a mesh resource for a plane anchor: \(error).")
             return
@@ -63,12 +62,11 @@ class PlaneAnchorHandler {
         }
         
         // Generate a collision shape for the plane (for object placement and physics).
-        // 충돌 메쉬 코드 수정 필요
         var shape: ShapeResource? = nil
         do {
-//            let vertices = anchor.geometry.meshVertices.asSIMD3(ofType: Float.self)
-//            shape = try await ShapeResource.generateStaticMesh(positions: vertices,
-//                                                               faceIndices: anchor.geometry.meshFaces.asUInt16Array())
+            let vertices = anchor.geometry.meshVertices.asSIMD3(ofType: Float.self)
+            shape = try await ShapeResource.generateStaticMesh(positions: vertices,
+                                                               faceIndices: anchor.geometry.meshFaces.asUInt16Array())
         } catch {
             print("Failed to create a static mesh for a plane anchor: \(error).")
             return
