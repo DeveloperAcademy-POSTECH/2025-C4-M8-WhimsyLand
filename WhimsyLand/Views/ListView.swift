@@ -13,6 +13,7 @@ struct ListView: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @State private var searchText = ""
     let immersiveSpaceIdentifier: String
+
     var module: Module
     
     var body: some View {

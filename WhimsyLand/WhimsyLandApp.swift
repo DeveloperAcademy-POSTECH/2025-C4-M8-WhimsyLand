@@ -14,11 +14,14 @@ private enum UIIdentifier {
 @main
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
+
+    // item에 따라 다른 immersion 스타일
+    @State private var houseImmersionStyle: ImmersionStyle = .full
     @State private var appState = AppState()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.scenePhase) private var scenePhase
-    
+
     var body: some Scene {
         WindowGroup {
             HomeView()
@@ -29,15 +32,17 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
         
-//        
-//        WindowGroup {
-//            ContentView(
-//                appState: appState,
-//                immersiveSpaceIdentifier: UIIdentifier.immersiveSpace
-//            )
-//            .environment(appState)
-//        }
-//        .windowStyle(.volumetric)
+        // scene 일부분을 immersive space로 정의
+        ImmersiveSpace(id: Module.threeLittlePigs.name ) {
+            House()
+                .onAppear {
+                    model.isShowBrickHouse = true
+                }
+                .onDisappear {
+                    model.isShowBrickHouse = false
+                }
+        }.immersionStyle(selection: $houseImmersionStyle, in: .full)
+
         
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
             ObjectPlacementRealityView()
