@@ -1,5 +1,3 @@
-// git 올리기 전에 삭제하기
-
 import SwiftUI
 
 struct ObjectPlacementMenuView: View {
