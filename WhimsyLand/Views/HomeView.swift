@@ -15,7 +15,14 @@ struct Book {
 }
 
 struct HomeView: View {
-    //    @Environment(ViewModel.self) private var model
+    @Environment(ViewModel.self) private var model
+    @Environment(AppState.self) private var appState
+    @Environment(ModelLoader.self) private var modelLoader
+    
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.scenePhase) private var scenePhase
+    
     @State private var searchText = ""
     @State private var currentPage = 0
     @GestureState private var dragOffset: CGSize = .zero
@@ -57,13 +64,59 @@ struct HomeView: View {
                             NavigationLink(destination: ListView(module: module)) {
                                 FairyTaleCard(module: module)
                             }.buttonBorderShape(.roundedRectangle(radius: 20))
-                            .frame(width: 276, height: 344)
+                                .frame(width: 276, height: 344)
                         }
                     }
                     .padding(.horizontal, 20)
                     .scrollTargetLayout()
                 }
                 .scrollTargetBehavior(.viewAligned)
+            }
+        }
+        .onChange(of: scenePhase, initial: true) {
+            if scenePhase == .active {
+                Task {
+                    await appState.queryWorldSensingAuthorization()
+                }
+            } else {
+                if appState.immersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        appState.didLeaveImmersiveSpace()
+                    }
+                }
+            }
+        }
+        .onChange(of: appState.providersStoppedWithError, { _, providersStoppedWithError in
+            if providersStoppedWithError {
+                if appState.immersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        appState.didLeaveImmersiveSpace()
+                    }
+                }
+                appState.providersStoppedWithError = false
+            }
+        })
+        .task {
+            if appState.allRequiredProvidersAreSupported {
+                await appState.requestWorldSensingAuthorization()
+            }
+        }
+        .task {
+            await appState.monitorSessionEvents()
+        }
+        .task {
+            await modelLoader.loadObjects()
+            await MainActor.run {
+                appState.setPlaceableObjects(modelLoader.placeableObjects)
+            }
+        }
+        .task {
+            guard appState.canEnterImmersiveSpace else { return }
+            let result = await openImmersiveSpace(id: "Object Placement")
+            if case .opened = result {
+                print("immersiveSpace opened successfully.")
             }
         }
     }

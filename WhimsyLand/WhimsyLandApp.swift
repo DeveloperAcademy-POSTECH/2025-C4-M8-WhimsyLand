@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 private enum UIIdentifier {
     static let immersiveSpace = "Object Placement"
 }
@@ -16,7 +15,7 @@ private enum UIIdentifier {
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
     @State private var appState = AppState()
-    
+    @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.scenePhase) private var scenePhase
     
@@ -24,6 +23,8 @@ struct WhimsyLandApp: App {
         WindowGroup {
             HomeView()
                 .environment(model)
+                .environment(appState)
+                .environment(modelLoader)
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)

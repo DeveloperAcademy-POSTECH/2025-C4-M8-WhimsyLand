@@ -11,16 +11,20 @@ import Foundation
 import ARKit
 import RealityKit
 
+enum ImmersiveMode {
+    case editing
+    case viewing
+}
+
 @Observable
 class AppState {
     var immersiveSpaceOpened: Bool { placementManager != nil }
-    private(set) weak var placementManager: PlacementManager? = nil
-
-    // 배치 가능한 오브젝트 저장 및 오브젝트 파일명
-    private(set) var placeableObjectsByFileName: [String: PlaceableObject] = [:]
-    private(set) var modelDescriptors: [ModelDescriptor] = []
+    var immersiveMode: ImmersiveMode = .viewing
     var selectedFileName: String?
-
+    private(set) weak var placementManager: PlacementManager? = nil
+    private(set) var placeableObjectsByFileName: [String: PlaceableObject] = [:] // 배치 가능한 오브젝트 저장 및 오브젝트 파일명
+    private(set) var modelDescriptors: [ModelDescriptor] = []
+    
     // MARK: immersive 환경 오픈, 종료 함수
     func immersiveSpaceOpened(with manager: PlacementManager) {
         placementManager = manager
