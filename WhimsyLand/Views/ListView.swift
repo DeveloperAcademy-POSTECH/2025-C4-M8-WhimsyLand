@@ -97,6 +97,12 @@ struct ListView: View {
         }
         .frame(width:1020, height: 678)
         .cornerRadius(20)
+        
+        if appState.immersiveSpaceOpened {
+            ObjectPlacementMenuView(appState: appState)
+                .padding(20)
+                .glassBackgroundEffect()
+        }
     }
 }
 
