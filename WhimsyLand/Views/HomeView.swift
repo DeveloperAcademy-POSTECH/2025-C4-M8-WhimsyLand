@@ -58,7 +58,6 @@ struct HomeView: View {
                     LazyHStack(spacing: 20) {
                         ForEach(Module.allCases) { module in
                             NavigationLink(destination: ListView(
-                                immersiveSpaceIdentifier: "Object Placement",
                                 module: module)
                             ) {
                                 FairyTaleCard(module: module)
@@ -104,12 +103,6 @@ struct HomeView: View {
         }
         .task {
             await appState.monitorSessionEvents()
-        }
-        .task {
-            await modelLoader.loadObjects()
-            await MainActor.run {
-                appState.setPlaceableObjects(modelLoader.placeableObjects)
-            }
         }
     }
 }

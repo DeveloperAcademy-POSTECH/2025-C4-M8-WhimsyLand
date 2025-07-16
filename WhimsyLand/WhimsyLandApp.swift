@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private enum UIIdentifier {
+enum UIIdentifier {
     static let immersiveSpace = "Object Placement"
 }
 
@@ -29,6 +29,12 @@ struct WhimsyLandApp: App {
                 .environment(model)
                 .environment(appState)
                 .environment(modelLoader)
+                .task {
+                    await modelLoader.loadObjects()
+                    await MainActor.run {
+                        appState.setPlaceableObjects(modelLoader.placeableObjects)
+                    }
+                }
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
@@ -56,6 +62,7 @@ struct WhimsyLandApp: App {
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
             ObjectPlacementRealityView()
                 .environment(appState)
+                .environment(modelLoader)
         }
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {
