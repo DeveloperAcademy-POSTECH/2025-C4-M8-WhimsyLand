@@ -40,6 +40,8 @@ final class PlacementManager {
     private let raycastOrigin: Entity
     private let placementLocation: Entity
     private weak var placementTooltip: Entity? = nil
+    weak var dragTooltip: Entity? = nil
+    weak var deleteButton: Entity? = nil
     
     // 현실 평면과 오브젝트 사이 간격 조정
     static private let placedObjectsOffsetOnPlanes: Float = 0.01
@@ -101,7 +103,6 @@ final class PlacementManager {
             // AppState에서 에러 감지 중이므로 별도 처리 X
             return
         }
-        
     }
 
     // MARK: 오브젝트 충돌 관리
@@ -183,21 +184,20 @@ final class PlacementManager {
     // MARK: AR의 UI가 사용자를 향하도록 조정
     @MainActor
     private func updateUserFacingUIOrientations(_ deviceAnchor: DeviceAnchor) async {
-        // 추후 활성화...
-        // 1. UI가 사용자를 바라보도록 조정
-//        if let uiOrigin = placementState.highlightedObject?.uiOrigin {
-//            // Set the UI to face the user (on the y-axis only).
-//            uiOrigin.look(at: deviceAnchor.originFromAnchorTransform.translation)
-//            let uiRotationOnYAxis = uiOrigin.transformMatrix(relativeTo: nil).gravityAligned.rotation
-//            uiOrigin.setOrientation(uiRotationOnYAxis, relativeTo: nil)
-//        }
+        //1. UI가 사용자를 바라보도록 조정
+        if let uiOrigin = placementState.highlightedObject?.uiOrigin {
+            // Set the UI to face the user (on the y-axis only).
+            uiOrigin.look(at: deviceAnchor.originFromAnchorTransform.translation)
+            let uiRotationOnYAxis = uiOrigin.transformMatrix(relativeTo: nil).gravityAligned.rotation
+            uiOrigin.setOrientation(uiRotationOnYAxis, relativeTo: nil)
+        }
         
-        // 2. Orient each UI element to face the user.
-//        for entity in [placementTooltip, dragTooltip, deleteButton] {
-//            if let entity {
-//                entity.look(at: deviceAnchor.originFromAnchorTransform.translation)
-//            }
-//        }
+        //2. Orient each UI element to face the user.
+        for entity in [placementTooltip, dragTooltip, deleteButton] {
+            if let entity {
+                entity.look(at: deviceAnchor.originFromAnchorTransform.translation)
+            }
+        }
     }
     
     // MARK: 오브젝트 배치 미리보기
@@ -275,9 +275,9 @@ final class PlacementManager {
 
         // To-do : 오브젝트 하이라이트 처리
         // 이전 오브젝트 하이라이트 해제
-//        guard let deleteButton, let dragTooltip else { return }
-//        deleteButton.removeFromParent()
-//        dragTooltip.removeFromParent()
+        guard let deleteButton, let dragTooltip else { return }
+        deleteButton.removeFromParent()
+        dragTooltip.removeFromParent()
 
         guard let objectToHighlight else { return }
 
@@ -285,13 +285,13 @@ final class PlacementManager {
         let extents = objectToHighlight.extents
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
         let frontBottomCenter: SIMD3<Float> = [0, (-extents.y / 2) + 0.04, extents.z / 2 + 0.04]
-//        deleteButton.position = topLeftCorner
-//        dragTooltip.position = frontBottomCenter
+        deleteButton.position = topLeftCorner
+        dragTooltip.position = frontBottomCenter
 
-//        objectToHighlight.uiOrigin.addChild(deleteButton)
-//        deleteButton.scale = 1 / objectToHighlight.scale
-//        objectToHighlight.uiOrigin.addChild(dragTooltip)
-//        dragTooltip.scale = 1 / objectToHighlight.scale
+        objectToHighlight.uiOrigin.addChild(deleteButton)
+        deleteButton.scale = 1 / objectToHighlight.scale
+        objectToHighlight.uiOrigin.addChild(dragTooltip)
+        dragTooltip.scale = 1 / objectToHighlight.scale
     }
 
     func removeAllPlacedObjects() async {
