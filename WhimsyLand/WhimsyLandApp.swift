@@ -14,6 +14,7 @@ private enum UIIdentifier {
 @main
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
+    @State private var extractedObject: ObjectModule? = nil
 
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
@@ -31,6 +32,14 @@ struct WhimsyLandApp: App {
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
+
+        WindowGroup(id: "ExtractedObject") {
+            if let object = extractedObject {
+                Reality3DView(objectName: object.rawValue)
+            }
+        }
+        .defaultSize(width: 0.4, height: 0.4, depth: 0.4, in: .meters)
+        .windowStyle(.volumetric)
         
         // scene 일부분을 immersive space로 정의
         ImmersiveSpace(id: Module.threeLittlePigs.name ) {
