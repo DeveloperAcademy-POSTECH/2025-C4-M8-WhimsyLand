@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private enum UIIdentifier {
+enum UIIdentifier {
     static let immersiveSpace = "Object Placement"
 }
 
@@ -18,7 +18,8 @@ struct WhimsyLandApp: App {
 
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
-    @State private var appState = AppState()
+    @State private var mixedImmersiveState = MixedImmersiveState()
+    @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.scenePhase) private var scenePhase
@@ -27,8 +28,15 @@ struct WhimsyLandApp: App {
         WindowGroup {
             HomeView()
                 .environment(model)
-                .environment(appState)
                 .environment(modelLoader)
+                .environment(mixedImmersiveState)
+                .environment(placeableItemStore)
+                .task {
+                    await modelLoader.loadObjects()
+                    await MainActor.run {
+                        placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
+                    }
+                }
         }
         .windowStyle(.plain)
         .defaultSize(width: 1020, height: 540)
@@ -55,14 +63,15 @@ struct WhimsyLandApp: App {
         
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
             ObjectPlacementRealityView()
-                .environment(appState)
+                .environment(mixedImmersiveState)
+                .environment(modelLoader)
         }
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {
-                if appState.immersiveSpaceOpened {
+                if mixedImmersiveState.mixedImmersiveSpaceOpened {
                     Task {
                         await dismissImmersiveSpace()
-                        appState.didLeaveImmersiveSpace()
+                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
                     }
                 }
             }

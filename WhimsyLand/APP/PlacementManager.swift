@@ -13,16 +13,17 @@ import SwiftUI
 
 @Observable
 final class PlacementManager {
-    
     private let worldTracking = WorldTrackingProvider()
     private let planeDetection = PlaneDetectionProvider()
     
     private var planeAnchorHandler: PlaneAnchorHandler
     private var persistenceManager: PersistenceManager
     
-    var appState: AppState? = nil {
+    var mixedImmersiveState: MixedImmersiveState? = nil
+    
+    var placeableItemStore: PlaceableItemStore? = nil {
         didSet {
-            persistenceManager.placeableObjectsByFileName = appState?.placeableObjectsByFileName ?? [:]
+            persistenceManager.placeableObjectsByFileName = placeableItemStore?.placeableObjectsByFileName ?? [:]
         }
     }
 
@@ -98,7 +99,7 @@ final class PlacementManager {
     func runARKitSession() async {
         do {
             // 평면 인식, 기기 방향과 위치 추적
-            try await appState!.arkitSession.run([worldTracking, planeDetection])
+            try await mixedImmersiveState!.arkitSession.run([worldTracking, planeDetection])
         } catch {
             // AppState에서 에러 감지 중이므로 별도 처리 X
             return
@@ -133,7 +134,7 @@ final class PlacementManager {
             // Remove the preview entity from the scene.
             placementLocation.removeChild(oldSelection.previewEntity)
             placementState.selectedObject = nil
-            appState?.selectedFileName = nil
+            placeableItemStore?.selectedFileName = nil
         }
     }
     
@@ -142,7 +143,7 @@ final class PlacementManager {
         deselectCurrentObject()
 
         placementState.selectedObject = object
-        appState?.selectedFileName = object?.descriptor.fileName
+        placeableItemStore?.selectedFileName = object?.descriptor.fileName
 
         if let object {
             placementLocation.addChild(object.previewEntity)

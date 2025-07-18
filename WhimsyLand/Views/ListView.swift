@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ListView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(AppState.self) private var appState
+    @Environment(MixedImmersiveState.self) private var mixedImmersiveState
+    @Environment(PlaceableItemStore.self) private var placeableItemStore
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(ModelLoader.self) private var modelLoader
     @State private var searchText = ""
-    let immersiveSpaceIdentifier: String
-
+    
     var module: Module
     
     var body: some View {
@@ -26,26 +28,6 @@ struct ListView: View {
                     .foregroundColor(.white)
                 
                 Spacer()
-                
-                // Mixed Immersive Enter Button
-                Button("Try Enter") {
-                    Task {
-                        await appState.requestWorldSensingAuthorization()
-                        
-                        switch await openImmersiveSpace(id: immersiveSpaceIdentifier) {
-                        case .opened:
-                            print("Immersive space opened successfully: \(immersiveSpaceIdentifier)")
-                            break
-                        case .error:
-                            print("An error occurred when trying to open the immersive space \(immersiveSpaceIdentifier)")
-                        case .userCancelled:
-                            print("The user declined opening immersive space \(immersiveSpaceIdentifier)")
-                        @unknown default:
-                            break
-                        }
-                    }
-                }
-                .disabled(!appState.canEnterImmersiveSpace)
                 
                 // Search Bar
                 HStack {
@@ -67,6 +49,28 @@ struct ListView: View {
             
             Spacer()
             
+            // Mixed Immersive Enter Button
+            Button("Try Enter") {
+                Task {
+                    await mixedImmersiveState.requestWorldSensingAuthorization()
+                    
+                    switch await openImmersiveSpace(id: UIIdentifier.immersiveSpace) {
+                    case .opened:
+                        print("Immersive space opened successfully: \(UIIdentifier.immersiveSpace)")
+                        break
+                    case .error:
+                        print("An error occurred when trying to open the immersive space \(UIIdentifier.immersiveSpace)")
+                    case .userCancelled:
+                        print("The user declined opening immersive space \(UIIdentifier.immersiveSpace)")
+                    @unknown default:
+                        break
+                    }
+                }
+            }
+            .disabled(!mixedImmersiveState.canEnterMixedImmersiveSpace)
+            
+            Spacer()
+            
             // Book Grid
             ScrollView {
                 LazyVGrid(columns: [
@@ -74,7 +78,7 @@ struct ListView: View {
                     GridItem(.flexible(), spacing: 20),
                     GridItem(.flexible(), spacing: 20)
                 ], spacing: 30) {
-                
+                    
                     // Additional placeholder books for scrolling
                     ForEach(1..<10) { index in
                         VStack(spacing: 20) {
@@ -95,15 +99,55 @@ struct ListView: View {
         }
         .frame(width:1020, height: 678)
         .cornerRadius(20)
+        .overlay{
+            if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                ObjectPlacementMenuView(
+                    mixedImmersiveState: mixedImmersiveState, placeableItemStore: placeableItemStore)
+                    .padding(20)
+                    .glassBackgroundEffect()
+            }
+        }
+        .onChange(of: scenePhase, initial: true) {
+            if scenePhase == .active {
+                Task {
+                    await mixedImmersiveState.queryWorldSensingAuthorization()
+                }
+            } else {
+                if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
+                    }
+                }
+            }
+        }
+        .onChange(of: mixedImmersiveState.providersStoppedWithError, { _, providersStoppedWithError in
+            if providersStoppedWithError {
+                if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
+                    }
+                }
+                mixedImmersiveState.providersStoppedWithError = false
+            }
+        })
+        .task {
+            if mixedImmersiveState.allRequiredProvidersAreSupported {
+                await mixedImmersiveState.requestWorldSensingAuthorization()
+            }
+        }
+        .task {
+            await mixedImmersiveState.monitorSessionEvents()
+        }
     }
 }
 
 #Preview("ThreeLittlePigs") {
     NavigationStack {
         ListView(
-            immersiveSpaceIdentifier: "Object Placement",
             module: .threeLittlePigs
         )
-        .environment(AppState())
+        .environment(MixedImmersiveState())
     }
 }
