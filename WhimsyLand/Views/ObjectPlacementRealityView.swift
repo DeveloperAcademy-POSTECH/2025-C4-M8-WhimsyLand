@@ -10,7 +10,7 @@ import SwiftUI
 
 @MainActor
 struct ObjectPlacementRealityView: View {
-    @Environment(AppState.self) private var appState
+    @Environment(MixedImmersiveState.self) private var mixedImmersiveState
     @State private var placementManager = PlacementManager()
     @State private var collisionBeganSubscription: EventSubscription? = nil
     @State private var collisionEndedSubscription: EventSubscription? = nil
@@ -24,7 +24,7 @@ struct ObjectPlacementRealityView: View {
     var body: some View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
-            placementManager.appState = appState
+            placementManager.mixedImmersiveState = mixedImmersiveState
             
             if let placementTooltipAttachment = attachments.entity(for: Attachments.placementTooltip) {
                 placementManager.addPlacementTooltip(placementTooltipAttachment)
@@ -123,11 +123,11 @@ struct ObjectPlacementRealityView: View {
         )
         .onAppear() {
             print("Entering immersive space.")
-            appState.immersiveSpaceOpened(with: placementManager)
+            mixedImmersiveState.mixedImmersiveSpaceOpened(with: placementManager)
         }
         .onDisappear() {
             print("Leaving immersive space.")
-            appState.didLeaveImmersiveSpace()
+            mixedImmersiveState.didLeaveMixedImmersiveSpace()
         }
     }
 }

@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct ObjectPlacementMenuView: View {
-    let appState: AppState
+    let mixedImmersiveState: MixedImmersiveState
+    let placeableItemStore: PlaceableItemStore
 
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     
@@ -10,11 +11,11 @@ struct ObjectPlacementMenuView: View {
     var body: some View {
         VStack(spacing: 20) {
             ObjectSelectionView(
-                modelDescriptors: appState.modelDescriptors,
-                selectedFileName: appState.selectedFileName
+                modelDescriptors: placeableItemStore.modelDescriptors,
+                selectedFileName: placeableItemStore.selectedFileName
             ) { descriptor in
-                if let model = appState.placeableObjectsByFileName[descriptor.fileName] {
-                    appState.placementManager?.selectObject(model)
+                if let model = placeableItemStore.placeableObjectsByFileName[descriptor.fileName] {
+                    mixedImmersiveState.placementManager?.selectObject(model)
                 }
             }
 
@@ -26,7 +27,7 @@ struct ObjectPlacementMenuView: View {
             .confirmationDialog("Remove all objects?", isPresented: $presentConfirmationDialog) {
                 Button("Remove all", role: .destructive) {
                     Task {
-                        await appState.placementManager?.removeAllPlacedObjects()
+                        await mixedImmersiveState.placementManager?.removeAllPlacedObjects()
                     }
                 }
             }
@@ -34,7 +35,7 @@ struct ObjectPlacementMenuView: View {
             Button("Leave", systemImage: "xmark.circle") {
                 Task {
                     await dismissImmersiveSpace()
-                    appState.didLeaveImmersiveSpace()
+                    mixedImmersiveState.didLeaveMixedImmersiveSpace()
                 }
             }
             .font(.subheadline)

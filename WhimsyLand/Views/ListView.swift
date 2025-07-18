@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ListView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(AppState.self) private var appState
+    @Environment(MixedImmersiveState.self) private var mixedImmersiveState
+    @Environment(PlaceableItemStore.self) private var placeableItemStore
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ModelLoader.self) private var modelLoader
     @State private var searchText = ""
-
+    
     var module: Module
     
     var body: some View {
@@ -50,7 +52,7 @@ struct ListView: View {
             // Mixed Immersive Enter Button
             Button("Try Enter") {
                 Task {
-                    await appState.requestWorldSensingAuthorization()
+                    await mixedImmersiveState.requestWorldSensingAuthorization()
                     
                     switch await openImmersiveSpace(id: UIIdentifier.immersiveSpace) {
                     case .opened:
@@ -65,8 +67,8 @@ struct ListView: View {
                     }
                 }
             }
-            .disabled(!appState.canEnterImmersiveSpace)
-
+            .disabled(!mixedImmersiveState.canEnterMixedImmersiveSpace)
+            
             Spacer()
             
             // Book Grid
@@ -76,7 +78,7 @@ struct ListView: View {
                     GridItem(.flexible(), spacing: 20),
                     GridItem(.flexible(), spacing: 20)
                 ], spacing: 30) {
-                
+                    
                     // Additional placeholder books for scrolling
                     ForEach(1..<10) { index in
                         VStack(spacing: 20) {
@@ -97,11 +99,46 @@ struct ListView: View {
         }
         .frame(width:1020, height: 678)
         .cornerRadius(20)
-        
-        if appState.immersiveSpaceOpened {
-            ObjectPlacementMenuView(appState: appState)
-                .padding(20)
-                .glassBackgroundEffect()
+        .overlay{
+            if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                ObjectPlacementMenuView(
+                    mixedImmersiveState: mixedImmersiveState, placeableItemStore: placeableItemStore)
+                    .padding(20)
+                    .glassBackgroundEffect()
+            }
+        }
+        .onChange(of: scenePhase, initial: true) {
+            if scenePhase == .active {
+                Task {
+                    await mixedImmersiveState.queryWorldSensingAuthorization()
+                }
+            } else {
+                if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
+                    }
+                }
+            }
+        }
+        .onChange(of: mixedImmersiveState.providersStoppedWithError, { _, providersStoppedWithError in
+            if providersStoppedWithError {
+                if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
+                    }
+                }
+                mixedImmersiveState.providersStoppedWithError = false
+            }
+        })
+        .task {
+            if mixedImmersiveState.allRequiredProvidersAreSupported {
+                await mixedImmersiveState.requestWorldSensingAuthorization()
+            }
+        }
+        .task {
+            await mixedImmersiveState.monitorSessionEvents()
         }
     }
 }
@@ -111,6 +148,6 @@ struct ListView: View {
         ListView(
             module: .threeLittlePigs
         )
-        .environment(AppState())
+        .environment(MixedImmersiveState())
     }
 }

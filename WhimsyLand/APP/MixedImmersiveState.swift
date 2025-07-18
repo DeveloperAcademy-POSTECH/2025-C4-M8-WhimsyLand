@@ -11,27 +11,24 @@ import Foundation
 import ARKit
 import RealityKit
 
-enum ImmersiveMode {
+enum MixedImmersiveMode {
     case editing
     case viewing
 }
 
 @Observable
-class AppState {
-    var immersiveSpaceOpened: Bool { placementManager != nil }
-    var immersiveMode: ImmersiveMode = .viewing
-    var selectedFileName: String?
+class MixedImmersiveState {
+    var mixedImmersiveSpaceOpened: Bool { placementManager != nil }
+    var mixedImmersiveMode: MixedImmersiveMode = .viewing
     private(set) weak var placementManager: PlacementManager? = nil
-    private(set) var placeableObjectsByFileName: [String: PlaceableObject] = [:] // 배치 가능한 오브젝트 저장 및 오브젝트 파일명
-    private(set) var modelDescriptors: [ModelDescriptor] = []
     
-    // MARK: immersive 환경 오픈, 종료 함수
-    func immersiveSpaceOpened(with manager: PlacementManager) {
+    // MARK: mixedImmersive 환경 오픈, 종료 함수
+    func mixedImmersiveSpaceOpened(with manager: PlacementManager) {
         placementManager = manager
     }
 
-    func didLeaveImmersiveSpace() {
-        // Remember which placed object is attached to which persistent world anchor when leaving the immersive space.
+    func didLeaveMixedImmersiveSpace() {
+        // Remember which placed object is attached to which persistent world anchor when leaving the mixed immersive space.
         if let placementManager {
             placementManager.saveWorldAnchorsObjectsMapToDisk()
             
@@ -43,18 +40,7 @@ class AppState {
         placementManager = nil
     }
 
-    func setPlaceableObjects(_ objects: [PlaceableObject]) {
-        placeableObjectsByFileName = objects.reduce(into: [:]) { map, placeableObject in
-            map[placeableObject.descriptor.fileName] = placeableObject
-        }
-
-        // Sort descriptors alphabetically.
-        modelDescriptors = objects.map { $0.descriptor }.sorted { lhs, rhs in
-            lhs.displayName < rhs.displayName
-        }
-   }
-
-    // Vision센서 기능 컨트롤(권한 요청 및 상태 확인, provider 실행/중단 감지, immersive space 진입 준비 상태 관리)
+    // Vision센서 기능 컨트롤(권한 요청 및 상태 확인, provider 실행/중단 감지, mixed immersive space 진입 준비 상태 관리)
     var arkitSession = ARKitSession()
     
     //에러 없음으로 초기화
@@ -77,9 +63,9 @@ class AppState {
     }
     
     // 위의 두 조건을 만족하는 경우에 true 반환
-    // 두 조건을 모두 만족하는 경우에만 immersiveSpace로 진입 허용
+    // 두 조건을 모두 만족하는 경우에만 mixed immersiveSpace로 진입 허용
     // 이 값은 Enter 버튼 활성 여부에 활용
-    var canEnterImmersiveSpace: Bool {
+    var canEnterMixedImmersiveSpace: Bool {
         allRequiredAuthorizationsAreGranted && allRequiredProvidersAreSupported
     }
     

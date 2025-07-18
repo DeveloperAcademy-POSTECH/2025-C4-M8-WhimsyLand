@@ -16,10 +16,7 @@ struct Book {
 
 struct HomeView: View {
     @Environment(ViewModel.self) private var model
-    @Environment(AppState.self) private var appState
     @Environment(ModelLoader.self) private var modelLoader
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(\.scenePhase) private var scenePhase
     
     @State private var searchText = ""
     @State private var currentPage = 0
@@ -70,39 +67,6 @@ struct HomeView: View {
                 }
                 .scrollTargetBehavior(.viewAligned)
             }
-        }
-        .onChange(of: scenePhase, initial: true) {
-            if scenePhase == .active {
-                Task {
-                    await appState.queryWorldSensingAuthorization()
-                }
-            } else {
-                if appState.immersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        appState.didLeaveImmersiveSpace()
-                    }
-                }
-            }
-        }
-        .onChange(of: appState.providersStoppedWithError, { _, providersStoppedWithError in
-            if providersStoppedWithError {
-                if appState.immersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        appState.didLeaveImmersiveSpace()
-                    }
-                }
-                appState.providersStoppedWithError = false
-            }
-        })
-        .task {
-            if appState.allRequiredProvidersAreSupported {
-                await appState.requestWorldSensingAuthorization()
-            }
-        }
-        .task {
-            await appState.monitorSessionEvents()
         }
     }
 }
