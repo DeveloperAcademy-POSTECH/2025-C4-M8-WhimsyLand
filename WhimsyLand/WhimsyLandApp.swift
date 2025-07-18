@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-private enum UIIdentifier {
-    static let immersiveSpace = "Object Placement"
-}
 
 @main
 struct WhimsyLandApp: App {
@@ -21,51 +18,37 @@ struct WhimsyLandApp: App {
     @State private var appState = AppState()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.dismissWindow) var dismissWindow
     @Environment(\.scenePhase) private var scenePhase
+    
+    // 사용자가 immersionStyle을 조절하기 위한 변수
+    @State private var immersionStyle: ImmersionStyle = .mixed
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "HomeView") {
             HomeView()
-                .environment(model)
-                .environment(appState)
-                .environment(modelLoader)
         }
         .windowStyle(.plain)
-        .defaultSize(width: 1020, height: 540)
-
-        WindowGroup(id: "ExtractedObject") {
-            if let object = extractedObject {
-                Reality3DView(objectName: object.rawValue)
-            }
-        }
-        .defaultSize(width: 0.4, height: 0.4, depth: 0.4, in: .meters)
-        .windowStyle(.volumetric)
+        .windowResizability(.contentSize)
         
-        // scene 일부분을 immersive space로 정의
-        ImmersiveSpace(id: Module.threeLittlePigs.name ) {
-            House()
-                .onAppear {
-                    model.isShowBrickHouse = true
-                }
-                .onDisappear {
-                    model.isShowBrickHouse = false
-                }
-        }.immersionStyle(selection: $houseImmersionStyle, in: .full)
+        WindowGroup(id: "ItemDetail") {
+            ItemDetail()
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 980, height: 480)
+        .defaultWindowPlacement { content, context in
+                  guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
+                  }
+                  return WindowPlacement(.trailing(contentWindow))
+              }
 
         
-        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-            ObjectPlacementRealityView()
-                .environment(appState)
+        ImmersiveSpace(id: model.immersiveSpaceID) {
+            Fence()
+                .environment(model)
         }
-        .onChange(of: scenePhase, initial: true) {
-            if scenePhase != .active {
-                if appState.immersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        appState.didLeaveImmersiveSpace()
-                    }
-                }
-            }
-        }
+        .immersionStyle(selection: $immersionStyle, in: .mixed, .full)
+
+
     }
 }

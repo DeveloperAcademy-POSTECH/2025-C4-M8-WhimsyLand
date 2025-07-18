@@ -6,46 +6,27 @@
 //
 
 import SwiftUI
+import RealityKit
 
 struct ListView: View {
-    @Environment(\.scenePhase) private var scenePhase
-    @Environment(AppState.self) private var appState
-    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.openWindow) var openWindow
+    @Environment(\.dismissWindow) var dismissWindow
     @State private var searchText = ""
-    let immersiveSpaceIdentifier: String
-
-    var module: Module
+    @State private var isDetailActive = false
+    
+    // TODO : viewmodel 이동해야함
+    let itemImages = ["BrickHouse","RagHouse","TreeHouse"]
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack {
             // Header
             HStack {
-                Text("Object(10)")
+                Text("아이템 \(itemImages.count)개")
                     .font(.largeTitle)
                     .fontWeight(.medium)
                     .foregroundColor(.white)
                 
                 Spacer()
-                
-                // Mixed Immersive Enter Button
-                Button("Try Enter") {
-                    Task {
-                        await appState.requestWorldSensingAuthorization()
-                        
-                        switch await openImmersiveSpace(id: immersiveSpaceIdentifier) {
-                        case .opened:
-                            print("Immersive space opened successfully: \(immersiveSpaceIdentifier)")
-                            break
-                        case .error:
-                            print("An error occurred when trying to open the immersive space \(immersiveSpaceIdentifier)")
-                        case .userCancelled:
-                            print("The user declined opening immersive space \(immersiveSpaceIdentifier)")
-                        @unknown default:
-                            break
-                        }
-                    }
-                }
-                .disabled(!appState.canEnterImmersiveSpace)
                 
                 // Search Bar
                 HStack {
@@ -74,36 +55,49 @@ struct ListView: View {
                     GridItem(.flexible(), spacing: 20),
                     GridItem(.flexible(), spacing: 20)
                 ], spacing: 30) {
-                
-                    // Additional placeholder books for scrolling
-                    ForEach(1..<10) { index in
+                    
+                    // 아이템을 3 x 3 리스트 형태
+                    ForEach(itemImages, id: \.self) { index in
                         VStack(spacing: 20) {
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.gray.opacity(0.6))
-                                .frame(width:304, height: 328)
-                            
-                            Text("Book Title \(index)")
-                                .font(.title3)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.center)
+                            VStack{
+                                Image("\(index)")
+                                    .resizable()
+                                    .scaledToFit()
+                                
+                                
+                                Text("\(index)")
+                                    .font(.title3)
+                                    .fontWeight(.medium)
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(hex: "#5E5E5E29").opacity(0.16))
+                            )
+                            .hoverEffect()
+                            .onTapGesture {
+                                openWindow(id:"ItemDetail")
+                            }
                         }
                     }
                 }
                 .padding(.horizontal, 40)
             }
         }
-        .frame(width:1020, height: 678)
         .cornerRadius(20)
+        .persistentSystemOverlays(.hidden)
+        .onDisappear{
+            dismissWindow(id:"ItemDetail")
+        }
     }
 }
 
-#Preview("ThreeLittlePigs") {
-    NavigationStack {
-        ListView(
-            immersiveSpaceIdentifier: "Object Placement",
-            module: .threeLittlePigs
-        )
-        .environment(AppState())
-    }
-}
+//#Preview("ThreeLittlePigs") {
+//    NavigationStack {
+//        ListView(
+//            immersiveSpaceIdentifier: "Object Placement",
+//            module: .threeLittlePigs
+//        )
+//        .environment(AppState())
+//    }
+//}

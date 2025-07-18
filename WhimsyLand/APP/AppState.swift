@@ -18,6 +18,8 @@ enum ImmersiveMode {
 
 @Observable
 class AppState {
+    
+    
     var immersiveSpaceOpened: Bool { placementManager != nil }
     var immersiveMode: ImmersiveMode = .viewing
     var selectedFileName: String?

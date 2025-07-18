@@ -6,13 +6,31 @@
 //
 
 import SwiftUI
+import RealityKit
 
 struct Fence: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+            HStack{
+                Text("Reality3DView")
+                    .font(.system(size: 30))
+                    .fontWeight(.bold)
+                
+                
+                RealityView { content in
+                    if let entity = try? await Entity(named: "Box") {
+                        entity.setPosition([0, -0.01, 0], relativeTo: nil)
+                        content.add(entity)
+                    }
+                }
+            }
+            
+        }.padding(20)
+       
     }
 }
 
-#Preview {
-    Fence()
+
+#Preview(immersionStyle: .mixed){
+    Fence().environment(ViewModel())
 }

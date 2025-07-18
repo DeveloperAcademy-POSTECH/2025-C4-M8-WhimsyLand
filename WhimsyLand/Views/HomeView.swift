@@ -7,114 +7,64 @@
 
 import SwiftUI
 
-struct Book {
-    let id = UUID()
-    let title: String
-    let imageName: String?
-    let coverColor: Color
-}
-
 struct HomeView: View {
-    @Environment(ViewModel.self) private var model
-    @Environment(AppState.self) private var appState
-    @Environment(ModelLoader.self) private var modelLoader
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(\.scenePhase) private var scenePhase
-    
-    @State private var searchText = ""
-    @State private var currentPage = 0
-    @GestureState private var dragOffset: CGSize = .zero
+    @State private var isDetailActive = false
     
     var body: some View {
-        NavigationStack{
-            VStack {
-                // Header
-                HStack {
-                    Text("WhimsyLand")
-                        .font(.largeTitle)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    // Search Bar
-                    HStack {
-                        Image(systemName: "mic.fill")
-                            .foregroundColor(.gray)
-                        
-                        TextField("Search", text: $searchText)
-                            .textFieldStyle(PlainTextFieldStyle())
-                            .foregroundColor(.white)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(20)
-                    .frame(width: 300)
-                }.padding(20)
-                
-                Spacer()
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 20) {
-                        ForEach(Module.allCases) { module in
-                            NavigationLink(destination: ListView(
-                                immersiveSpaceIdentifier: "Object Placement",
-                                module: module)
-                            ) {
-                                FairyTaleCard(module: module)
-                            }.buttonBorderShape(.roundedRectangle(radius: 20))
-                                .frame(width: 276, height: 344)
+        GeometryReader { geometry in
+            NavigationStack{
+                let isControl = geometry.size.width < 300 || geometry.size.height < 400
+                HStack{
+                    Group{
+                        if isControl {
+                            VStack {
+                                Image("ThreeLittlePigs")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 200, height: 300)
+                                
+                                Button("시작하기") {
+                                    isDetailActive = true
+                                }
+                            }
+                        }else {
+                            Image("ThreeLittlePigs")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 200, height: 300)
+                            
+                            VStack(alignment: .leading){
+                                Text("아기돼지 삼형제")
+                                    .font(.system(size: 38 ))
+                                    .bold()
+                                
+                                Text("아기돼지 삼형제의 집을 여러분의 공간에 배치해보세요.\n집안에 들어가 다양한 콘텐츠를 즐겨 보세요")
+                                    .font(.system(size: 32))
+                                    .lineLimit(nil)
+                                    .padding(.top, 16)
+                                
+                                Button("시작하기") {
+                                    isDetailActive = true
+                                }
+                            }
                         }
-                    }
-                    .padding(.horizontal, 20)
-                    .scrollTargetLayout()
-                }
-                .scrollTargetBehavior(.viewAligned)
-            }
-        }
-        .onChange(of: scenePhase, initial: true) {
-            if scenePhase == .active {
-                Task {
-                    await appState.queryWorldSensingAuthorization()
-                }
-            } else {
-                if appState.immersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        appState.didLeaveImmersiveSpace()
+                        Spacer()
                     }
                 }
-            }
-        }
-        .onChange(of: appState.providersStoppedWithError, { _, providersStoppedWithError in
-            if providersStoppedWithError {
-                if appState.immersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        appState.didLeaveImmersiveSpace()
-                    }
+                .background(.pink)
+                .navigationDestination(isPresented: $isDetailActive){
+                    ListView()
                 }
-                appState.providersStoppedWithError = false
             }
-        })
-        .task {
-            if appState.allRequiredProvidersAreSupported {
-                await appState.requestWorldSensingAuthorization()
-            }
+            .padding(30)
         }
-        .task {
-            await appState.monitorSessionEvents()
-        }
-        .task {
-            await modelLoader.loadObjects()
-            await MainActor.run {
-                appState.setPlaceableObjects(modelLoader.placeableObjects)
-            }
-        }
+        .background(.blue)
+        .frame(width: isDetailActive ?  1020 : 1060, height: isDetailActive ? 678 :  360)
+        .animation(.easeInOut, value: isDetailActive )
     }
 }
 
-
-#Preview(windowStyle: .automatic, traits: .fixedLayout(width: 1020, height: 540)) {
-    HomeView()
-}
+//
+//#Preview(windowStyle: .automatic, traits: .fixedLayout(width: 1060, height: 360)) {
+//    HomeView()
+//}
