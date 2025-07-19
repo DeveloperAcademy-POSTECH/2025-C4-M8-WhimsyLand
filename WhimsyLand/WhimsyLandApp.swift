@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+// TODO: 삭제 또는 viewModel 또는 AppSate로 이동
+enum UIIdentifier {
+    static let immersiveSpace = "Object Placement"
+}
 
 @main
 struct WhimsyLandApp: App {
@@ -15,7 +19,8 @@ struct WhimsyLandApp: App {
 
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
-    @State private var appState = AppState()
+    @State private var mixedImmersiveState = MixedImmersiveState()
+    @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.dismissWindow) var dismissWindow
@@ -48,7 +53,21 @@ struct WhimsyLandApp: App {
                 .environment(model)
         }
         .immersionStyle(selection: $immersionStyle, in: .mixed, .full)
-
-
+            
+        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
+                ObjectPlacementRealityView()
+                    .environment(mixedImmersiveState)
+                    .environment(modelLoader)
+        }
+        .onChange(of: scenePhase, initial: true) {
+            if scenePhase != .active {
+                if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                    Task {
+                        await dismissImmersiveSpace()
+                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
+                    }
+                }
+            }
+        }
     }
 }
