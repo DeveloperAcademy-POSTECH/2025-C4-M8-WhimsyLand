@@ -6,23 +6,22 @@
 //
 
 import SwiftUI
+import RealityKit
 
 struct ListView: View {
-    @Environment(\.scenePhase) private var scenePhase
-    @Environment(MixedImmersiveState.self) private var mixedImmersiveState
-    @Environment(PlaceableItemStore.self) private var placeableItemStore
-    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(ModelLoader.self) private var modelLoader
+    @Environment(\.openWindow) var openWindow
+    @Environment(\.dismissWindow) var dismissWindow
     @State private var searchText = ""
+    @State private var isDetailActive = false
     
-    var module: Module
+    // TODO : viewmodel 이동해야함
+    let itemImages = ["BrickHouse","RagHouse","TreeHouse"]
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack {
             // Header
             HStack {
-                Text("Object(10)")
+                Text("아이템 \(itemImages.count)개")
                     .font(.largeTitle)
                     .fontWeight(.medium)
                     .foregroundColor(.white)
@@ -79,75 +78,48 @@ struct ListView: View {
                     GridItem(.flexible(), spacing: 20)
                 ], spacing: 30) {
                     
-                    // Additional placeholder books for scrolling
-                    ForEach(1..<10) { index in
+                    // 아이템을 3 x 3 리스트 형태
+                    ForEach(itemImages, id: \.self) { index in
                         VStack(spacing: 20) {
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.gray.opacity(0.6))
-                                .frame(width:304, height: 328)
-                            
-                            Text("Book Title \(index)")
-                                .font(.title3)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.center)
+                            VStack{
+                                Image("\(index)")
+                                    .resizable()
+                                    .scaledToFit()
+                                
+                                
+                                Text("\(index)")
+                                    .font(.title3)
+                                    .fontWeight(.medium)
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(hex: "#5E5E5E29").opacity(0.16))
+                            )
+                            .hoverEffect()
+                            .onTapGesture {
+                                openWindow(id:"ItemDetail")
+                            }
                         }
                     }
                 }
                 .padding(.horizontal, 40)
             }
         }
-        .frame(width:1020, height: 678)
         .cornerRadius(20)
-        .overlay{
-            if mixedImmersiveState.mixedImmersiveSpaceOpened {
-                ObjectPlacementMenuView(
-                    mixedImmersiveState: mixedImmersiveState, placeableItemStore: placeableItemStore)
-                    .padding(20)
-                    .glassBackgroundEffect()
-            }
-        }
-        .onChange(of: scenePhase, initial: true) {
-            if scenePhase == .active {
-                Task {
-                    await mixedImmersiveState.queryWorldSensingAuthorization()
-                }
-            } else {
-                if mixedImmersiveState.mixedImmersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
-                    }
-                }
-            }
-        }
-        .onChange(of: mixedImmersiveState.providersStoppedWithError, { _, providersStoppedWithError in
-            if providersStoppedWithError {
-                if mixedImmersiveState.mixedImmersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
-                    }
-                }
-                mixedImmersiveState.providersStoppedWithError = false
-            }
-        })
-        .task {
-            if mixedImmersiveState.allRequiredProvidersAreSupported {
-                await mixedImmersiveState.requestWorldSensingAuthorization()
-            }
-        }
-        .task {
-            await mixedImmersiveState.monitorSessionEvents()
+        .persistentSystemOverlays(.hidden)
+        .onDisappear{
+            dismissWindow(id:"ItemDetail")
         }
     }
 }
 
-#Preview("ThreeLittlePigs") {
-    NavigationStack {
-        ListView(
-            module: .threeLittlePigs
-        )
-        .environment(MixedImmersiveState())
-    }
-}
+//#Preview("ThreeLittlePigs") {
+//    NavigationStack {
+//        ListView(
+//            immersiveSpaceIdentifier: "Object Placement",
+//            module: .threeLittlePigs
+//        )
+//        .environment(AppState())
+//    }
+//}

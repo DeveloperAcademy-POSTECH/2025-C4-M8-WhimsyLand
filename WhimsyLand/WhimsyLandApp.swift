@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// TODO: 삭제 또는 viewModel 또는 AppSate로 이동
 enum UIIdentifier {
     static let immersiveSpace = "Object Placement"
 }
@@ -22,49 +23,41 @@ struct WhimsyLandApp: App {
     @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.dismissWindow) var dismissWindow
     @Environment(\.scenePhase) private var scenePhase
+    
+    // 사용자가 immersionStyle을 조절하기 위한 변수
+    @State private var immersionStyle: ImmersionStyle = .mixed
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "HomeView") {
             HomeView()
-                .environment(model)
-                .environment(modelLoader)
-                .environment(mixedImmersiveState)
-                .environment(placeableItemStore)
-                .task {
-                    await modelLoader.loadObjects()
-                    await MainActor.run {
-                        placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
-                    }
-                }
         }
         .windowStyle(.plain)
-        .defaultSize(width: 1020, height: 540)
-
-        WindowGroup(id: "ExtractedObject") {
-            if let object = extractedObject {
-                Reality3DView(objectName: object.rawValue)
-            }
+        .windowResizability(.contentSize)
+        
+        WindowGroup(id: "ItemDetail") {
+            ItemDetail()
         }
-        .defaultSize(width: 0.4, height: 0.4, depth: 0.4, in: .meters)
-        .windowStyle(.volumetric)
-        
-        // scene 일부분을 immersive space로 정의
-        ImmersiveSpace(id: Module.threeLittlePigs.name ) {
-            House()
-                .onAppear {
-                    model.isShowBrickHouse = true
-                }
-                .onDisappear {
-                    model.isShowBrickHouse = false
-                }
-        }.immersionStyle(selection: $houseImmersionStyle, in: .full)
+        .windowStyle(.plain)
+        .defaultSize(width: 980, height: 480)
+        .defaultWindowPlacement { content, context in
+                  guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
+                  }
+                  return WindowPlacement(.trailing(contentWindow))
+              }
 
         
+        ImmersiveSpace(id: model.immersiveSpaceID) {
+            Fence()
+                .environment(model)
+        }
+        .immersionStyle(selection: $immersionStyle, in: .mixed, .full)
+            
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-            ObjectPlacementRealityView()
-                .environment(mixedImmersiveState)
-                .environment(modelLoader)
+                ObjectPlacementRealityView()
+                    .environment(mixedImmersiveState)
+                    .environment(modelLoader)
         }
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {
