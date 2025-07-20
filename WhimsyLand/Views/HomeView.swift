@@ -85,6 +85,12 @@ struct HomeView: View {
                 print("⚠️ Mixed Immersive 공간 진입 불가: 센서 권한 또는 디바이스 미지원")
             }
         }
+        .onChange(of: isDetailActive) {
+            if !isDetailActive {
+                model.mixedImmersiveState.mixedImmersiveMode = .viewing
+                print("🛠️ mixedImmersiveMode = viewing")
+            }
+        }
     }
 }
 

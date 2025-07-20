@@ -11,6 +11,7 @@ import RealityKit
 struct ListView: View {
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
+    @Environment(ViewModel.self) var model
     @State private var searchText = ""
     @State private var isDetailActive = false
     
@@ -86,6 +87,7 @@ struct ListView: View {
         }
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)
+        .onAppear {
         .onDisappear{
             dismissWindow(id:"ItemDetail")
         }
