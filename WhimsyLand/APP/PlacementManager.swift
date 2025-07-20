@@ -319,6 +319,8 @@ final class PlacementManager {
             await persistenceManager.attachObjectToWorldAnchor(object)
         }
         placementState.userPlacedAnObject = true
+        
+        deselectCurrentObject()
     }
     
     @MainActor
