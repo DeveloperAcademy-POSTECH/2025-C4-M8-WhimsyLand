@@ -48,28 +48,6 @@ struct ListView: View {
             
             Spacer()
             
-            // Mixed Immersive Enter Button
-            Button("Try Enter") {
-                Task {
-                    await mixedImmersiveState.requestWorldSensingAuthorization()
-                    
-                    switch await openImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-                    case .opened:
-                        print("Immersive space opened successfully: \(UIIdentifier.immersiveSpace)")
-                        break
-                    case .error:
-                        print("An error occurred when trying to open the immersive space \(UIIdentifier.immersiveSpace)")
-                    case .userCancelled:
-                        print("The user declined opening immersive space \(UIIdentifier.immersiveSpace)")
-                    @unknown default:
-                        break
-                    }
-                }
-            }
-            .disabled(!mixedImmersiveState.canEnterMixedImmersiveSpace)
-            
-            Spacer()
-            
             // Book Grid
             ScrollView {
                 LazyVGrid(columns: [
