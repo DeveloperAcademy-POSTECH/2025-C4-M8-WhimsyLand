@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-// TODO: 삭제 또는 viewModel 또는 AppSate로 이동
-enum UIIdentifier {
-    static let immersiveSpace = "Object Placement"
-}
-
 @main
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
@@ -48,22 +43,27 @@ struct WhimsyLandApp: App {
               }
 
         
-        ImmersiveSpace(id: model.immersiveSpaceID) {
+        ImmersiveSpace(id: model.fullImmersiveID) {
             Fence()
                 .environment(model)
         }
-        .immersionStyle(selection: $immersionStyle, in: .mixed, .full)
+        .immersionStyle(selection: .constant(.full), in: .full)
             
-        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-                ObjectPlacementRealityView()
-                    .environment(mixedImmersiveState)
-                    .environment(modelLoader)
+        ImmersiveSpace(id: model.mixedImmersiveID) {
+            ObjectPlacementRealityView()
+                .environment(mixedImmersiveState)
+                .environment(modelLoader)
         }
+        .immersionStyle(selection: .constant(.mixed), in: .mixed)
+        
+        // 앱이 강제로 종료되거나 사라졌을 때 상태를 관리하는 부분
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {
-                if mixedImmersiveState.mixedImmersiveSpaceOpened {
+                if model.immersiveSpaceState == .open {
                     Task {
                         await dismissImmersiveSpace()
+                        model.immersiveSpaceState = .closed
+                        model.currentImmersiveMode = .none
                         mixedImmersiveState.didLeaveMixedImmersiveSpace()
                     }
                 }
