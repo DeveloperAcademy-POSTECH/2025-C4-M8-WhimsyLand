@@ -15,7 +15,6 @@ enum UIIdentifier {
 @main
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
-    @State private var extractedObject: ObjectModule? = nil
 
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
@@ -28,6 +27,7 @@ struct WhimsyLandApp: App {
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
     @State private var immersionStyle: ImmersionStyle = .mixed
+    @State private var toyImmersionStyle: ImmersionStyle = .mixed
 
     var body: some Scene {
         WindowGroup(id: "HomeView") {
@@ -35,18 +35,19 @@ struct WhimsyLandApp: App {
         }
         .windowStyle(.plain)
         .windowResizability(.contentSize)
-        
-        WindowGroup(id: "ItemDetail") {
-            ItemDetail()
-        }
-        .windowStyle(.plain)
-        .defaultSize(width: 980, height: 480)
-        .defaultWindowPlacement { content, context in
-                  guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
-                  }
-                  return WindowPlacement(.trailing(contentWindow))
-              }
 
+        // ToyDetailView
+        WindowGroup(id: "toy") {
+            ToyDetail(module: toyModule)
+                .environment(model)
+        }
+        .defaultSize(width: 980, height: 451)
+
+        ImmersiveSpace(id: "toy") {
+            Toy()
+                .environment(model)
+        }
+        .immersionStyle(selection: $toyImmersionStyle, in: .mixed)
         
         ImmersiveSpace(id: model.immersiveSpaceID) {
             Fence()
