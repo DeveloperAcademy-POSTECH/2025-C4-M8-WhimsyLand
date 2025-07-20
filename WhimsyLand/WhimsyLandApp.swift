@@ -14,7 +14,7 @@ private enum UIIdentifier {
 @main
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
-    @State private var extractedObject: ObjectModule? = nil
+//    @State private var extractedObject: ToyModule? = nil
 
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
@@ -22,6 +22,13 @@ struct WhimsyLandApp: App {
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.scenePhase) private var scenePhase
+<<<<<<< Updated upstream
+=======
+    
+    // 사용자가 immersionStyle을 조절하기 위한 변수
+    @State private var immersionStyle: ImmersionStyle = .mixed
+    @State private var toyImmersionStyle: ImmersionStyle = .mixed
+>>>>>>> Stashed changes
 
     var body: some Scene {
         WindowGroup {
@@ -31,6 +38,7 @@ struct WhimsyLandApp: App {
                 .environment(modelLoader)
         }
         .windowStyle(.plain)
+<<<<<<< Updated upstream
         .defaultSize(width: 1020, height: 540)
 
         WindowGroup(id: "ExtractedObject") {
@@ -51,7 +59,22 @@ struct WhimsyLandApp: App {
                     model.isShowBrickHouse = false
                 }
         }.immersionStyle(selection: $houseImmersionStyle, in: .full)
+=======
+        .windowResizability(.contentSize)
+>>>>>>> Stashed changes
 
+        // ToyDetailView
+        WindowGroup(id: "toy") {
+            ToyDetail(module: toyModule)
+                .environment(model)
+        }
+        .defaultSize(width: 980, height: 451)
+
+        ImmersiveSpace(id: "toy") {
+            Toy()
+                .environment(model)
+        }
+        .immersionStyle(selection: $toyImmersionStyle, in: .mixed)
         
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
             ObjectPlacementRealityView()
