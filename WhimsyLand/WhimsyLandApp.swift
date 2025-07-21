@@ -49,7 +49,7 @@ struct WhimsyLandApp: App {
         }
         
         ImmersiveSpace(id: model.mixedImmersiveID) {
-            ObjectPlacementRealityView(mixedImmersiveState: model.mixedImmersiveState)
+            ObjectPlacementSwitcherView(mixedImmersiveState: model.mixedImmersiveState)
         }
         .immersionStyle(selection: .constant(.mixed), in: .mixed)
         

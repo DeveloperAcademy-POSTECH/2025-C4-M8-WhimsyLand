@@ -404,6 +404,11 @@ final class PlacementManager {
         currentDrag.draggedObject.isBeingDragged = false
         self.currentDrag = nil
     }
+    
+    @MainActor
+    func placedObject(for entity: Entity) -> PlacedObject? {
+        return persistenceManager.placedObject(for: entity)
+    }
 }
 
 extension PlacementManager {
