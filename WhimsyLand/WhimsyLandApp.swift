@@ -14,6 +14,9 @@ enum UIIdentifier {
 
 @main
 struct WhimsyLandApp: App {
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.scenePhase) private var scenePhase
+    
     @State private var model = ViewModel()
 
     // item에 따라 다른 immersion 스타일
@@ -21,9 +24,6 @@ struct WhimsyLandApp: App {
     @State private var mixedImmersiveState = MixedImmersiveState()
     @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(\.dismissWindow) var dismissWindow
-    @Environment(\.scenePhase) private var scenePhase
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
     @State private var immersionStyle: ImmersionStyle = .mixed
@@ -32,28 +32,23 @@ struct WhimsyLandApp: App {
     var body: some Scene {
         WindowGroup(id: "HomeView") {
             HomeView()
+                .environment(model)
         }
         .windowStyle(.plain)
         .windowResizability(.contentSize)
 
         // ToyDetailView
-        WindowGroup(id: "toy") {
+        WindowGroup(id: "Toy") {
             ToyDetail(module: toyModule)
                 .environment(model)
         }
         .defaultSize(width: 980, height: 451)
-
-        ImmersiveSpace(id: "toy") {
-            Toy()
-                .environment(model)
-        }
-        .immersionStyle(selection: $toyImmersionStyle, in: .mixed)
+        .defaultWindowPlacement { content, context in
+                 guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
+                 }
+                 return WindowPlacement(.trailing(contentWindow))
+             }
         
-        ImmersiveSpace(id: model.immersiveSpaceID) {
-            Fence()
-                .environment(model)
-        }
-        .immersionStyle(selection: $immersionStyle, in: .mixed, .full)
             
         ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
                 ObjectPlacementRealityView()
