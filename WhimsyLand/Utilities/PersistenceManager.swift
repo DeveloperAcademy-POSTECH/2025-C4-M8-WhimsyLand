@@ -5,8 +5,8 @@
 //  Created by changhyen yun on 7/9/25.
 //
 /*
-월드 앵커로 배치된 오브젝트에 매핑하는 클래스
-*/
+ 월드 앵커로 배치된 오브젝트에 매핑하는 클래스
+ */
 
 import Foundation
 import ARKit
@@ -53,7 +53,7 @@ class PersistenceManager {
             print("Couldn’t find file: '\(PersistenceManager.objectsDatabaseFileName)' - skipping deserialization of persistent objects.")
             return
         }
-
+        
         do {
             let data = try Data(contentsOf: filePath)
             persistedObjectFileNamePerAnchor = try JSONDecoder().decode([UUID: String].self, from: data)
@@ -74,7 +74,7 @@ class PersistenceManager {
             let jsonString = try encoder.encode(worldAnchorsToFileNames)
             let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let filePath = documentsDirectory.appendingPathComponent(PersistenceManager.objectsDatabaseFileName)
-
+            
             do {
                 try jsonString.write(to: filePath)
             } catch {
@@ -84,20 +84,20 @@ class PersistenceManager {
             print(error)
         }
     }
-
+    
     @MainActor
     func attachPersistedObjectToAnchor(_ modelFileName: String, anchor: WorldAnchor) {
         guard let placeableObject = placeableObjectsByFileName[modelFileName] else {
             print("No object available for '\(modelFileName)' - it will be ignored.")
             return
         }
-
+        
         let object = placeableObject.materialize()
         object.position = anchor.originFromAnchorTransform.translation
         object.orientation = anchor.originFromAnchorTransform.rotation
         object.isEnabled = anchor.isTracked
         rootEntity.addChild(object)
-
+        
         anchoredObjects[anchor.id] = object
     }
     

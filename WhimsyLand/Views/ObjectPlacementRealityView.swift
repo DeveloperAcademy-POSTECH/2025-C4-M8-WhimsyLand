@@ -18,10 +18,10 @@ struct ObjectPlacementRealityView: View {
     
     private enum Attachments {
         case placementTooltip
-        case dragTooltip
         case deleteButton
+        case infoCard
     }
-
+    
     var body: some View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
@@ -31,12 +31,12 @@ struct ObjectPlacementRealityView: View {
                 placementManager.addPlacementTooltip(placementTooltipAttachment)
             }
             
-            if let dragTooltipAttachment = attachments.entity(for: Attachments.dragTooltip) {
-                placementManager.dragTooltip = dragTooltipAttachment
-            }
-              
             if let deleteButtonAttachment = attachments.entity(for: Attachments.deleteButton) {
                 placementManager.deleteButton = deleteButtonAttachment
+            }
+            
+            if let infoCardAttachment = attachments.entity(for: Attachments.infoCard) {
+                placementManager.fullInfoCard = infoCardAttachment
             }
             
             collisionBeganSubscription = content.subscribe(to: CollisionEvents.Began.self) {  [weak placementManager] event in
@@ -53,32 +53,32 @@ struct ObjectPlacementRealityView: View {
             }
         } update: { update, attachments in
             let placementState = placementManager.placementState
-
+            
             if let placementTooltip = attachments.entity(for: Attachments.placementTooltip) {
                 placementTooltip.isEnabled = (placementState.selectedObject != nil && placementState.shouldShowPreview)
             }
             
-            if let dragTooltip = attachments.entity(for: Attachments.dragTooltip) {
-                // Dismiss the drag tooltip after the user demonstrates it.
-                dragTooltip.isEnabled = !placementState.userDraggedAnObject
-            }
-
             if let selectedObject = placementState.selectedObject {
                 selectedObject.isPreviewActive = placementState.isPlacementPossible
             }
+            
+            
         } attachments: {
             Attachment(id: Attachments.placementTooltip) {
                 PlacementTooltip(placementState: placementManager.placementState)
             }
-            Attachment(id: Attachments.dragTooltip) {
-                TooltipView(text: "Drag to reposition.")
-            }
+            
             Attachment(id: Attachments.deleteButton) {
                 DeleteButton {
                     Task {
                         await placementManager.removeHighlightedObject()
                     }
                 }
+            }
+            
+            Attachment(id: Attachments.infoCard) {
+                InfoCardSwitcher()
+                    .environment(placementManager)
             }
         }
         .task {
@@ -103,10 +103,15 @@ struct ObjectPlacementRealityView: View {
             await placementManager.checkIfMovingObjectsCanBeAnchored()
         }
         .gesture(SpatialTapGesture().targetedToAnyEntity().onEnded { event in
-            // Place the currently selected object when the user looks directly at the selected object’s preview.
-            if event.entity.components[CollisionComponent.self]?.filter.group == PlaceableObject.previewCollisionGroup {
-                placementManager.placeSelectedObject()
-            }
+            let tappedEntity = event.entity
+            
+            // 오브젝트 배치 시도
+            if tappedEntity.components[CollisionComponent.self]?.filter.group == PlaceableObject.previewCollisionGroup {
+                    placementManager.placeSelectedObject()
+                    return
+                }
+            // 2. 탭한 엔티티가 오브젝트인 경우 InfoCard를 열도록 설정
+            // 보류
         })
         .gesture(DragGesture()
             .targetedToAnyEntity()

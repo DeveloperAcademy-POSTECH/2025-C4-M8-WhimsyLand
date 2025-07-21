@@ -41,8 +41,9 @@ final class PlacementManager {
     private let raycastOrigin: Entity
     private let placementLocation: Entity
     private weak var placementTooltip: Entity? = nil
-    weak var dragTooltip: Entity? = nil
     weak var deleteButton: Entity? = nil
+    weak var openFullInfoCard: Entity? = nil
+    weak var fullInfoCard: Entity? = nil
     
     // 현실 평면과 오브젝트 사이 간격 조정
     static private let placedObjectsOffsetOnPlanes: Float = 0.01
@@ -194,7 +195,7 @@ final class PlacementManager {
         }
         
         //2. Orient each UI element to face the user.
-        for entity in [placementTooltip, dragTooltip, deleteButton] {
+        for entity in [placementTooltip, deleteButton, openFullInfoCard, fullInfoCard] {
             if let entity {
                 entity.look(at: deviceAnchor.originFromAnchorTransform.translation)
             }
@@ -272,13 +273,22 @@ final class PlacementManager {
         guard placementState.highlightedObject != objectToHighlight else {
             return
         }
+        
+        if let oldHighlighted = placementState.highlightedObject {
+                oldHighlighted.renderContent.components.remove(HoverEffectComponent.self)
+            }
+        
         placementState.highlightedObject = objectToHighlight
 
-        // To-do : 오브젝트 하이라이트 처리
         // 이전 오브젝트 하이라이트 해제
-        guard let deleteButton, let dragTooltip else { return }
+        guard let deleteButton else { return }
         deleteButton.removeFromParent()
-        dragTooltip.removeFromParent()
+        
+        guard let openFullInfoCard else { return }
+        openFullInfoCard.removeFromParent()
+        
+        guard let fullInfoCard else { return }
+        fullInfoCard.removeFromParent()
 
         guard let objectToHighlight else { return }
 
@@ -287,12 +297,26 @@ final class PlacementManager {
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
         let frontBottomCenter: SIMD3<Float> = [0, (-extents.y / 2) + 0.04, extents.z / 2 + 0.04]
         deleteButton.position = topLeftCorner
-        dragTooltip.position = frontBottomCenter
+        openFullInfoCard.position = topLeftCorner
+        fullInfoCard.position = topLeftCorner
 
-        objectToHighlight.uiOrigin.addChild(deleteButton)
-        deleteButton.scale = 1 / objectToHighlight.scale
-        objectToHighlight.uiOrigin.addChild(dragTooltip)
-        dragTooltip.scale = 1 / objectToHighlight.scale
+        if mixedImmersiveState?.mixedImmersiveMode == .editing {
+            objectToHighlight.uiOrigin.addChild(deleteButton)
+            deleteButton.scale = 1 / objectToHighlight.scale
+        } else if mixedImmersiveState?.mixedImmersiveMode == .viewing {
+            objectToHighlight.uiOrigin.addChild(openFullInfoCard)
+            openFullInfoCard.scale = 1 / objectToHighlight.scale
+        }
+
+        objectToHighlight.uiOrigin.addChild(fullInfoCard)
+        fullInfoCard.scale = 1 / objectToHighlight.scale
+        
+        let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
+                color: .yellow, // 디자이너와 협의 후 수정 필요
+                strength: 0.8
+            )
+            let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
+            objectToHighlight.renderContent.components.set(hoverEffect)
     }
 
     func removeAllPlacedObjects() async {
