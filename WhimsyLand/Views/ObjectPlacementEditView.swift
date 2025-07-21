@@ -1,5 +1,5 @@
 //
-//  ObjectPlacementRealityView.swift
+//  ObjectPlacementEditView.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/11/25.
@@ -9,7 +9,7 @@ import RealityKit
 import SwiftUI
 
 @MainActor
-struct ObjectPlacementRealityView: View {
+struct ObjectPlacementEditView: View {
     var mixedImmersiveState: MixedImmersiveState
     
     @State private var placementManager = PlacementManager()
@@ -19,7 +19,6 @@ struct ObjectPlacementRealityView: View {
     private enum Attachments {
         case placementTooltip
         case deleteButton
-        case infoCard
     }
     
     var body: some View {
@@ -34,11 +33,7 @@ struct ObjectPlacementRealityView: View {
             if let deleteButtonAttachment = attachments.entity(for: Attachments.deleteButton) {
                 placementManager.deleteButton = deleteButtonAttachment
             }
-            
-            if let infoCardAttachment = attachments.entity(for: Attachments.infoCard) {
-                placementManager.fullInfoCard = infoCardAttachment
-            }
-            
+
             collisionBeganSubscription = content.subscribe(to: CollisionEvents.Began.self) {  [weak placementManager] event in
                 placementManager?.collisionBegan(event)
             }
@@ -75,19 +70,8 @@ struct ObjectPlacementRealityView: View {
                     }
                 }
             }
-            
-            Attachment(id: Attachments.infoCard) {
-                InfoCardSwitcher()
-                    .environment(placementManager)
-            }
         }
         .task {
-            // Monitor ARKit anchor updates once the user opens the immersive space.
-            //
-            // Tasks attached to a view automatically receive a cancellation
-            // signal when the user dismisses the view. This ensures that
-            // loops that await anchor updates from the ARKit data providers
-            // immediately end.
             await placementManager.processWorldAnchorUpdates()
         }
         .task {
@@ -105,13 +89,10 @@ struct ObjectPlacementRealityView: View {
         .gesture(SpatialTapGesture().targetedToAnyEntity().onEnded { event in
             let tappedEntity = event.entity
             
-            // 오브젝트 배치 시도
             if tappedEntity.components[CollisionComponent.self]?.filter.group == PlaceableObject.previewCollisionGroup {
                     placementManager.placeSelectedObject()
                     return
                 }
-            // 2. 탭한 엔티티가 오브젝트인 경우 InfoCard를 열도록 설정
-            // 보류
         })
         .gesture(DragGesture()
             .targetedToAnyEntity()
@@ -128,11 +109,11 @@ struct ObjectPlacementRealityView: View {
             }
         )
         .onAppear() {
-            print("Entering immersive space.")
+            print("Entering immersive edit mode.")
             mixedImmersiveState.mixedImmersiveSpaceOpened(with: placementManager)
         }
         .onDisappear() {
-            print("Leaving immersive space.")
+            print("Leaving immersive edit mode.")
             mixedImmersiveState.didLeaveMixedImmersiveSpace()
         }
     }
