@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(PlaceableItemStore.self) var placeableItemStore
+    @Environment(ViewModel.self) var model
     @State private var isDetailActive = false
     
     var body: some View {
@@ -54,6 +58,8 @@ struct HomeView: View {
                 .background(.pink)
                 .navigationDestination(isPresented: $isDetailActive){
                     ListView()
+                        .environment(placeableItemStore)
+                        .environment(model)
                 }
             }
             .padding(30)
@@ -61,6 +67,30 @@ struct HomeView: View {
         .background(.blue)
         .frame(width: isDetailActive ?  1020 : 1060, height: isDetailActive ? 678 :  360)
         .animation(.easeInOut, value: isDetailActive )
+        
+        .task {
+            // 1. 권한 요청
+            await model.mixedImmersiveState.requestWorldSensingAuthorization()
+            
+            // 2. 조건 체크
+            if model.mixedImmersiveState.canEnterMixedImmersiveSpace {
+                // 3. 진입 가능 시 immersive 열기
+                await model.switchToImmersiveMode(
+                    .mixed,
+                    open: { id in await openImmersiveSpace(id: id) },
+                    dismiss: dismissImmersiveSpace.callAsFunction
+                )
+            } else {
+                // 4. 진입 불가
+                print("⚠️ Mixed Immersive 공간 진입 불가: 센서 권한 또는 디바이스 미지원")
+            }
+        }
+        .onChange(of: isDetailActive) {
+            if !isDetailActive {
+                model.mixedImmersiveState.mixedImmersiveMode = .viewing
+                print("🛠️ mixedImmersiveMode = viewing")
+            }
+        }
     }
 }
 

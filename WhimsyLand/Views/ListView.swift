@@ -11,6 +11,8 @@ import RealityKit
 struct ListView: View {
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
+    @Environment(ViewModel.self) var model
+    @Environment(PlaceableItemStore.self) var placeableItemStore
     @State private var searchText = ""
     @State private var isDetailActive = false
     
@@ -48,28 +50,6 @@ struct ListView: View {
             
             Spacer()
             
-            // Mixed Immersive Enter Button
-            Button("Try Enter") {
-                Task {
-                    await mixedImmersiveState.requestWorldSensingAuthorization()
-                    
-                    switch await openImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-                    case .opened:
-                        print("Immersive space opened successfully: \(UIIdentifier.immersiveSpace)")
-                        break
-                    case .error:
-                        print("An error occurred when trying to open the immersive space \(UIIdentifier.immersiveSpace)")
-                    case .userCancelled:
-                        print("The user declined opening immersive space \(UIIdentifier.immersiveSpace)")
-                    @unknown default:
-                        break
-                    }
-                }
-            }
-            .disabled(!mixedImmersiveState.canEnterMixedImmersiveSpace)
-            
-            Spacer()
-            
             // Book Grid
             ScrollView {
                 LazyVGrid(columns: [
@@ -98,7 +78,11 @@ struct ListView: View {
                             )
                             .hoverEffect()
                             .onTapGesture {
-                                openWindow(id:"ItemDetail")
+                                if let index = itemImages.firstIndex(of: index){
+                                    placeableItemStore.selectedFileName = itemImages[index]
+                                    openWindow(id: "Toy")
+                                    print("\(placeableItemStore.selectedFileName)가 선택됨")
+                                }
                             }
                         }
                     }
@@ -109,7 +93,7 @@ struct ListView: View {
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)
         .onDisappear{
-            dismissWindow(id:"ItemDetail")
+            dismissWindow(id:"Toy")
         }
     }
 }

@@ -7,18 +7,12 @@
 
 import SwiftUI
 
-// TODO: 삭제 또는 viewModel 또는 AppSate로 이동
-enum UIIdentifier {
-    static let immersiveSpace = "Object Placement"
-}
-
 @main
 struct WhimsyLandApp: App {
     @State private var model = ViewModel()
-
+    
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
-    @State private var mixedImmersiveState = MixedImmersiveState()
     @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
@@ -27,46 +21,46 @@ struct WhimsyLandApp: App {
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
     @State private var immersionStyle: ImmersionStyle = .mixed
-    @State private var toyImmersionStyle: ImmersionStyle = .mixed
 
     var body: some Scene {
         WindowGroup(id: "HomeView") {
             HomeView()
+                .environment(placeableItemStore)
+                .environment(model)
+                .task {
+                    await modelLoader.loadObjects()
+                    placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
+                }
         }
         .windowStyle(.plain)
         .windowResizability(.contentSize)
-
-        // ToyDetailView
-        WindowGroup(id: "toy") {
+        
+        WindowGroup(id: "Toy") {
             ToyDetail(module: toyModule)
                 .environment(model)
+                .environment(placeableItemStore)
         }
-        .defaultSize(width: 980, height: 451)
-
-        ImmersiveSpace(id: "toy") {
-            Toy()
-                .environment(model)
+        .windowStyle(.plain)
+        .defaultSize(width: 980, height: 480)
+        .defaultWindowPlacement { content, context in
+            guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
+            }
+            return WindowPlacement(.trailing(contentWindow))
         }
-        .immersionStyle(selection: $toyImmersionStyle, in: .mixed)
         
-        ImmersiveSpace(id: model.immersiveSpaceID) {
-            Fence()
+        ImmersiveSpace(id: model.mixedImmersiveID) {
+            ObjectPlacementRealityView(mixedImmersiveState: model.mixedImmersiveState)
                 .environment(model)
+                .environment(modelLoader)
+                .environment(placeableItemStore)
         }
-        .immersionStyle(selection: $immersionStyle, in: .mixed, .full)
-            
-        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-                ObjectPlacementRealityView()
-                    .environment(mixedImmersiveState)
-                    .environment(modelLoader)
-        }
+        .immersionStyle(selection: .constant(.mixed), in: .mixed)
+        
+        // 앱이 강제로 종료되거나 사라졌을 때 상태를 관리하는 부분
         .onChange(of: scenePhase, initial: true) {
             if scenePhase != .active {
-                if mixedImmersiveState.mixedImmersiveSpaceOpened {
-                    Task {
-                        await dismissImmersiveSpace()
-                        mixedImmersiveState.didLeaveMixedImmersiveSpace()
-                    }
+                Task {
+                    model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
                 }
             }
         }

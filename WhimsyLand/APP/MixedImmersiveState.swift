@@ -20,7 +20,6 @@ enum MixedImmersiveMode {
 class MixedImmersiveState {
     var mixedImmersiveSpaceOpened: Bool { placementManager != nil }
     var mixedImmersiveMode: MixedImmersiveMode = .viewing
-    var selectedFileName: String?
     private(set) weak var placementManager: PlacementManager? = nil
     
     // MARK: mixedImmersive 환경 오픈, 종료 함수
