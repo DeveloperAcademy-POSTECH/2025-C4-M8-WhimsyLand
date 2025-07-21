@@ -41,30 +41,24 @@ enum Module: String, Identifiable, CaseIterable, Equatable {
     }
 }
 
-enum ObjectModule: String, Identifiable, CaseIterable, Equatable {
-    case strawHouse, stickHouse, brickHouse
-    var id: Self { self }
-    var name: String { rawValue.capitalized }
-
-    var heading: String {
-        switch self {
-        case .strawHouse:
-            String(localized: "초가집", comment: "첫째 돼지의 초가집")
-        case .stickHouse:
-            String(localized: "나무집", comment: "둘째 돼지의 나무집")
-        case .brickHouse:
-            String(localized: "벽돌집", comment: "셋째 돼지의 튼튼한 벽돌집")
-        }
-    }
-
-    var abstract: String {
-        switch self {
-        case .strawHouse:
-            String(localized: "첫째 아기돼지는 지푸라기로 된 집을 지었어요", comment: "Detail text explaining the Planet Earth module.")
-        case .stickHouse:
-            String(localized: "둘째 아기돼지는 나무로 된 집을 지었어요. 집이 예뻐요. 돼지는 집이 아주 맘에 들어요", comment: "Detail text explaining the Objects in Orbit module.")
-        case .brickHouse:
-            String(localized: "셋째 아기돼지는 벽돌로 된 집을 지었어요. 돼지는 기뻤어요.", comment: "Detail text explaining the Solar System module.")
-        }
-    }
+struct ToyData {
+    let id: String
+    let name: String
+    let overview: String
+    let owner: String
+    let material: String
+    let description: String
+    let callToAction: String
+    let toy3D: String
 }
+
+let toyModule = ToyData(
+    id: "RagHouse",
+    name: "첫째 돼지의 집",
+    overview: "바람에 쉽게 날아가는 가장 약한 구조의 집",
+    owner: "첫째 돼지",
+    material: "지푸라기",
+    description: "첫째 돼지는 일을 빨리 끝내고 놀고 싶어 지푸라기로 급하게 집을 지었어요. 하지만 늑대가 불자마자 집은 날아가 버리고 말았죠.",
+    callToAction: "첫째 돼지 집에서 아기 돼지 삼형제의 이야기를 들어보세요.",
+    toy3D: "RagHouse"
+)

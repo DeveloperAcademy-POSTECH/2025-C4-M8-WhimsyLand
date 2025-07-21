@@ -21,7 +21,7 @@ struct WhimsyLandApp: App {
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
     @State private var immersionStyle: ImmersionStyle = .mixed
-    
+
     var body: some Scene {
         WindowGroup(id: "HomeView") {
             HomeView()
@@ -35,8 +35,8 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .windowResizability(.contentSize)
         
-        WindowGroup(id: "ItemDetailForTest") {
-            ItemDetailForTest()
+        WindowGroup(id: "Toy") {
+            ToyDetail(module: toyModule)
                 .environment(model)
                 .environment(placeableItemStore)
         }
@@ -47,24 +47,6 @@ struct WhimsyLandApp: App {
             }
             return WindowPlacement(.trailing(contentWindow))
         }
-        
-        //        WindowGroup(id: "ItemDetail") {
-        //            ItemDetail()
-        //        }
-        //        .windowStyle(.plain)
-        //        .defaultSize(width: 980, height: 480)
-        //        .defaultWindowPlacement { content, context in
-        //                  guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
-        //                  }
-        //                  return WindowPlacement(.trailing(contentWindow))
-        //              }
-        
-        
-        ImmersiveSpace(id: model.fullImmersiveID) {
-            Fence()
-                .environment(model)
-        }
-        .immersionStyle(selection: .constant(.full), in: .full)
         
         ImmersiveSpace(id: model.mixedImmersiveID) {
             ObjectPlacementRealityView(mixedImmersiveState: model.mixedImmersiveState)
