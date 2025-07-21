@@ -38,7 +38,7 @@ class ViewModel {
     
     // MARK: - threeLittlePigs
     var isShowBrickHouse = false
-    
+
     func switchToImmersiveMode(
         _ mode: ImmersiveMode,
         open: @escaping (_ id: String) async -> OpenImmersiveSpaceAction.Result,
@@ -93,5 +93,4 @@ class ViewModel {
             currentImmersiveMode = .none
         }
     }
-    
 }

@@ -9,17 +9,20 @@ import SwiftUI
 import RealityKit
 
 struct ListView: View {
+    @Environment(\.openImmersiveSpace) var openImmersiveSpace
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
+
     @Environment(ViewModel.self) var model
     @Environment(PlaceableItemStore.self) var placeableItemStore
+
     @State private var searchText = ""
-    @State private var isDetailActive = false
     
     // TODO : viewmodel 이동해야함
-    let itemImages = ["BrickHouse","RagHouse","TreeHouse"]
+    let itemImages: [String:String] = ["BrickHouse":"첫째 돼지집","RagHouse":"둘째 돼지집","TreeHouse":"셋째 돼지집"]
     
     var body: some View {
+        
         VStack {
             // Header
             HStack {
@@ -59,23 +62,20 @@ struct ListView: View {
                 ], spacing: 30) {
                     
                     // 아이템을 3 x 3 리스트 형태
-                    ForEach(itemImages, id: \.self) { index in
+                    ForEach(Array(itemImages), id: \.key) { key, value in
                         VStack(spacing: 20) {
                             VStack{
-                                Image("\(index)")
+                                Image("\(key)")
                                     .resizable()
                                     .scaledToFit()
                                 
-                                
-                                Text("\(index)")
+                                Text("\(value)")
                                     .font(.title3)
                                     .fontWeight(.medium)
                             }
                             .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(hex: "#5E5E5E29").opacity(0.16))
-                            )
+                            .background(.fill.quaternary)
+                            .cornerRadius(16)
                             .hoverEffect()
                             .onTapGesture {
                                 if let index = itemImages.firstIndex(of: index){

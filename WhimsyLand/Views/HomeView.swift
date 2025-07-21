@@ -7,37 +7,74 @@
 
 import SwiftUI
 
+// TODO : 별도 파일로 빼기
+enum FrameSize {
+    case small, medium, large
+}
+
 struct HomeView: View {
+
+    @Environment(ViewModel.self) private var model
+
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(PlaceableItemStore.self) var placeableItemStore
-    @Environment(ViewModel.self) var model
+
     @State private var isDetailActive = false
+    @State private var currentSize: FrameSize = .medium
+    
+    // TODO : extension으로 가능 ?
+    private var frameWidth: CGFloat {
+        switch currentSize {
+               case .small: return 258
+               case .medium: return 1067
+               case .large: return 1020
+               }
+    }
+    
+    // TODO : extension으로 가능 ?
+    private var frameHeight: CGFloat {
+          switch currentSize {
+          case .small: return 435
+          case .medium: return 353
+          case .large: return 678
+          }
+      }
     
     var body: some View {
-        GeometryReader { geometry in
             NavigationStack{
-                let isControl = geometry.size.width < 300 || geometry.size.height < 400
                 HStack{
                     Group{
-                        if isControl {
+                        if currentSize == .small {
                             VStack {
                                 Image("ThreeLittlePigs")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(width: 200, height: 300)
                                 
-                                Button("시작하기") {
-                                    isDetailActive = true
+                                HStack{
+                                    Button(action: {
+                                        isDetailActive = true
+                                        currentSize = .large
+                                    }){
+                                        Text("아이템 배치하기")
+                                            .font(.system(size: 24, weight: .semibold))
+                                            .padding(.horizontal, 24)
+                                    }
+                                    
+                                    Button(action: {
+                                        currentSize = .medium
+                                    }) {
+                                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                            
+                                    }.frame(width: 60, height: 60)
                                 }
                             }
                         }else {
                             Image("ThreeLittlePigs")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: 200, height: 300)
                             
-                            VStack(alignment: .leading){
+                            VStack(alignment: .leading, spacing: 20){
                                 Text("아기돼지 삼형제")
                                     .font(.system(size: 38 ))
                                     .bold()
@@ -46,23 +83,45 @@ struct HomeView: View {
                                     .font(.system(size: 32))
                                     .lineLimit(nil)
                                     .padding(.top, 16)
-                                
-                                Button("시작하기") {
-                                    isDetailActive = true
+                            
+                                Spacer()
+                            
+                                HStack{
+
+                                    Button(action: {
+                                        isDetailActive = true
+                                        currentSize = .large
+                                    }){
+                                        Text("아이템 배치하기")
+                                            .font(.system(size: 24, weight: .semibold))
+                                            .padding(.horizontal, 24)
+                                    }
+                                    
+                                    Spacer()
+                                    Button(action: {
+                                        currentSize = .small
+                                    }) {
+                                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    }.frame(width: 60, height: 60)
+                                    
                                 }
                             }
                         }
-                        Spacer()
                     }
                 }
-                .background(.pink)
+                .glassBackgroundEffect()
+                .padding(32)
                 .navigationDestination(isPresented: $isDetailActive){
                     ListView()
                         .environment(placeableItemStore)
                         .environment(model)
                 }
+                .onAppear{
+                    currentSize = .medium
+                }
             }
-            .padding(30)
+            .frame(width:  frameWidth, height: frameHeight)
+            .animation(.easeInOut, value: currentSize )
         }
         .background(.blue)
         .frame(width: isDetailActive ?  1020 : 1060, height: isDetailActive ? 678 :  360)
@@ -92,7 +151,6 @@ struct HomeView: View {
             }
         }
     }
-}
 
 //
 //#Preview(windowStyle: .automatic, traits: .fixedLayout(width: 1060, height: 360)) {

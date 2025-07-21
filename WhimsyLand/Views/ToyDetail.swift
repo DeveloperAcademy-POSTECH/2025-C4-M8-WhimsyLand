@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ToyDetail: View {
+    @Environment(ViewModel.self) private var model
+    
+    @State private var isMonitoring = true
     var module: ToyData
-    @Environment(ViewModel.self) var model
     @Environment(PlaceableItemStore.self) var placeableItemStore
 
     var body: some View {
@@ -35,12 +37,12 @@ struct ToyDetail: View {
 
                 }
                 .frame(maxWidth: 328, alignment: .leading)
-
+                
                 Text(module.description)
                     .font(.system(size: 24, weight: .light))
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 608)
-
+                
                 Text(module.callToAction)
                     .font(.system(size: 26, weight: .semibold))
                 Spacer()
@@ -60,7 +62,7 @@ struct ToyDetail: View {
 private struct InfoCard: View {
     let title: String
     let value: String
-
+    
     var body: some View {
         VStack {
             Text(title)
