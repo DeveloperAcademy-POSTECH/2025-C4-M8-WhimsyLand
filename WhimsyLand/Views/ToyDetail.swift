@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ToyDetail: View {
     var module: ToyData
+    @Environment(ViewModel.self) var model
+    @Environment(PlaceableItemStore.self) var placeableItemStore
 
     var body: some View {
         ZStack {
@@ -21,6 +23,16 @@ struct ToyDetail: View {
                 HStack(spacing: 20) {
                     InfoCard(title: "주인", value: module.owner)
                     InfoCard(title: "재료", value: module.material)
+                    Button("꺼내서 조작하기") {
+                        // 테스트용: 첫 번째 PlaceableObject 가져오기
+                        if let first = placeableItemStore.placeableObjectsByFileName.values.first {
+                            model.mixedImmersiveState.placementManager?.selectObject(first)
+                            print("👉 \(first.descriptor.fileName)를 선택함")
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(model.currentImmersiveMode != .mixed)
+
                 }
                 .frame(maxWidth: 328, alignment: .leading)
 

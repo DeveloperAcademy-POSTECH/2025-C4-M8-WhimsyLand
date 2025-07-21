@@ -92,6 +92,10 @@ struct ListView: View {
         }
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)
+        .onAppear {
+            model.mixedImmersiveState.mixedImmersiveMode = .editing
+            print("🛠️ mixedImmersiveMode = editing")
+        }
         .onDisappear{
             dismissWindow(id:"Toy")
         }
