@@ -50,9 +50,6 @@ struct WhimsyLandApp: App {
         
         ImmersiveSpace(id: model.mixedImmersiveID) {
             ObjectPlacementRealityView(mixedImmersiveState: model.mixedImmersiveState)
-                .environment(model)
-                .environment(modelLoader)
-                .environment(placeableItemStore)
         }
         .immersionStyle(selection: .constant(.mixed), in: .mixed)
         
