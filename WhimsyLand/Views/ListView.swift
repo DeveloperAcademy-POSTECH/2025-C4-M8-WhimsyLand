@@ -12,6 +12,7 @@ struct ListView: View {
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
     @Environment(ViewModel.self) var model
+    @Environment(PlaceableItemStore.self) var placeableItemStore
     @State private var searchText = ""
     @State private var isDetailActive = false
     
@@ -77,7 +78,11 @@ struct ListView: View {
                             )
                             .hoverEffect()
                             .onTapGesture {
-                                openWindow(id:"ItemDetail")
+                                if let index = itemImages.firstIndex(of: index){
+                                    placeableItemStore.selectedFileName = itemImages[index]
+                                    openWindow(id: "Toy")
+                                    print("\(placeableItemStore.selectedFileName)가 선택됨")
+                                }
                             }
                         }
                     }
@@ -87,9 +92,8 @@ struct ListView: View {
         }
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)
-        .onAppear {
         .onDisappear{
-            dismissWindow(id:"ItemDetail")
+            dismissWindow(id:"Toy")
         }
     }
 }

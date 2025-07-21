@@ -57,7 +57,7 @@ struct HomeView: View {
                 }
                 .background(.pink)
                 .navigationDestination(isPresented: $isDetailActive){
-                    ListView(modelDescriptors: placeableItemStore.modelDescriptors)
+                    ListView()
                         .environment(placeableItemStore)
                         .environment(model)
                 }
