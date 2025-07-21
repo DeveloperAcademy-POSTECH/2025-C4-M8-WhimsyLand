@@ -36,9 +36,11 @@ struct WhimsyLandApp: App {
         .windowResizability(.contentSize)
         
         WindowGroup(id: "Toy") {
-            ToyDetail(module: toyModule)
-                .environment(model)
-                .environment(placeableItemStore)
+            ForEach([toyModule], id: \.id) { toy in
+                ToyDetail(module: toy)
+                    .environment(model)
+                    .environment(placeableItemStore)
+            }
         }
         .windowStyle(.plain)
         .defaultSize(width: 980, height: 480)
