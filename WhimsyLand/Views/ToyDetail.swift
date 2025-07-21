@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ToyDetail: View {
+    @Environment(ViewModel.self) private var model
+    
+    @State private var isMonitoring = true
     var module: ToyData
-
+    
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 20) {
@@ -23,12 +26,12 @@ struct ToyDetail: View {
                     InfoCard(title: "재료", value: module.material)
                 }
                 .frame(maxWidth: 328, alignment: .leading)
-
+                
                 Text(module.description)
                     .font(.system(size: 24, weight: .light))
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 608)
-
+                
                 Text(module.callToAction)
                     .font(.system(size: 26, weight: .semibold))
                 Spacer()
@@ -48,7 +51,7 @@ struct ToyDetail: View {
 private struct InfoCard: View {
     let title: String
     let value: String
-
+    
     var body: some View {
         VStack {
             Text(title)
