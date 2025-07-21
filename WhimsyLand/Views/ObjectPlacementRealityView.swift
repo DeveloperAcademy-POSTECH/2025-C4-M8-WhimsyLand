@@ -10,7 +10,8 @@ import SwiftUI
 
 @MainActor
 struct ObjectPlacementRealityView: View {
-    @Environment(MixedImmersiveState.self) private var mixedImmersiveState
+    var mixedImmersiveState: MixedImmersiveState
+    
     @State private var placementManager = PlacementManager()
     @State private var collisionBeganSubscription: EventSubscription? = nil
     @State private var collisionEndedSubscription: EventSubscription? = nil

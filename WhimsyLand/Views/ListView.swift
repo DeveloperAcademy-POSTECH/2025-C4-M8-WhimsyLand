@@ -12,9 +12,11 @@ struct ListView: View {
     @Environment(\.openImmersiveSpace) var openImmersiveSpace
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
-    
+
+    @Environment(ViewModel.self) var model
+    @Environment(PlaceableItemStore.self) var placeableItemStore
+
     @State private var searchText = ""
-    @State private var mixedImmersiveState = MixedImmersiveState()
     
     // TODO : viewmodel 이동해야함
     let itemImages: [String:String] = ["BrickHouse":"첫째 돼지집","RagHouse":"둘째 돼지집","TreeHouse":"셋째 돼지집"]
@@ -51,28 +53,6 @@ struct ListView: View {
             
             Spacer()
             
-            // Mixed Immersive Enter Button
-            Button("Try Enter") {
-                Task {
-                    await mixedImmersiveState.requestWorldSensingAuthorization()
-                    
-                    switch await openImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-                    case .opened:
-                        print("Immersive space opened successfully: \(UIIdentifier.immersiveSpace)")
-                        break
-                    case .error:
-                        print("An error occurred when trying to open the immersive space \(UIIdentifier.immersiveSpace)")
-                    case .userCancelled:
-                        print("The user declined opening immersive space \(UIIdentifier.immersiveSpace)")
-                    @unknown default:
-                        break
-                    }
-                }
-            }
-            .disabled(!mixedImmersiveState.canEnterMixedImmersiveSpace)
-            
-            Spacer()
-            
             // Book Grid
             ScrollView {
                 LazyVGrid(columns: [
@@ -98,7 +78,11 @@ struct ListView: View {
                             .cornerRadius(16)
                             .hoverEffect()
                             .onTapGesture {
-                                openWindow(id: "Toy")
+                                if let index = itemImages.firstIndex(of: index){
+                                    placeableItemStore.selectedFileName = itemImages[index]
+                                    openWindow(id: "Toy")
+                                    print("\(placeableItemStore.selectedFileName)가 선택됨")
+                                }
                             }
                         }
                     }
@@ -108,8 +92,12 @@ struct ListView: View {
         }
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)
+        .onAppear {
+            model.mixedImmersiveState.mixedImmersiveMode = .editing
+            print("🛠️ mixedImmersiveMode = editing")
+        }
         .onDisappear{
-            dismissWindow(id: "Toy")
+            dismissWindow(id:"Toy")
         }
     }
 }
