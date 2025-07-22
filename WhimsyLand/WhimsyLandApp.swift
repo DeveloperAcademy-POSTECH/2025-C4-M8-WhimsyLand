@@ -36,11 +36,9 @@ struct WhimsyLandApp: App {
         .windowResizability(.contentSize)
         
         WindowGroup(id: "Toy") {
-            ForEach([toyModule], id: \.id) { toy in
-                ToyDetail(module: toy)
-                    .environment(model)
-                    .environment(placeableItemStore)
-            }
+            ToyDetail(toyModule: .ragHouse) // TODO: 선택한 toy 입력하기
+                .environment(model)
+                .environment(placeableItemStore)
         }
         .windowStyle(.plain)
         .defaultSize(width: 980, height: 480)
