@@ -10,7 +10,8 @@ import SwiftUI
 struct ToyDetail: View {
     @Environment(ViewModel.self) var model
     @Environment(PlaceableItemStore.self) var placeableItemStore
-    let toyModule : ToyModule
+    
+    private let toyModule: ToyModule = .ragHouse // TODO: 선택한 toy 받아오기
     
     var body: some View {
         ZStack {
@@ -51,7 +52,7 @@ struct ToyDetail: View {
             .cornerRadius(46)
             
             toyModule.detailView
-                .frame(width: 560, height: 560)
+                .frame(width: .infinity, height: .infinity)
                 .position(x: 820, y: 225)
         }
     }

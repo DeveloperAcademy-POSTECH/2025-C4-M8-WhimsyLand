@@ -23,20 +23,20 @@ struct WhimsyLandApp: App {
     @State private var immersionStyle: ImmersionStyle = .mixed
 
     var body: some Scene {
-        WindowGroup(id: "HomeView") {
-            HomeView()
-                .environment(placeableItemStore)
-                .environment(model)
-                .task {
-                    await modelLoader.loadObjects()
-                    placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
-                }
-        }
-        .windowStyle(.plain)
-        .windowResizability(.contentSize)
+//        WindowGroup(id: "HomeView") {
+//            HomeView()
+//                .environment(placeableItemStore)
+//                .environment(model)
+//                .task {
+//                    await modelLoader.loadObjects()
+//                    placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
+//                }
+//        }
+//        .windowStyle(.plain)
+//        .windowResizability(.contentSize)
         
         WindowGroup(id: "Toy") {
-            ToyDetail(toyModule: .ragHouse) // TODO: 선택한 toy 입력하기
+            ToyDetail()
                 .environment(model)
                 .environment(placeableItemStore)
         }
