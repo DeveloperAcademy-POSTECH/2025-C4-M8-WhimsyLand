@@ -19,55 +19,55 @@ private let targetSizeInMeters: Float = 0.26
 
 struct Toy: View {
     @Environment(ViewModel.self) private var model
-//    @State private var conePosition: SIMD3<Float> = .zero
+    //    @State private var conePosition: SIMD3<Float> = .zero
     @State private var sceneEntity: Entity? = nil
-
+    
     var body: some View {
-            // 3D 미리보기
+        // 3D 미리보기
         RealityView { content in
             if let entity = try? await Entity(named: modelName) {
                 // 모델 원본 크기 측정
                 let originalBounds = entity.visualBounds(relativeTo: nil)
                 let originalSize = originalBounds.extents
-
+                
                 // 모델 크기 중 가장 큰 축을 기준으로 스케일 계산
                 let maxOriginalDimension = max(originalSize.x, originalSize.y, originalSize.z)
                 let scaleFactor = targetSizeInMeters / maxOriginalDimension
                 
                 entity.scale = [scaleFactor, scaleFactor, scaleFactor]
+                entity.position =  [0.21, -0.13, 0]
                 
                 enableGesturesRecursively(for: entity)
                 content.add(entity)
                 sceneEntity = entity
             }
         } placeholder: {
-                        ProgressView()
-                    }
-        .frame(width: 800, height: 800)
+            ProgressView()
+        }
         .gesture(
             RotateGesture3D()
                 .targetedToAnyEntity()
                 .useGestureComponent()
         )
-
-//            Model3D(named: modelName) { model in
-//                model.resizable()
-//                    .scaledToFit()
-//                    .rotation3DEffect(
-//                        Rotation3D(
-//                            eulerAngles: .init(angles: modelOrientation, order: .xyz)
-//                        )
-//                    )
-//                    .frame(width: modelSize, height: modelSize)
-//                    .scaleEffect(modelScale)
-//                    .frame(depth: modelDepth)
-//                    .offset(z: -modelDepth / 2)
-//            } placeholder: {
-//                ProgressView()
-//                    .offset(z: -modelDepth * 0.75)
-//            }
-//            .dragRotation(yawLimit: .degrees(360), pitchLimit: .degrees(360))
-//            .offset(z: modelDepth)
+        
+        //            Model3D(named: modelName) { model in
+        //                model.resizable()
+        //                    .scaledToFit()
+        //                    .rotation3DEffect(
+        //                        Rotation3D(
+        //                            eulerAngles: .init(angles: modelOrientation, order: .xyz)
+        //                        )
+        //                    )
+        //                    .frame(width: modelSize, height: modelSize)
+        //                    .scaleEffect(modelScale)
+        //                    .frame(depth: modelDepth)
+        //                    .offset(z: -modelDepth / 2)
+        //            } placeholder: {
+        //                ProgressView()
+        //                    .offset(z: -modelDepth * 0.75)
+        //            }
+        //            .dragRotation(yawLimit: .degrees(360), pitchLimit: .degrees(360))
+        //            .offset(z: modelDepth)
     }
 }
 

@@ -41,7 +41,8 @@ struct WhimsyLandApp: App {
                 .environment(model)
                 .environment(placeableItemStore)
         }
-        .defaultSize(width: 980, height: 451)
+        .windowStyle(.plain)
+        .defaultSize(width: 1120, height: 902)
         .defaultWindowPlacement { content, context in
                  guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
                  }

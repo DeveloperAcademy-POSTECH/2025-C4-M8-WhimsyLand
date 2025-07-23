@@ -35,7 +35,7 @@ struct ToyDetail: View {
                     .disabled(model.currentImmersiveMode != .mixed)
 
                 }
-                .frame(maxWidth: 328, alignment: .leading)
+                .frame(maxWidth: 400, alignment: .leading)
 
                 Text(toyModule.description)
                     .font(.pretendard(.light, size: 24))
@@ -47,13 +47,11 @@ struct ToyDetail: View {
                 Spacer()
             }
             .padding(40)
-            .frame(width: 980, height: 451)
-            .background()
+            .frame(width: 980, height: 491)
+            .glassBackgroundEffect() 
             .cornerRadius(46)
 
-            toyModule.detailView
-                .frame(width: 800, height: 800)
-                .position(x: 800, y: 450)
+                toyModule.detailView
         }
     }
 }
