@@ -146,13 +146,6 @@ class PersistenceManager {
         }
     }
     
-    @MainActor
-    private func deleteWorldAnchorsForAnchoredObjects() async {
-        for anchorID in anchoredObjects.keys {
-            await removeAnchorWithID(anchorID)
-        }
-    }
-    
     func removeAnchorWithID(_ uuid: UUID) async {
         do {
             try await worldTracking.removeAnchor(forID: uuid)
