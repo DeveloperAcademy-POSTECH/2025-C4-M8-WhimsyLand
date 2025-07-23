@@ -50,10 +50,10 @@ struct ToyDetail: View {
             .frame(width: 980, height: 451)
             .background()
             .cornerRadius(46)
-            
+
             toyModule.detailView
-                .frame(width: 560, height: 560)
-                .position(x: 820, y: 225)
+                .frame(width: 800, height: 800)
+                .position(x: 800, y: 450)
         }
     }
 }
