@@ -79,8 +79,8 @@ class ViewModel {
     
     // App이 갑자기 종료되었을 때, immersive 상태를 관리하는 함수
     func handleAppDidDeactivate(dismiss: @escaping () async -> Void) {
-        guard immersiveSpaceState == .open,
-              mixedImmersiveState.placementManager != nil else { return } // ✅ 실체 확인
+        guard immersiveSpaceState == .open
+        else { return }
 
         Task {
             await dismiss()
