@@ -147,11 +147,6 @@ class PersistenceManager {
     }
     
     @MainActor
-    func removeAllPlacedObjects() async {
-        // 월드 앵커가 모두 완벽히 지워진 후에 배치된 객체가 지워짐
-        await deleteWorldAnchorsForAnchoredObjects()
-    }
-    
     private func deleteWorldAnchorsForAnchoredObjects() async {
         for anchorID in anchoredObjects.keys {
             await removeAnchorWithID(anchorID)
