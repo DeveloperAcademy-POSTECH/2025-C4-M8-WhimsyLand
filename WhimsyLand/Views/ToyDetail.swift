@@ -9,22 +9,25 @@ import SwiftUI
 
 struct ToyDetail: View {
     @Environment(ViewModel.self) private var model
+    @Environment(ToyModel.self) private var toyModel
+    @Environment(PlaceableItemStore.self) var placeableItemStore
     
     @State private var isMonitoring = true
-    var module: ToyData
-    @Environment(PlaceableItemStore.self) var placeableItemStore
+    
+    @Binding var item: ToyItem?
 
     var body: some View {
         ZStack {
+            if let item = item {
             VStack(alignment: .leading, spacing: 20) {
-                Text(module.name)
+                Text(item.module?.name ?? "")
                     .font(.system(size: 34, weight: .bold))
                 Divider()
-                Text(module.overview)
+                Text(item.module?.overview ?? "")
                     .font(.system(size: 26, weight: .regular))
                 HStack(spacing: 20) {
-                    InfoCard(title: "주인", value: module.owner)
-                    InfoCard(title: "재료", value: module.material)
+                    InfoCard(title: "주인", value: item.module?.owner ?? "")
+                    InfoCard(title: "재료", value: item.module?.material ?? "")
                     Button("꺼내서 조작하기") {
                         // 테스트용: 첫 번째 PlaceableObject 가져오기
                         if let first = placeableItemStore.placeableObjectsByFileName.values.first {
@@ -38,12 +41,12 @@ struct ToyDetail: View {
                 }
                 .frame(maxWidth: 328, alignment: .leading)
                 
-                Text(module.description)
+                Text(item.module?.description ?? "")
                     .font(.system(size: 24, weight: .light))
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 608)
                 
-                Text(module.callToAction)
+                Text(item.module?.callToAction ?? "")
                     .font(.system(size: 26, weight: .semibold))
                 Spacer()
             }
@@ -51,10 +54,8 @@ struct ToyDetail: View {
             .frame(width: 980, height: 451)
             .background()
             .cornerRadius(46)
-            
-            module.detailView
-                .frame(width: 560, height: 560)
-                .position(x: 820, y: 225)
+                Toy2(modelName: item.ModelName, modelDepth: 200, modelSize: 560, modelScale: 1, modelOrientation: [0, 0, 0])
+            }
         }
     }
 }
