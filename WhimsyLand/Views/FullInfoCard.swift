@@ -1,5 +1,5 @@
 //
-//  InfoCardSwitcher.swift
+//  FullInfoCard.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/21/25.
@@ -7,23 +7,13 @@
 
 import SwiftUI
 
-struct InfoCardSwitcher: View {
-    @Environment(PlacementManager.self) var manager
-    var body: some View {
-        if let current = manager.placementState.infoCardPresentedObject {
-            FullInfoCard(object: current)
-                .environment(manager)
-        }
-    }
-}
-
 struct FullInfoCard: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+
     @Environment(ViewModel.self) var model
     @Environment(PlacementManager.self) var manager
-    
-    var object: PlacedObject
+//    let current = manager.placementState.infoCardPresentedObject
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -44,6 +34,7 @@ struct FullInfoCard: View {
             .buttonStyle(.bordered)
             Button("닫기"){
                 manager.placementState.infoCardPresentedObject = nil
+                manager.infoCardAlreadyOriented = false
             }
         }
         .padding()
