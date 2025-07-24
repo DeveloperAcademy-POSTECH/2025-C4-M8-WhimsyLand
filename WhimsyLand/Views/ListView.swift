@@ -9,24 +9,23 @@ import SwiftUI
 import RealityKit
 
 struct ListView: View {
+    @Environment(\.openImmersiveSpace) var openImmersiveSpace
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
-    @Environment(ViewModel.self) var model
-    @Environment(PlaceableItemStore.self) var placeableItemStore
-    @State private var searchText = ""
-    @State private var isDetailActive = false
     
-    // TODO : viewmodel 이동해야함
-    let itemImages = ["BrickHouse","RagHouse","TreeHouse"]
+    @Environment(ViewModel.self) var model
+    @Environment(ToyModel.self) var toyModel
+    @Environment(PlaceableItemStore.self) var placeableItemStore
+    
+    @State private var searchText = ""
     
     var body: some View {
+        
         VStack {
             // Header
             HStack {
-                Text("아이템 \(itemImages.count)개")
-                    .font(.largeTitle)
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
+                Text("아이템 \(toyModel.items.count)개")
+                    .font(.pretendard(.bold, size: 29))
                 
                 Spacer()
                 
@@ -57,33 +56,11 @@ struct ListView: View {
                     GridItem(.flexible(), spacing: 20),
                     GridItem(.flexible(), spacing: 20)
                 ], spacing: 30) {
-                    
                     // 아이템을 3 x 3 리스트 형태
-                    ForEach(itemImages, id: \.self) { index in
-                        VStack(spacing: 20) {
-                            VStack{
-                                Image("\(index)")
-                                    .resizable()
-                                    .scaledToFit()
-                                
-                                
-                                Text("\(index)")
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(hex: "#5E5E5E29").opacity(0.16))
-                            )
-                            .hoverEffect()
-                            .onTapGesture {
-                                if let index = itemImages.firstIndex(of: index){
-                                    placeableItemStore.selectedFileName = itemImages[index]
-                                    openWindow(id: "Toy")
-                                    print("\(placeableItemStore.selectedFileName)가 선택됨")
-                                }
-                            }
+                    ForEach(toyModel.items) { item in
+                        ToyCard(imageName: item.ImageName, label: item.label) {
+                            placeableItemStore.selectedFileName = item.ModelName
+                            openWindow(id: "Toy", value: item)
                         }
                     }
                 }

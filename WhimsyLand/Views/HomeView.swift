@@ -7,66 +7,120 @@
 
 import SwiftUI
 
+// TODO : 별도 파일로 빼기
+enum FrameSize {
+    case small, medium, large
+}
+
 struct HomeView: View {
+    
+    @Environment(ViewModel.self) private var model
+    
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(PlaceableItemStore.self) var placeableItemStore
-    @Environment(ViewModel.self) var model
+    
     @State private var isDetailActive = false
+    @State private var currentSize: FrameSize = .medium
+    
+    // TODO : extension으로 가능 ?
+    private var frameWidth: CGFloat {
+        switch currentSize {
+        case .small: return 258
+        case .medium: return 1067
+        case .large: return 1020
+        }
+    }
+    
+    // TODO : extension으로 가능 ?
+    private var frameHeight: CGFloat {
+        switch currentSize {
+        case .small: return 435
+        case .medium: return 353
+        case .large: return 678
+        }
+    }
     
     var body: some View {
-        GeometryReader { geometry in
-            NavigationStack{
-                let isControl = geometry.size.width < 300 || geometry.size.height < 400
-                HStack{
-                    Group{
-                        if isControl {
-                            VStack {
-                                Image("ThreeLittlePigs")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 200, height: 300)
-                                
-                                Button("시작하기") {
-                                    isDetailActive = true
-                                }
-                            }
-                        }else {
+        NavigationStack{
+            HStack{
+                Group{
+                    if currentSize == .small {
+                        VStack {
                             Image("ThreeLittlePigs")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: 200, height: 300)
                             
-                            VStack(alignment: .leading){
-                                Text("아기돼지 삼형제")
-                                    .font(.system(size: 38 ))
-                                    .bold()
-                                
-                                Text("아기돼지 삼형제의 집을 여러분의 공간에 배치해보세요.\n집안에 들어가 다양한 콘텐츠를 즐겨 보세요")
-                                    .font(.system(size: 32))
-                                    .lineLimit(nil)
-                                    .padding(.top, 16)
-                                
-                                Button("시작하기") {
+                            HStack{
+                                Button(action: {
                                     isDetailActive = true
+                                    currentSize = .large
+                                }){
+                                    Text("아이템 배치하기")
+                                        .font(.pretendard(.semibold, size: 24))
+                                        .padding(.horizontal, 24)
                                 }
+                                
+                                Button(action: {
+                                    currentSize = .medium
+                                }) {
+                                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    
+                                }.frame(width: 60, height: 60)
                             }
                         }
-                        Spacer()
+                    }else {
+                        Image("ThreeLittlePigs")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                        
+                        VStack(alignment: .leading, spacing: 20){
+                            Text("아기돼지 삼형제")
+                                .font(.pretendard(.semibold, size: 38))
+                            
+                            Text("아기돼지 삼형제의 집을 여러분의 공간에 배치해보세요.\n집안에 들어가 다양한 콘텐츠를 즐겨 보세요")
+                                .font(.pretendard(.regular, size: 24))
+                                .lineLimit(nil)
+                                .padding(.top, 16)
+                            
+                            Spacer()
+                            
+                            HStack{
+                                Button(action: {
+                                    isDetailActive = true
+                                    currentSize = .large
+                                }){
+                                    Text("아이템 배치하기")
+                                        .font(.pretendard(.semibold, size: 24))
+                                        .padding(.horizontal, 24)
+                                }
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    currentSize = .small
+                                }) {
+                                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                }.frame(width: 60, height: 60)
+                                
+                            }
+                        }
                     }
                 }
-                .background(.pink)
-                .navigationDestination(isPresented: $isDetailActive){
-                    ListView()
-                        .environment(placeableItemStore)
-                        .environment(model)
-                }
             }
-            .padding(30)
+            .glassBackgroundEffect()
+            .padding(32)
+            .navigationDestination(isPresented: $isDetailActive){
+                ListView()
+                    .environment(placeableItemStore)
+                    .environment(model)
+            }
+            .onAppear{
+                currentSize = .medium
+            }
         }
-        .background(.blue)
-        .frame(width: isDetailActive ?  1020 : 1060, height: isDetailActive ? 678 :  360)
-        .animation(.easeInOut, value: isDetailActive )
+        .frame(width:  frameWidth, height: frameHeight)
+        .animation(.easeInOut, value: currentSize )
         .task {
             if model.mixedImmersiveState.allRequiredProvidersAreSupported {
                 await model.mixedImmersiveState.requestWorldSensingAuthorization()
@@ -80,7 +134,6 @@ struct HomeView: View {
         }
     }
 }
-
 //
 //#Preview(windowStyle: .automatic, traits: .fixedLayout(width: 1060, height: 360)) {
 //    HomeView()

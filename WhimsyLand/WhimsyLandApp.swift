@@ -9,16 +9,18 @@ import SwiftUI
 
 @main
 struct WhimsyLandApp: App {
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.dismissWindow) var dismissWindow
+    @Environment(\.scenePhase) private var scenePhase
+    
     @State private var model = ViewModel()
+    @State private var toyModel = ToyModel()
     
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
     @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
-    @Environment(\.dismissWindow) var dismissWindow
-    @Environment(\.scenePhase) private var scenePhase
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
     @State private var immersionStyle: ImmersionStyle = .mixed
@@ -28,6 +30,7 @@ struct WhimsyLandApp: App {
             HomeView()
                 .environment(placeableItemStore)
                 .environment(model)
+                .environment(toyModel)
                 .task {
                     await modelLoader.loadObjects()
                     placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
@@ -39,13 +42,15 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .windowResizability(.contentSize)
         
-        WindowGroup(id: "Toy") {
-            ToyDetail(module: toyModule)
+        WindowGroup(id: "Toy", for: ToyItem.self, content: { $value in
+            ToyDetail(item: $value)
                 .environment(model)
+                .environment(toyModel)
                 .environment(placeableItemStore)
         }
+        )
         .windowStyle(.plain)
-        .defaultSize(width: 980, height: 480)
+        .defaultSize(width: 1120, height: 902)
         .defaultWindowPlacement { content, context in
             guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
             }
