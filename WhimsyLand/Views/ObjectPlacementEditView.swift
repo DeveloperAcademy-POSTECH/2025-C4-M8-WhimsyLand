@@ -11,8 +11,10 @@ import SwiftUI
 @MainActor
 struct ObjectPlacementEditView: View {
     var mixedImmersiveState: MixedImmersiveState
+    var placeableItemStore: PlaceableItemStore
     
-    @State private var placementManager = PlacementManager()
+    @Environment(PlacementManager.self) var placementManager
+    
     @State private var collisionBeganSubscription: EventSubscription? = nil
     @State private var collisionEndedSubscription: EventSubscription? = nil
     
@@ -25,6 +27,7 @@ struct ObjectPlacementEditView: View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
             placementManager.mixedImmersiveState = mixedImmersiveState
+            placementManager.placeableItemStore = placeableItemStore
             
             if let placementTooltipAttachment = attachments.entity(for: Attachments.placementTooltip) {
                 placementManager.addPlacementTooltip(placementTooltipAttachment)
@@ -43,7 +46,6 @@ struct ObjectPlacementEditView: View {
             }
             
             Task {
-                // Run the ARKit session after the user opens the immersive space.
                 await placementManager.runARKitSession()
             }
         } update: { update, attachments in
@@ -56,8 +58,6 @@ struct ObjectPlacementEditView: View {
             if let selectedObject = placementState.selectedObject {
                 selectedObject.isPreviewActive = placementState.isPlacementPossible
             }
-            
-            
         } attachments: {
             Attachment(id: Attachments.placementTooltip) {
                 PlacementTooltip(placementState: placementManager.placementState)
@@ -87,12 +87,9 @@ struct ObjectPlacementEditView: View {
             await placementManager.checkIfMovingObjectsCanBeAnchored()
         }
         .gesture(SpatialTapGesture().targetedToAnyEntity().onEnded { event in
-            let tappedEntity = event.entity
-            
-            if tappedEntity.components[CollisionComponent.self]?.filter.group == PlaceableObject.previewCollisionGroup {
-                    placementManager.placeSelectedObject()
-                    return
-                }
+            if event.entity.components[CollisionComponent.self]?.filter.group == PlaceableObject.previewCollisionGroup {
+                placementManager.placeSelectedObject()
+            }
         })
         .gesture(DragGesture()
             .targetedToAnyEntity()
@@ -111,10 +108,10 @@ struct ObjectPlacementEditView: View {
         .onAppear() {
             print("Entering immersive edit mode.")
             mixedImmersiveState.mixedImmersiveSpaceOpened(with: placementManager)
+            mixedImmersiveState.mixedImmersiveMode = .editing
         }
         .onDisappear() {
             print("Leaving immersive edit mode.")
-            mixedImmersiveState.didLeaveMixedImmersiveSpace()
         }
     }
 }

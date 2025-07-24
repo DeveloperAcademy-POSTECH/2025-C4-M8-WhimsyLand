@@ -42,7 +42,6 @@ final class PlacementManager {
     private let placementLocation: Entity
     private weak var placementTooltip: Entity? = nil
     weak var deleteButton: Entity? = nil
-    weak var openFullInfoCard: Entity? = nil
     weak var fullInfoCard: Entity? = nil
     
     // 현실 평면과 오브젝트 사이 간격 조정
@@ -51,6 +50,9 @@ final class PlacementManager {
     // 근처에 있는 평면으로 자동 스냅되는 간격 조정
     static private let snapToPlaneDistanceForDraggedObjects: Float = 0.04
     
+    // info Card 고정
+    var infoCardAlreadyOriented: Bool = false
+
     @MainActor
     init() {
         // 위치 관련 Entity 값 초기화
@@ -104,6 +106,10 @@ final class PlacementManager {
         } catch {
             // AppState에서 에러 감지 중이므로 별도 처리 X
             return
+        }
+        
+        if let firstFileName = placeableItemStore?.modelDescriptors.first?.fileName, let object = placeableItemStore?.placeableObjectsByFileName[firstFileName] {
+            selectObject(object)
         }
     }
 
@@ -195,7 +201,7 @@ final class PlacementManager {
         }
         
         //2. Orient each UI element to face the user.
-        for entity in [placementTooltip, deleteButton, openFullInfoCard, fullInfoCard] {
+        for entity in [placementTooltip, deleteButton] {
             if let entity {
                 entity.look(at: deviceAnchor.originFromAnchorTransform.translation)
             }
@@ -258,6 +264,7 @@ final class PlacementManager {
         let collisionMask = PlacedObject.collisionGroup
         
         if let result = rootEntity.scene?.raycast(origin: origin, direction: direction, query: .nearest, mask: collisionMask).first {
+
             if let pointedAtObject = persistenceManager.object(for: result.entity) {
                 setHighlightedObject(pointedAtObject)
             } else {
@@ -273,56 +280,62 @@ final class PlacementManager {
         guard placementState.highlightedObject != objectToHighlight else {
             return
         }
-        
+
         if let oldHighlighted = placementState.highlightedObject {
                 oldHighlighted.renderContent.components.remove(HoverEffectComponent.self)
             }
-        
+
         placementState.highlightedObject = objectToHighlight
 
         // 이전 오브젝트 하이라이트 해제
-        guard let deleteButton else { return }
-        deleteButton.removeFromParent()
+        deleteButton?.removeFromParent()
+        //fullInfoCard?.removeFromParent()
         
-        guard let openFullInfoCard else { return }
-        openFullInfoCard.removeFromParent()
-        
-        guard let fullInfoCard else { return }
-        fullInfoCard.removeFromParent()
-
         guard let objectToHighlight else { return }
 
         // Position and attach the UI to the newly highlighted object.
         let extents = objectToHighlight.extents
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
         let frontBottomCenter: SIMD3<Float> = [0, (-extents.y / 2) + 0.04, extents.z / 2 + 0.04]
-        deleteButton.position = topLeftCorner
-        openFullInfoCard.position = topLeftCorner
-        fullInfoCard.position = topLeftCorner
+        deleteButton?.position = topLeftCorner
+        fullInfoCard?.position = topLeftCorner
+        
+        switch mixedImmersiveState?.mixedImmersiveMode {
+        case .editing:
+            if let deleteButton {
+                objectToHighlight.uiOrigin.addChild(deleteButton)
+                deleteButton.scale = 1 / objectToHighlight.scale
+            }
+        case .viewing:
+//            if let fullInfoCard, placementState.infoCardPresentedObject == objectToHighlight, fullInfoCard.parent != objectToHighlight.uiOrigin {
+//                objectToHighlight.uiOrigin.addChild(fullInfoCard)
+//                fullInfoCard.scale = 1 / objectToHighlight.scale
+//                
+//                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
+//                infoCardAlreadyOriented = true
+//            }
+            if let fullInfoCard,
+                   placementState.infoCardPresentedObject == objectToHighlight,
+                   fullInfoCard.parent != objectToHighlight {
 
-        if mixedImmersiveState?.mixedImmersiveMode == .editing {
-            objectToHighlight.uiOrigin.addChild(deleteButton)
-            deleteButton.scale = 1 / objectToHighlight.scale
-        } else if mixedImmersiveState?.mixedImmersiveMode == .viewing {
-            objectToHighlight.uiOrigin.addChild(openFullInfoCard)
-            openFullInfoCard.scale = 1 / objectToHighlight.scale
+                    objectToHighlight.addChild(fullInfoCard)
+                    fullInfoCard.scale = 1 / objectToHighlight.scale
+                    fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
+                    infoCardAlreadyOriented = true
+                }
+        default:
+            print("mixedImmersiveMode is neither .editing nor .viewing")
         }
-
-        objectToHighlight.uiOrigin.addChild(fullInfoCard)
-        fullInfoCard.scale = 1 / objectToHighlight.scale
         
         let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
-                color: .yellow, // 디자이너와 협의 후 수정 필요
-                strength: 0.8
-            )
-            let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
-            objectToHighlight.renderContent.components.set(hoverEffect)
+            color: .red, // 디자이너와 협의 후 수정 필요
+            strength: 1.0
+        )
+        
+        let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
+        objectToHighlight.components.set(hoverEffect)
     }
 
-    func removeAllPlacedObjects() async {
-        await persistenceManager.removeAllPlacedObjects()
-    }
-    
     func processPlaneDetectionUpdates() async {
         for await anchorUpdate in planeDetection.anchorUpdates {
             await planeAnchorHandler.process(anchorUpdate)

@@ -16,12 +16,13 @@ struct WhimsyLandApp: App {
     @State private var placeableItemStore = PlaceableItemStore()
     @State private var modelLoader = ModelLoader()
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissWindow) var dismissWindow
     @Environment(\.scenePhase) private var scenePhase
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
     @State private var immersionStyle: ImmersionStyle = .mixed
-
+    
     var body: some Scene {
         WindowGroup(id: "HomeView") {
             HomeView()
@@ -30,6 +31,9 @@ struct WhimsyLandApp: App {
                 .task {
                     await modelLoader.loadObjects()
                     placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
+                }
+                .task {
+                    await model.mixedImmersiveState.monitorSessionEvents()
                 }
         }
         .windowStyle(.plain)
@@ -49,16 +53,35 @@ struct WhimsyLandApp: App {
         }
         
         ImmersiveSpace(id: model.mixedImmersiveID) {
-            ObjectPlacementSwitcherView(mixedImmersiveState: model.mixedImmersiveState)
+            ObjectPlacementSwitcherView(mixedImmersiveState: model.mixedImmersiveState, placeableItemStore: placeableItemStore)
+                .environment(model)
         }
         .immersionStyle(selection: .constant(.mixed), in: .mixed)
         
-        // 앱이 강제로 종료되거나 사라졌을 때 상태를 관리하는 부분
+        ImmersiveSpace(id: model.fullImmersiveID) {
+            FullImmersiveView()
+        }
+        .immersionStyle(selection: .constant(.full), in: .full)
+        
+        // 앱의 상태에 따라 관리하는 부분
         .onChange(of: scenePhase, initial: true) {
-            if scenePhase != .active {
+            // 앱이 활성화 된 경우 처리
+            if scenePhase == .active {
                 Task {
-                    model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
+                    await model.mixedImmersiveState.queryWorldSensingAuthorization()
+                    
+                    if model.mixedImmersiveState.canEnterMixedImmersiveSpace {
+                        await model.switchToImmersiveMode(
+                            .mixed,
+                            open: { id in await openImmersiveSpace(id: id) },
+                            dismiss: dismissImmersiveSpace.callAsFunction
+                        )
+                    } else {
+                        print("⚠️ Mixed Immersive 공간 진입 보류: 권한 미획득 or 미지원")
+                    }
                 }
+            } else if scenePhase != .active {
+                model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
             }
         }
     }
