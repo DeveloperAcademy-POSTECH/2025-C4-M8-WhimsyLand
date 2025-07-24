@@ -71,20 +71,9 @@ struct ListView: View {
         .persistentSystemOverlays(.hidden)
         .onAppear {
             model.mixedImmersiveState.mixedImmersiveMode = .editing
-            print("🛠️ mixedImmersiveMode = editing")
         }
         .onDisappear{
             dismissWindow(id:"Toy")
         }
     }
 }
-
-//#Preview("ThreeLittlePigs") {
-//    NavigationStack {
-//        ListView(
-//            immersiveSpaceIdentifier: "Object Placement",
-//            module: .threeLittlePigs
-//        )
-//        .environment(AppState())
-//    }
-//}

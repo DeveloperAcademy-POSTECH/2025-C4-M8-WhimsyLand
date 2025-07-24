@@ -28,13 +28,8 @@ class MixedImmersiveState {
     }
 
     func didLeaveMixedImmersiveSpace() {
-        // Remember which placed object is attached to which persistent world anchor when leaving the mixed immersive space.
         if let placementManager {
             placementManager.saveWorldAnchorsObjectsMapToDisk()
-            
-            // ARKit의 World Sensing 기능 종료
-            // 더 이상 AR 정보를 실시간으로 받아올 필요 없음
-            // 리소스를 아끼고 오류를 최소회하기 위해
             arkitSession.stop()
         }
         placementManager = nil
