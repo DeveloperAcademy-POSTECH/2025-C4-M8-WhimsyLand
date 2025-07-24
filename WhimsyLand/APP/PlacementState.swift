@@ -13,6 +13,7 @@ import RealityKit
 class PlacementState {
 
     var selectedObject: PlaceableObject? = nil
+    var infoCardPresentedObject: PlacedObject? = nil
     var highlightedObject: PlacedObject? = nil
     var objectToPlace: PlaceableObject? { isPlacementPossible ? selectedObject : nil }
     var userDraggedAnObject = false

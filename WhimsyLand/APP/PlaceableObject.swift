@@ -77,7 +77,7 @@ class PlacedObject: Entity {
     let fileName: String
     
     // 객체를 표시하기 위한 3D model
-    private let renderContent: ModelEntity
+    let renderContent: ModelEntity
 
     static let collisionGroup = CollisionGroup(rawValue: 1 << 29)
     
