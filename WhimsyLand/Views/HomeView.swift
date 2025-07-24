@@ -14,10 +14,9 @@ enum FrameSize {
 
 struct HomeView: View {
     
-    @Environment(ViewModel.self) private var model
-    
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(ViewModel.self) private var model
     @Environment(PlaceableItemStore.self) var placeableItemStore
     
     @State private var isDetailActive = false
@@ -129,12 +128,7 @@ struct HomeView: View {
         .onChange(of: isDetailActive) {
             if !isDetailActive {
                 model.mixedImmersiveState.mixedImmersiveMode = .viewing
-                print("🛠️ mixedImmersiveMode = viewing")
             }
         }
     }
 }
-//
-//#Preview(windowStyle: .automatic, traits: .fixedLayout(width: 1060, height: 360)) {
-//    HomeView()
-//}

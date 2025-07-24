@@ -26,7 +26,7 @@ final class PlacementManager {
             persistenceManager.placeableObjectsByFileName = placeableItemStore?.placeableObjectsByFileName ?? [:]
         }
     }
-
+    
     private var currentDrag: DragState? = nil {
         didSet {
             placementState.dragInProgress = currentDrag != nil
@@ -34,7 +34,7 @@ final class PlacementManager {
     }
     
     var placementState = PlacementState()
-
+    
     var rootEntity: Entity
     
     private let deviceLocation: Entity
@@ -52,7 +52,7 @@ final class PlacementManager {
     
     // info Card 고정
     var infoCardAlreadyOriented: Bool = false
-
+    
     @MainActor
     init() {
         // 위치 관련 Entity 값 초기화
@@ -97,7 +97,7 @@ final class PlacementManager {
             await persistenceManager.removeObject(highlightedObject)
         }
     }
-
+    
     @MainActor
     func runARKitSession() async {
         do {
@@ -112,13 +112,13 @@ final class PlacementManager {
             selectObject(object)
         }
     }
-
+    
     // MARK: 오브젝트 충돌 관리
     @MainActor
     func collisionBegan(_ event: CollisionEvents.Began) {
         guard let selectedObject = placementState.selectedObject else { return }
         guard selectedObject.matchesCollisionEvent(event: event) else { return }
-
+        
         placementState.activeCollisions += 1
     }
     
@@ -130,7 +130,7 @@ final class PlacementManager {
             print("Received a collision ended event without a corresponding collision start event.")
             return
         }
-
+        
         placementState.activeCollisions -= 1
     }
     
@@ -148,10 +148,10 @@ final class PlacementManager {
     @MainActor
     func selectObject(_ object: PlaceableObject?) {
         deselectCurrentObject()
-
+        
         placementState.selectedObject = object
         placeableItemStore?.selectedFileName = object?.descriptor.fileName
-
+        
         if let object {
             placementLocation.addChild(object.previewEntity)
         }
@@ -177,7 +177,7 @@ final class PlacementManager {
         guard worldTracking.state == .running else { return }
         
         let deviceAnchor = worldTracking.queryDeviceAnchor(atTimestamp: CACurrentMediaTime())
-
+        
         placementState.deviceAnchorPresent = deviceAnchor != nil
         placementState.planeAnchorsPresent = !planeAnchorHandler.planeAnchors.isEmpty
         placementState.selectedObject?.previewEntity.isEnabled = placementState.shouldShowPreview
@@ -218,7 +218,7 @@ final class PlacementManager {
         
         // Cast the ray from the device origin.
         let origin: SIMD3<Float> = raycastOrigin.transformMatrix(relativeTo: nil).translation
-    
+        
         // Cast the ray along the negative z-axis of the device anchor, but with a slight downward angle.
         // (The downward angle is configurable using the `raycastOrigin` orientation.)
         let direction: SIMD3<Float> = -raycastOrigin.transformMatrix(relativeTo: nil).zAxis
@@ -229,10 +229,10 @@ final class PlacementManager {
         
         // Only raycast against horizontal planes.
         let collisionMask = PlaneAnchor.allPlanesCollisionGroup
-
+        
         var originFromPointOnPlaneTransform: float4x4? = nil
         if let result = rootEntity.scene?.raycast(origin: origin, direction: direction, length: maxDistance, query: .nearest, mask: collisionMask)
-                                                  .first, result.distance > minDistance {
+            .first, result.distance > minDistance {
             if result.entity.components[CollisionComponent.self]?.filter.group != PlaneAnchor.verticalCollisionGroup {
                 // If the raycast hit a horizontal plane, use that result with a small, fixed offset.
                 originFromPointOnPlaneTransform = originFromUprightDeviceAnchorTransform
@@ -264,7 +264,7 @@ final class PlacementManager {
         let collisionMask = PlacedObject.collisionGroup
         
         if let result = rootEntity.scene?.raycast(origin: origin, direction: direction, query: .nearest, mask: collisionMask).first {
-
+            
             if let pointedAtObject = persistenceManager.object(for: result.entity) {
                 setHighlightedObject(pointedAtObject)
             } else {
@@ -280,19 +280,18 @@ final class PlacementManager {
         guard placementState.highlightedObject != objectToHighlight else {
             return
         }
-
+        
         if let oldHighlighted = placementState.highlightedObject {
-                oldHighlighted.renderContent.components.remove(HoverEffectComponent.self)
-            }
-
+            oldHighlighted.renderContent.components.remove(HoverEffectComponent.self)
+        }
+        
         placementState.highlightedObject = objectToHighlight
-
+        
         // 이전 오브젝트 하이라이트 해제
         deleteButton?.removeFromParent()
-        //fullInfoCard?.removeFromParent()
         
         guard let objectToHighlight else { return }
-
+        
         // Position and attach the UI to the newly highlighted object.
         let extents = objectToHighlight.extents
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
@@ -307,22 +306,22 @@ final class PlacementManager {
                 deleteButton.scale = 1 / objectToHighlight.scale
             }
         case .viewing:
-//            if let fullInfoCard, placementState.infoCardPresentedObject == objectToHighlight, fullInfoCard.parent != objectToHighlight.uiOrigin {
-//                objectToHighlight.uiOrigin.addChild(fullInfoCard)
-//                fullInfoCard.scale = 1 / objectToHighlight.scale
-//                
-//                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
-//                infoCardAlreadyOriented = true
-//            }
+            //            if let fullInfoCard, placementState.infoCardPresentedObject == objectToHighlight, fullInfoCard.parent != objectToHighlight.uiOrigin {
+            //                objectToHighlight.uiOrigin.addChild(fullInfoCard)
+            //                fullInfoCard.scale = 1 / objectToHighlight.scale
+            //
+            //                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
+            //                infoCardAlreadyOriented = true
+            //            }
             if let fullInfoCard,
-                   placementState.infoCardPresentedObject == objectToHighlight,
-                   fullInfoCard.parent != objectToHighlight {
-
-                    objectToHighlight.addChild(fullInfoCard)
-                    fullInfoCard.scale = 1 / objectToHighlight.scale
-                    fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
-                    infoCardAlreadyOriented = true
-                }
+               placementState.infoCardPresentedObject == objectToHighlight,
+               fullInfoCard.parent != objectToHighlight {
+                
+                objectToHighlight.addChild(fullInfoCard)
+                fullInfoCard.scale = 1 / objectToHighlight.scale
+                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
+                infoCardAlreadyOriented = true
+            }
         default:
             print("mixedImmersiveMode is neither .editing nor .viewing")
         }
@@ -335,7 +334,7 @@ final class PlacementManager {
         let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
         objectToHighlight.components.set(hoverEffect)
     }
-
+    
     func processPlaneDetectionUpdates() async {
         for await anchorUpdate in planeDetection.anchorUpdates {
             await planeAnchorHandler.process(anchorUpdate)
@@ -347,7 +346,7 @@ final class PlacementManager {
     func placeSelectedObject() {
         // Ensure there’s a placeable object.
         guard let objectToPlace = placementState.objectToPlace else { return }
-
+        
         let object = objectToPlace.materialize()
         object.position = placementLocation.position
         object.orientation = placementLocation.orientation
@@ -400,7 +399,7 @@ final class PlacementManager {
         // Update the dragged object’s position.
         if let currentDrag {
             currentDrag.draggedObject.position = currentDrag.initialPosition + value.convert(value.translation3D, from: .local, to: rootEntity)
-
+            
             // If possible, snap the dragged object to a nearby horizontal plane.
             let maxDistance = PlacementManager.snapToPlaneDistanceForDraggedObjects
             if let projectedTransform = PlaneProjector.project(point: currentDrag.draggedObject.transform.matrix,

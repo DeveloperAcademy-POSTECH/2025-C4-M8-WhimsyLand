@@ -60,7 +60,7 @@ struct ObjectPlacementView: View {
                 
                 placementManager.setHighlightedObject(tappedObject)
             } else {
-                print("❗️ tappedObject를 찾을 수 없음")
+                print("tappedObject를 찾을 수 없음")
             }
         })
         .onAppear {
