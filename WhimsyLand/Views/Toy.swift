@@ -10,7 +10,7 @@ import RealityKit
 import RealityKitContent
 
 // 모델 설정 상수
-private let modelName = "Cone"  // TODO: 선택한 toy3D name 받아오기
+private let modelName = "Cube"  // TODO: 선택한 toy3D name 받아오기
 private let targetSizeInMeters: Float = 0.26
 //private let modelDepth: Double = 200
 //private let modelSize: CGFloat = 560
@@ -18,7 +18,7 @@ private let targetSizeInMeters: Float = 0.26
 //private let modelOrientation: SIMD3<Double> = [0, 0, 0]
 
 struct Toy: View {
-    @Environment(ViewModel.self) private var model
+//    @Environment(ViewModel.self) private var model
     //    @State private var conePosition: SIMD3<Float> = .zero
     @State private var sceneEntity: Entity? = nil
     
