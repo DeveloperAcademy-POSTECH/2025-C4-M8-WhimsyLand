@@ -13,6 +13,7 @@ struct WhimsyLandApp: App {
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var model = ViewModel()
+    @State private var toyModel = ToyModel()
     
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
@@ -27,6 +28,7 @@ struct WhimsyLandApp: App {
             HomeView()
                 .environment(placeableItemStore)
                 .environment(model)
+                .environment(toyModel)
                 .task {
                     await modelLoader.loadObjects()
                     placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
@@ -35,10 +37,10 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .windowResizability(.contentSize)
         
-
-        WindowGroup(id: "Toy") {
-            ToyDetail()
+        WindowGroup(id: "Toy", for: ToyItem.self, content: { $value in
+            ToyDetail(item: $value)
                 .environment(model)
+                .environment(toyModel)
                 .environment(placeableItemStore)
         }
         .windowStyle(.plain)
@@ -48,20 +50,6 @@ struct WhimsyLandApp: App {
                  }
                  return WindowPlacement(.trailing(contentWindow))
              }
-        
-            
-//        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-//                ObjectPlacementRealityView()
-//                    .environment(mixedImmersiveState)
-//                    .environment(modelLoader)
-//        }
-//        .windowStyle(.plain)
-//        .defaultSize(width: 980, height: 480)
-//        .defaultWindowPlacement { content, context in
-//            guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
-//            }
-//            return WindowPlacement(.trailing(contentWindow))
-//        }
         
         ImmersiveSpace(id: model.mixedImmersiveID) {
             ObjectPlacementRealityView(mixedImmersiveState: model.mixedImmersiveState)

@@ -8,22 +8,25 @@
 import SwiftUI
 
 struct ToyDetail: View {
-    @Environment(ViewModel.self) var model
+    @Environment(ViewModel.self) private var model
+    @Environment(ToyModel.self) private var toyModel
     @Environment(PlaceableItemStore.self) var placeableItemStore
     
-    private let toyModule: ToyModule = .ragHouse // TODO: 선택한 toy 받아오기
+    @State private var isMonitoring = true
     
+    @Binding var item: ToyItem?
     var body: some View {
         ZStack {
+            if let item = item {
             VStack(alignment: .leading, spacing: 20) {
-                Text(toyModule.name)
-                    .font(.pretendard(.bold,size: 34))
+                Text(item.module?.name ?? "")
+                    .font(.system(size: 34, weight: .bold))
                 Divider()
-                Text(toyModule.overview)
-                    .font(.pretendard(.regular, size: 26))
+                Text(item.module?.overview ?? "")
+                    .font(.system(size: 26, weight: .regular))
                 HStack(spacing: 20) {
-                    InfoCard(title: "주인", value: toyModule.owner)
-                    InfoCard(title: "재료", value: toyModule.material)
+                    InfoCard(title: "주인", value: item.module?.owner ?? "")
+                    InfoCard(title: "재료", value: item.module?.material ?? "")
                     Button("꺼내서 조작하기") {
                         // 테스트용: 첫 번째 PlaceableObject 가져오기
                         if let first = placeableItemStore.placeableObjectsByFileName.values.first {
@@ -35,22 +38,21 @@ struct ToyDetail: View {
                     .disabled(model.currentImmersiveMode != .mixed)
 
                 }
-                .frame(maxWidth: 400, alignment: .leading)
-
-                Text(toyModule.description)
-                    .font(.pretendard(.light, size: 24))
+                .frame(maxWidth: 328, alignment: .leading)
+                
+                Text(item.module?.description ?? "")
+                    .font(.system(size: 24, weight: .light))
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 608)
-
-                Text(toyModule.callToAction)
-                    .font(.pretendard(.semibold, size: 26))
+                
+                Text(item.module?.callToAction ?? "")
+                    .font(.system(size: 26, weight: .semibold))
                 Spacer()
             }
             .padding(40)
             .frame(width: 980, height: 491)
             .glassBackgroundEffect() 
             .cornerRadius(46)
-
                 toyModule.detailView
         }
     }
