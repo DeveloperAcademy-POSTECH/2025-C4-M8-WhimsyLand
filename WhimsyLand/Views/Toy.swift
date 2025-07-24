@@ -9,7 +9,7 @@ import SwiftUI
 import RealityKit
 
 // 모델 설정 상수
-private let modelName = "Cone"
+private let modelName = "Cone"  // TODO: 선택한 toy3D name 받아오기
 private let modelDepth: Double = 200
 private let modelSize: CGFloat = 560
 private let modelScale: CGFloat = 0.7

@@ -37,7 +37,7 @@ struct WhimsyLandApp: App {
         
 
         WindowGroup(id: "Toy") {
-            ToyDetail(module: toyModule)
+            ToyDetail()
                 .environment(model)
                 .environment(placeableItemStore)
         }
