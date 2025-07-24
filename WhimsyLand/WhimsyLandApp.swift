@@ -42,28 +42,14 @@ struct WhimsyLandApp: App {
                 .environment(model)
                 .environment(toyModel)
                 .environment(placeableItemStore)
-            
-        })
-        .defaultSize(width: 980, height: 451)
+        }
+        .windowStyle(.plain)
+        .defaultSize(width: 1120, height: 902)
         .defaultWindowPlacement { content, context in
                  guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
                  }
                  return WindowPlacement(.trailing(contentWindow))
              }
-        
-            
-//        ImmersiveSpace(id: UIIdentifier.immersiveSpace) {
-//                ObjectPlacementRealityView()
-//                    .environment(mixedImmersiveState)
-//                    .environment(modelLoader)
-//        }
-//        .windowStyle(.plain)
-//        .defaultSize(width: 980, height: 480)
-//        .defaultWindowPlacement { content, context in
-//            guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
-//            }
-//            return WindowPlacement(.trailing(contentWindow))
-//        }
         
         ImmersiveSpace(id: model.mixedImmersiveID) {
             ObjectPlacementRealityView(mixedImmersiveState: model.mixedImmersiveState)

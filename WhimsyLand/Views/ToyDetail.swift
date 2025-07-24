@@ -15,7 +15,6 @@ struct ToyDetail: View {
     @State private var isMonitoring = true
     
     @Binding var item: ToyItem?
-
     var body: some View {
         ZStack {
             if let item = item {
@@ -51,11 +50,10 @@ struct ToyDetail: View {
                 Spacer()
             }
             .padding(40)
-            .frame(width: 980, height: 451)
-            .background()
+            .frame(width: 980, height: 491)
+            .glassBackgroundEffect() 
             .cornerRadius(46)
-                Toy2(modelName: item.ModelName, modelDepth: 200, modelSize: 560, modelScale: 1, modelOrientation: [0, 0, 0])
-            }
+                toyModule.detailView
         }
     }
 }
@@ -63,14 +61,14 @@ struct ToyDetail: View {
 private struct InfoCard: View {
     let title: String
     let value: String
-    
+
     var body: some View {
         VStack {
             Text(title)
-                .font(.system(size: 20, weight: .semibold))
+                .font(.pretendard(.semibold, size: 20))
             Divider()
             Text(value)
-                .font(.system(size: 18, weight: .regular))
+                .font(.pretendard(.regular, size: 18))
         }
         .padding(20)
         .background(.ultraThinMaterial)
@@ -78,7 +76,7 @@ private struct InfoCard: View {
     }
 }
 
-extension ToyData {
+extension ToyModule {
     @ViewBuilder
     fileprivate var detailView: some View {
         Toy()

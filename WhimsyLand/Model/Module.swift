@@ -41,17 +41,6 @@ enum Module: String, Identifiable, CaseIterable, Equatable {
     }
 }
 
-struct ToyData {
-    let id: String
-    let name: String
-    let overview: String
-    let owner: String
-    let material: String
-    let description: String
-    let callToAction: String
-    let toy3D: String
-}
-
 enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     case RagHouse, TreeHouse, BrickHouse
     var id: String { rawValue.capitalized }
@@ -105,3 +94,4 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
             }
         }
     }
+
