@@ -93,4 +93,13 @@ class ViewModel {
             currentImmersiveMode = .none
         }
     }
+    
+    func handleWindowDidClose(dismiss: @escaping () async -> Void) {
+        Task {
+            await dismiss()
+            immersiveSpaceState = .closed
+            currentImmersiveMode = .none
+            mixedImmersiveState.didLeaveMixedImmersiveSpace()
+        }
+    }
 }
