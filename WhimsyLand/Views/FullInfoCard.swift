@@ -10,10 +10,8 @@ import SwiftUI
 struct FullInfoCard: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-
     @Environment(ViewModel.self) var model
     @Environment(PlacementManager.self) var manager
-//    let current = manager.placementState.infoCardPresentedObject
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -23,12 +21,10 @@ struct FullInfoCard: View {
                 .font(.body)
                 .multilineTextAlignment(.leading)
             Button("시작하기") {
-                Task{
-                    await model.switchToImmersiveMode(
-                        .full,
-                        open: { id in await openImmersiveSpace(id: id) },
-                        dismiss: dismissImmersiveSpace.callAsFunction
-                    )
+                if model.immersiveSpaceState != .inTransition {
+                    Task {
+                        await model.switchToImmersiveMode(.full)
+                    }
                 }
             }
             .buttonStyle(.bordered)

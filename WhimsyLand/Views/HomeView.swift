@@ -134,7 +134,7 @@ struct HomeView: View {
         .onChange(of: scenePhase) {
             if scenePhase != .active {
                 Task {
-                    model.handleWindowDidClose(dismiss: dismissImmersiveSpace.callAsFunction)
+                    model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
                 }
             }
         }
