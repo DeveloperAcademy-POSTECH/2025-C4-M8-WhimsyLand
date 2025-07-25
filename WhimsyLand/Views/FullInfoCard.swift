@@ -20,6 +20,8 @@ struct FullInfoCard: View {
             Text("셋째 돼지는 늑대의 침입에 대비해 튼튼히 지었어요.\n방 안을 천천히 탐색해보며 즐겨보세요.\n솥에 불을 붙여 늑대를 막을 준비를 해주세요!")
                 .font(.body)
                 .multilineTextAlignment(.leading)
+            
+            //EnterFullButton이 들어갈 부분
             Button("시작하기") {
                 if model.immersiveSpaceState != .inTransition {
                     Task {

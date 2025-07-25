@@ -47,7 +47,9 @@ class ViewModel {
         currentImmersiveMode = mode
         switch mode {
         case .mixed: immersionStyle = .mixed
-        case .full: immersionStyle = .full
+        case .full:
+            immersionStyle = .full
+            mixedImmersiveState.didLeaveMixedImmersiveSpace()
         case .none: break
         }
     }
