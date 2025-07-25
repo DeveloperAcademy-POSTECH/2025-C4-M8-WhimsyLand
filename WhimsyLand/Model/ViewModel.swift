@@ -17,7 +17,11 @@ enum ImmersiveMode {
 @MainActor
 @Observable
 class ViewModel {
+    // MARK: - Window
+    let HomeViewID = "HomeView"
+    let ToyDetailViewID = "Toy"
     
+    // MARK: - immersive
     let ImmersiveId = "Immersive"
     
     enum ImmersiveSpaceState {

@@ -26,7 +26,7 @@ struct WhimsyLandApp: App {
     @State private var immersionStyle: ImmersionStyle = .mixed
     
     var body: some Scene {
-        WindowGroup(id: "HomeView") {
+        WindowGroup(id: model.HomeViewID) {
             HomeView()
                 .environment(placeableItemStore)
                 .environment(model)
@@ -42,7 +42,7 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .windowResizability(.contentSize)
         
-        WindowGroup(id: "Toy"){
+        WindowGroup(id: model.ToyDetailViewID){
             ToyDetail()
                 .environment(model)
                 .environment(toyModel)
@@ -50,7 +50,7 @@ struct WhimsyLandApp: App {
         }
         .windowStyle(.plain)
         .defaultWindowPlacement { content, context in
-            guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)
+            guard let contentWindow = context.windows.first(where: { $0.id == model.HomeViewID }) else { return WindowPlacement(nil)
             }
             return WindowPlacement(.trailing(contentWindow))
         }

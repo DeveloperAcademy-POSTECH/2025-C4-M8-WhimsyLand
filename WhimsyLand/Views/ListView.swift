@@ -22,31 +22,6 @@ struct ListView: View {
     var body: some View {
         
         VStack {
-            // Header
-            HStack {
-                Text("아이템 \(toyModel.items.count)개")
-                    .font(.pretendard(.bold, size: 29))
-                
-                Spacer()
-                
-                // Search Bar
-                HStack {
-                    Image(systemName: "mic.fill")
-                        .foregroundColor(.gray)
-                    
-                    TextField("Search", text: $searchText)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.black.opacity(0.3))
-                .cornerRadius(20)
-                .frame(width: 300)
-            }
-            .padding(.horizontal, 40)
-            .padding(.top, 20)
-            
             Spacer()
             
             // Book Grid
@@ -63,7 +38,7 @@ struct ListView: View {
                                 toyModel.selectedItem = item
                             
                                 if !toyModel.isSecondaryWindowShown {
-                                    openWindow(id: "Toy")
+                                    openWindow(id: model.ToyDetailViewID)
                                 toyModel.isSecondaryWindowShown = true
                                 }
                             }
@@ -78,7 +53,15 @@ struct ListView: View {
             model.mixedImmersiveState.mixedImmersiveMode = .editing
         }
         .onDisappear{
-            dismissWindow(id:"Toy")
+            dismissWindow(id:model.ToyDetailViewID)
         }
+        .navigationTitle("") // 우회방법으로 제목 커스텀 함
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("아이템 \(toyModel.items.count)개")
+                    .font(.pretendard(.bold, size: 29))
+            }
+        }
+       
     }
 }
