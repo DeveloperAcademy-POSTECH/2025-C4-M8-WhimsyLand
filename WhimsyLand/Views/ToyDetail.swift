@@ -32,7 +32,7 @@ struct ToyDetail: View {
                                 model.mixedImmersiveState.placementManager?.selectObject(first)
                                 print("👉 \(first.descriptor.fileName)를 선택함")
                             }
-                            dismissWindow(id: "Toy")
+                            dismissWindow(id: model.ToyDetailViewID)
                         }
                         .buttonStyle(.bordered)
                         .disabled(model.currentImmersiveMode != .mixed)

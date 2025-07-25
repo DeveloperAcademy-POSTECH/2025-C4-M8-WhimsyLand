@@ -17,6 +17,10 @@ enum ImmersiveMode {
 @MainActor
 @Observable
 class ViewModel {
+    // MARK: - Windows
+    let HomeViewID = "HomeView"
+    let ToyDetailViewID = "Toy"
+    
     // MARK: - immersive
     let mixedImmersiveID = "MixedImmersive"
     let fullImmersiveID = "FullImmersive"
