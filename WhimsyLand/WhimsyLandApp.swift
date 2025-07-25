@@ -42,13 +42,12 @@ struct WhimsyLandApp: App {
         .windowStyle(.plain)
         .windowResizability(.contentSize)
         
-        WindowGroup(id: "Toy", for: ToyItem.self) { $value in
-            ToyDetail(item: $value)
+        WindowGroup(id: "Toy"){
+            ToyDetail()
                 .environment(model)
                 .environment(toyModel)
                 .environment(placeableItemStore)
         }
-        )
         .windowStyle(.plain)
         .defaultWindowPlacement { content, context in
             guard let contentWindow = context.windows.first(where: { $0.id == "HomeView" }) else { return WindowPlacement(nil)

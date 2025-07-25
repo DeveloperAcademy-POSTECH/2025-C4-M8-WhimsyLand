@@ -21,6 +21,10 @@ struct ToyItem: Identifiable, Codable, Hashable {
 @MainActor
 @Observable
 class ToyModel {
+    
+    var selectedItem: ToyItem? = nil
+    var isSecondaryWindowShown: Bool = false
+    
   var items: [ToyItem] = [
         ToyItem(ImageName: "RagHouse",label: "첫째 돼지집", ModelName: "Cone"),
         ToyItem(ImageName: "TreeHouse",label: "둘째 돼지집", ModelName: "Cube"),

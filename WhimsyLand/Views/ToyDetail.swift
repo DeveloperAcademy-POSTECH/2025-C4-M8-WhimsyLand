@@ -11,13 +11,12 @@ struct ToyDetail: View {
     @Environment(ViewModel.self) private var model
     @Environment(ToyModel.self) private var toyModel
     @Environment(PlaceableItemStore.self) var placeableItemStore
+    @Environment(\.dismissWindow) var dismissWindow
     
-    @State private var isMonitoring = true
-    
-    @Binding var item: ToyItem?
     var body: some View {
         ZStack {
-            if let item = item {
+            if let item = toyModel.selectedItem {
+                
                 VStack(alignment: .leading, spacing: 20) {
                     Text(item.module?.name ?? "")
                         .font(.pretendard(.bold,size: 34))
@@ -33,6 +32,7 @@ struct ToyDetail: View {
                                 model.mixedImmersiveState.placementManager?.selectObject(first)
                                 print("👉 \(first.descriptor.fileName)를 선택함")
                             }
+                            dismissWindow(id: "Toy")
                         }
                         .buttonStyle(.bordered)
                         .disabled(model.currentImmersiveMode != .mixed)
@@ -54,8 +54,10 @@ struct ToyDetail: View {
                 .glassBackgroundEffect()
                 .cornerRadius(46)
                 
-                item.module?.detailView
+                Toy(modelName: item.ModelName)
             }
+        }.onDisappear{
+            toyModel.isSecondaryWindowShown = false
         }
     }
 
@@ -75,11 +77,5 @@ struct ToyDetail: View {
             .background(.ultraThinMaterial)
             .cornerRadius(24)
         }
-    }
-}
-extension ToyModule {
-    @ViewBuilder
-    fileprivate var detailView: some View {
-        Toy()
     }
 }
