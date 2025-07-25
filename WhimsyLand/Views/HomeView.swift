@@ -26,7 +26,7 @@ struct HomeView: View {
     // TODO : extension으로 가능 ?
     private var frameWidth: CGFloat {
         switch currentSize {
-        case .small: return 258
+        case .small: return 274
         case .medium: return 1067
         case .large: return 1020
         }
@@ -35,7 +35,7 @@ struct HomeView: View {
     // TODO : extension으로 가능 ?
     private var frameHeight: CGFloat {
         switch currentSize {
-        case .small: return 435
+        case .small: return 439
         case .medium: return 353
         case .large: return 678
         }
@@ -58,8 +58,7 @@ struct HomeView: View {
                                 }){
                                     Text("아이템 배치하기")
                                         .font(.pretendard(.semibold, size: 24))
-                                        .padding(.horizontal, 24)
-                                }
+                                }.frame(width: 150, height: 44)
                                 
                                 Button(action: {
                                     currentSize = .medium

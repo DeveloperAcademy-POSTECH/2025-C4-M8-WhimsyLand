@@ -58,10 +58,15 @@ struct ListView: View {
                 ], spacing: 30) {
                     // 아이템을 3 x 3 리스트 형태
                     ForEach(toyModel.items) { item in
-                        ToyCard(imageName: item.ImageName, label: item.label) {
-                            placeableItemStore.selectedFileName = item.ModelName
-                            openWindow(id: "Toy", value: item)
-                        }
+                            ToyCard(imageName: item.ImageName, label: item.label) {
+                                placeableItemStore.selectedFileName = item.ModelName
+                                toyModel.selectedItem = item
+                            
+                                if !toyModel.isSecondaryWindowShown {
+                                    openWindow(id: "Toy")
+                                toyModel.isSecondaryWindowShown = true
+                                }
+                            }
                     }
                 }
                 .padding(.horizontal, 40)
