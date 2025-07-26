@@ -37,6 +37,8 @@ struct ToyDetail: View {
                         .buttonStyle(.bordered)
                         .disabled(model.currentImmersiveMode != .mixed)
                         
+                        EnterFullButton(item: item)
+                            .environment(model)
                     }
                     .frame(maxWidth: 400, alignment: .leading)
                     

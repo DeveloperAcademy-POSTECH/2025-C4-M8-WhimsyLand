@@ -18,6 +18,7 @@ struct HomeView: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) private var model
     @Environment(PlaceableItemStore.self) var placeableItemStore
+    @Environment(\.scenePhase) private var scenePhase
     
     @State private var isDetailActive = false
     @State private var currentSize: FrameSize = .medium
@@ -127,6 +128,13 @@ struct HomeView: View {
         .onChange(of: isDetailActive) {
             if !isDetailActive {
                 model.mixedImmersiveState.mixedImmersiveMode = .viewing
+            }
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase != .active {
+                Task {
+                    model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
+                }
             }
         }
     }

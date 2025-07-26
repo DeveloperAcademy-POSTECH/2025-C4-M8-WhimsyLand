@@ -17,13 +17,12 @@ enum ImmersiveMode {
 @MainActor
 @Observable
 class ViewModel {
-    // MARK: - Windows
+    // MARK: - Window
     let HomeViewID = "HomeView"
     let ToyDetailViewID = "Toy"
     
     // MARK: - immersive
-    let mixedImmersiveID = "MixedImmersive"
-    let fullImmersiveID = "FullImmersive"
+    let ImmersiveId = "Immersive"
     
     enum ImmersiveSpaceState {
         case closed
@@ -33,8 +32,9 @@ class ViewModel {
     
     var immersiveSpaceState = ImmersiveSpaceState.closed
     var currentImmersiveMode: ImmersiveMode = .none
-    var mixedImmersiveState = MixedImmersiveState()
+    var immersionStyle: ImmersionStyle = .mixed
     
+    var mixedImmersiveState = MixedImmersiveState()
     var extractedObject: String? = nil
     
     // MARK: - Navigation
@@ -42,55 +42,33 @@ class ViewModel {
     
     // MARK: - threeLittlePigs
     var isShowBrickHouse = false
-
+    
     func switchToImmersiveMode(
-        _ mode: ImmersiveMode,
-        open: @escaping (_ id: String) async -> OpenImmersiveSpaceAction.Result,
-        dismiss: @escaping () async -> Void
+        _ mode: ImmersiveMode
     ) async {
-        guard immersiveSpaceState != .inTransition else { return }
-        immersiveSpaceState = .inTransition
+        if currentImmersiveMode == mode { return }
         
-        // 1. 기존 immersiveSpace 닫기
-        if immersiveSpaceState == .open {
-            await dismiss()
-            immersiveSpaceState = .closed
-        }
-        
-        // 2. 새로운 immersiveSpace 열기
-        let idToOpen: String
+        currentImmersiveMode = mode
         switch mode {
-        case .mixed:
-            idToOpen = mixedImmersiveID
+        case .mixed: immersionStyle = .mixed
         case .full:
-            idToOpen = fullImmersiveID
-        case .none:
-            currentImmersiveMode = .none
-            immersiveSpaceState = .closed
-            return
-        }
-        
-        let result = await open(idToOpen)
-        switch result {
-        case .opened:
-            immersiveSpaceState = .open
-            currentImmersiveMode = mode
-        default:
-            immersiveSpaceState = .closed
-            currentImmersiveMode = .none
+            immersionStyle = .full
+            mixedImmersiveState.didLeaveMixedImmersiveSpace()
+        case .none: break
         }
     }
     
     // App이 갑자기 종료되었을 때, immersive 상태를 관리하는 함수
     func handleAppDidDeactivate(dismiss: @escaping () async -> Void) {
+        print("앱 종료 함수 호출됨")
         guard immersiveSpaceState == .open
         else { return }
-
+        
         Task {
             await dismiss()
             immersiveSpaceState = .closed
             
-            if currentImmersiveMode == .mixed {
+            if currentImmersiveMode != .none {
                 mixedImmersiveState.didLeaveMixedImmersiveSpace()
             }
             

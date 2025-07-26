@@ -55,16 +55,20 @@ struct WhimsyLandApp: App {
             return WindowPlacement(.trailing(contentWindow))
         }
         
-        ImmersiveSpace(id: model.mixedImmersiveID) {
-            ObjectPlacementSwitcherView(mixedImmersiveState: model.mixedImmersiveState, placeableItemStore: placeableItemStore)
+        ImmersiveSpace(id: model.ImmersiveId) {
+            if model.currentImmersiveMode == .full {
+                FullImmersiveView()
+                    .environment(model)
+            } else {
+                // .mixed 또는 다른 경우 모두 ObjectPlacementSwitcherView 표시
+                ObjectPlacementSwitcherView(
+                    mixedImmersiveState: model.mixedImmersiveState,
+                    placeableItemStore: placeableItemStore
+                )
                 .environment(model)
+            }
         }
-        .immersionStyle(selection: .constant(.mixed), in: .mixed)
-        
-        ImmersiveSpace(id: model.fullImmersiveID) {
-            FullImmersiveView()
-        }
-        .immersionStyle(selection: .constant(.full), in: .full)
+        .immersionStyle(selection: $model.immersionStyle, in: .mixed, .full)
         
         // 앱의 상태에 따라 관리하는 부분
         .onChange(of: scenePhase, initial: true) {
@@ -72,13 +76,14 @@ struct WhimsyLandApp: App {
             if scenePhase == .active {
                 Task {
                     await model.mixedImmersiveState.queryWorldSensingAuthorization()
-                    
                     if model.mixedImmersiveState.canEnterMixedImmersiveSpace {
-                        await model.switchToImmersiveMode(
-                            .mixed,
-                            open: { id in await openImmersiveSpace(id: id) },
-                            dismiss: dismissImmersiveSpace.callAsFunction
-                        )
+                        await model.switchToImmersiveMode(.mixed)
+                        if model.immersiveSpaceState == .closed {
+                            let result = await openImmersiveSpace(id: model.ImmersiveId)
+                            if case .opened = result {
+                                model.immersiveSpaceState = .open
+                            }
+                        }
                     } else {
                         print("⚠️ Mixed Immersive 공간 진입 보류: 권한 미획득 or 미지원")
                     }

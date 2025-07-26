@@ -10,7 +10,6 @@ import SwiftUI
 struct FullInfoCard: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    
     @Environment(ViewModel.self) var model
     @Environment(PlacementManager.self) var manager
     
@@ -30,13 +29,12 @@ struct FullInfoCard: View {
                 .lineSpacing(4)
             HStack(spacing: 16) {
                 Button {
+                  if model.immersiveSpaceState != .inTransition {
                     Task {
-                        await model.switchToImmersiveMode(
-                            .full,
-                            open: { id in await openImmersiveSpace(id: id) },
-                            dismiss: dismissImmersiveSpace.callAsFunction
-                        )
+                        await model.switchToImmersiveMode(.full)
                     }
+                  }
+              
                 } label: {
                     Text("시작하기")
                         .font(.pretendard(.semibold, size: 24))

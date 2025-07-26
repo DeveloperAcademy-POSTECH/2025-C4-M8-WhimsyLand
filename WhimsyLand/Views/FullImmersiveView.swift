@@ -11,6 +11,7 @@ import RealityKitContent
 
 struct FullImmersiveView: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(ViewModel.self) private var model
     
     var body: some View {
         RealityView { content in
@@ -44,7 +45,11 @@ struct FullImmersiveView: View {
         .overlay(alignment: .topTrailing) {
             Button {
                 Task {
-                    await dismissImmersiveSpace()
+                    if model.immersiveSpaceState != .inTransition {
+                        Task {
+                            await model.switchToImmersiveMode(.mixed)
+                        }
+                    }
                 }
             } label: {
                 Text("나가기")
