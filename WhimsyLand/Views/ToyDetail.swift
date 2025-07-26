@@ -56,7 +56,7 @@ struct ToyDetail: View {
                 .glassBackgroundEffect()
                 .cornerRadius(46)
                 
-                Toy(modelName: item.ModelName)
+                ToyPreview(modelName: item.ModelName)
             }
         }.onDisappear{
             toyModel.isSecondaryWindowShown = false
