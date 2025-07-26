@@ -10,10 +10,8 @@ import SwiftUI
 struct FullInfoCard: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-
     @Environment(ViewModel.self) var model
     @Environment(PlacementManager.self) var manager
-//    let current = manager.placementState.infoCardPresentedObject
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -22,13 +20,13 @@ struct FullInfoCard: View {
             Text("셋째 돼지는 늑대의 침입에 대비해 튼튼히 지었어요.\n방 안을 천천히 탐색해보며 즐겨보세요.\n솥에 불을 붙여 늑대를 막을 준비를 해주세요!")
                 .font(.body)
                 .multilineTextAlignment(.leading)
+            
+            //EnterFullButton이 들어갈 부분
             Button("시작하기") {
-                Task{
-                    await model.switchToImmersiveMode(
-                        .full,
-                        open: { id in await openImmersiveSpace(id: id) },
-                        dismiss: dismissImmersiveSpace.callAsFunction
-                    )
+                if model.immersiveSpaceState != .inTransition {
+                    Task {
+                        await model.switchToImmersiveMode(.full)
+                    }
                 }
             }
             .buttonStyle(.bordered)
