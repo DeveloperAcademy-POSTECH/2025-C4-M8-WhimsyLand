@@ -306,13 +306,6 @@ final class PlacementManager {
                 deleteButton.scale = 1 / objectToHighlight.scale
             }
         case .viewing:
-            //            if let fullInfoCard, placementState.infoCardPresentedObject == objectToHighlight, fullInfoCard.parent != objectToHighlight.uiOrigin {
-            //                objectToHighlight.uiOrigin.addChild(fullInfoCard)
-            //                fullInfoCard.scale = 1 / objectToHighlight.scale
-            //
-            //                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
-            //                infoCardAlreadyOriented = true
-            //            }
             if let fullInfoCard,
                placementState.infoCardPresentedObject == objectToHighlight,
                fullInfoCard.parent != objectToHighlight {
