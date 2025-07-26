@@ -17,7 +17,7 @@ private let targetSizeInMeters: Float = 0.26
 //private let modelScale: CGFloat = 0.7
 //private let modelOrientation: SIMD3<Double> = [0, 0, 0]
 
-struct Toy: View {
+struct ToyPreview: View {
  
     var modelName: String = ""
     @State private var loadedEntity: Entity?

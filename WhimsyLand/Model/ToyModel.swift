@@ -16,6 +16,9 @@ struct ToyItem: Identifiable, Codable, Hashable {
     var module: ToyModule? {
         ToyModule(rawValue: ImageName)
     }
+    var fullInfoCardContent: FullInfoCardContent? {
+        FullInfoCardContent(rawValue: ImageName)
+    }
 }
 
 @MainActor
@@ -25,7 +28,7 @@ class ToyModel {
     var selectedItem: ToyItem? = nil
     var isSecondaryWindowShown: Bool = false
     
-  var items: [ToyItem] = [
+    var items: [ToyItem] = [
         ToyItem(ImageName: "RagHouse",label: "첫째 돼지집", ModelName: "Cone"),
         ToyItem(ImageName: "TreeHouse",label: "둘째 돼지집", ModelName: "Cube"),
         ToyItem(ImageName: "BrickHouse",label: "셋째 돼지집", ModelName: "Cylinder"),
