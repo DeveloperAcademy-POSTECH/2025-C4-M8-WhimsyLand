@@ -20,6 +20,7 @@ struct FullInfoCard: View {
     
     var body: some View {
         VStack(alignment: .center) {
+            
             Text(item.module?.name ?? "")
                 .font(.pretendard(.semibold, size: 42))
             Text(item.fullInfoCardContent?.description ?? "")
@@ -45,7 +46,7 @@ struct FullInfoCard: View {
                 .padding(.top, 34)
 
                 Button(action: {
-                    manager.placementState.infoCardPresentedObject = nil
+                    manager.placementState.infoCardPresentedToy = nil
                     manager.infoCardAlreadyOriented = false
                 }) {
                     Image(systemName: "xmark")

@@ -57,11 +57,11 @@ class PlaneAnchorHandler {
         }
         
         if let meshResource {
-            // Make this plane occlude virtual objects behind it.
+            // Make this plane occlude virtual toys behind it.
             entity.components.set(ModelComponent(mesh: meshResource, materials: [OcclusionMaterial()]))
         }
         
-        // Generate a collision shape for the plane (for object placement and physics).
+        // Generate a collision shape for the plane (for toy placement and physics).
         var shape: ShapeResource? = nil
         do {
             let vertices = anchor.geometry.meshVertices.asSIMD3(ofType: Float.self)
@@ -80,7 +80,7 @@ class PlaneAnchorHandler {
             
             entity.components.set(CollisionComponent(shapes: [shape], isStatic: true,
                                                      filter: CollisionFilter(group: collisionGroup, mask: .all)))
-            // The plane needs to be a static physics body so that objects come to rest on the plane.
+            // The plane needs to be a static physics body so that toys come to rest on the plane.
             let physicsMaterial = PhysicsMaterialResource.generate()
             let physics = PhysicsBodyComponent(shapes: [shape], mass: 0.0, material: physicsMaterial, mode: .static)
             entity.components.set(physics)

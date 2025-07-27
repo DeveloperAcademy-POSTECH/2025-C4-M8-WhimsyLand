@@ -21,9 +21,9 @@ final class PlacementManager {
     
     var mixedImmersiveState: MixedImmersiveState? = nil
     
-    var placeableItemStore: PlaceableItemStore? = nil {
+    var placeableToyStore: PlaceableToyStore? = nil {
         didSet {
-            persistenceManager.placeableObjectsByFileName = placeableItemStore?.placeableObjectsByFileName ?? [:]
+            persistenceManager.placeableToysByFileName = placeableToyStore?.placeableToysByFileName ?? [:]
         }
     }
     
@@ -44,11 +44,11 @@ final class PlacementManager {
     weak var deleteButton: Entity? = nil
     weak var fullInfoCard: Entity? = nil
     
-    // 현실 평면과 오브젝트 사이 간격 조정
-    static private let placedObjectsOffsetOnPlanes: Float = 0.01
+    // 현실 평면과 Toy 사이 간격 조정
+    static private let placedToysOffsetOnPlanes: Float = 0.01
     
     // 근처에 있는 평면으로 자동 스냅되는 간격 조정
-    static private let snapToPlaneDistanceForDraggedObjects: Float = 0.04
+    static private let snapToPlaneDistanceForDraggedToys: Float = 0.04
     
     // info Card 고정
     var infoCardAlreadyOriented: Bool = false
@@ -66,7 +66,7 @@ final class PlacementManager {
         // 월드 앵커 불러오기
         planeAnchorHandler = PlaneAnchorHandler(rootEntity: root)
         persistenceManager = PersistenceManager(worldTracking: worldTracking, rootEntity: root)
-        persistenceManager.loadPersistedObjects()
+        persistenceManager.loadPersistedToys()
         
         rootEntity.addChild(placementLocation)
         
@@ -78,9 +78,9 @@ final class PlacementManager {
         raycastOrigin.orientation = simd_quatf(angle: -raycastDownwardAngle, axis: [1.0, 0.0, 0.0])
     }
     
-    // 배치된 오브젝트 저장 함수
-    func saveWorldAnchorsObjectsMapToDisk() {
-        persistenceManager.saveWorldAnchorsObjectsMapToDisk()
+    // 배치된 Toy 저장 함수
+    func saveWorldAnchorsToysMapToDisk() {
+        persistenceManager.saveWorldAnchorsToysMapToDisk()
     }
     
     // 배치 불가 안내 메시지를 띄우는 함수
@@ -91,10 +91,10 @@ final class PlacementManager {
         tooltip.position = [0.0, 0.05, 0.1]
     }
     
-    // 오브젝트 삭제 함수
-    func removeHighlightedObject() async {
-        if let highlightedObject = placementState.highlightedObject {
-            await persistenceManager.removeObject(highlightedObject)
+    // Toy 삭제 함수
+    func removeHighlightedToy() async {
+        if let highlightedToy = placementState.highlightedToy {
+            await persistenceManager.removeToy(highlightedToy)
         }
     }
     
@@ -108,24 +108,24 @@ final class PlacementManager {
             return
         }
         
-        if let firstFileName = placeableItemStore?.modelDescriptors.first?.fileName, let object = placeableItemStore?.placeableObjectsByFileName[firstFileName] {
-            selectObject(object)
+        if let firstFileName = placeableToyStore?.modelDescriptors.first?.fileName, let toy = placeableToyStore?.placeableToysByFileName[firstFileName] {
+            selectToy(toy)
         }
     }
     
-    // MARK: 오브젝트 충돌 관리
+    // MARK: Toy 충돌 관리
     @MainActor
     func collisionBegan(_ event: CollisionEvents.Began) {
-        guard let selectedObject = placementState.selectedObject else { return }
-        guard selectedObject.matchesCollisionEvent(event: event) else { return }
+        guard let selectedToy = placementState.selectedToy else { return }
+        guard selectedToy.matchesCollisionEvent(event: event) else { return }
         
         placementState.activeCollisions += 1
     }
     
     @MainActor
     func collisionEnded(_ event: CollisionEvents.Ended) {
-        guard let selectedObject = placementState.selectedObject else { return }
-        guard selectedObject.matchesCollisionEvent(event: event) else { return }
+        guard let selectedToy = placementState.selectedToy else { return }
+        guard selectedToy.matchesCollisionEvent(event: event) else { return }
         guard placementState.activeCollisions > 0 else {
             print("Received a collision ended event without a corresponding collision start event.")
             return
@@ -134,26 +134,26 @@ final class PlacementManager {
         placementState.activeCollisions -= 1
     }
     
-    // MARK: 오브젝트 선택 관리
+    // MARK: Toy 선택 관리
     @MainActor
-    func deselectCurrentObject() {
-        if let oldSelection = placementState.selectedObject {
+    func deselectCurrentToy() {
+        if let oldSelection = placementState.selectedToy {
             // Remove the preview entity from the scene.
             placementLocation.removeChild(oldSelection.previewEntity)
-            placementState.selectedObject = nil
-            placeableItemStore?.selectedFileName = nil
+            placementState.selectedToy = nil
+            placeableToyStore?.selectedFileName = nil
         }
     }
     
     @MainActor
-    func selectObject(_ object: PlaceableObject?) {
-        deselectCurrentObject()
+    func selectToy(_ toy: PlaceableToy?) {
+        deselectCurrentToy()
         
-        placementState.selectedObject = object
-        placeableItemStore?.selectedFileName = object?.descriptor.fileName
+        placementState.selectedToy = toy
+        placeableToyStore?.selectedFileName = toy?.descriptor.fileName
         
-        if let object {
-            placementLocation.addChild(object.previewEntity)
+        if let toy {
+            placementLocation.addChild(toy.previewEntity)
         }
     }
     
@@ -180,12 +180,12 @@ final class PlacementManager {
         
         placementState.deviceAnchorPresent = deviceAnchor != nil
         placementState.planeAnchorsPresent = !planeAnchorHandler.planeAnchors.isEmpty
-        placementState.selectedObject?.previewEntity.isEnabled = placementState.shouldShowPreview
+        placementState.selectedToy?.previewEntity.isEnabled = placementState.shouldShowPreview
         
         guard let deviceAnchor, deviceAnchor.isTracked else { return }
         
         await updateUserFacingUIOrientations(deviceAnchor)
-        await checkWhichObjectDeviceIsPointingAt(deviceAnchor)
+        await checkWhichToyDeviceIsPointingAt(deviceAnchor)
         await updatePlacementLocation(deviceAnchor)
     }
     
@@ -193,7 +193,7 @@ final class PlacementManager {
     @MainActor
     private func updateUserFacingUIOrientations(_ deviceAnchor: DeviceAnchor) async {
         //1. UI가 사용자를 바라보도록 조정
-        if let uiOrigin = placementState.highlightedObject?.uiOrigin {
+        if let uiOrigin = placementState.highlightedToy?.uiOrigin {
             // Set the UI to face the user (on the y-axis only).
             uiOrigin.look(at: deviceAnchor.originFromAnchorTransform.translation)
             let uiRotationOnYAxis = uiOrigin.transformMatrix(relativeTo: nil).gravityAligned.rotation
@@ -208,7 +208,7 @@ final class PlacementManager {
         }
     }
     
-    // MARK: 오브젝트 배치 미리보기
+    // MARK: Toy 배치 미리보기
     @MainActor
     private func updatePlacementLocation(_ deviceAnchor: DeviceAnchor) async {
         deviceLocation.transform = Transform(matrix: deviceAnchor.originFromAnchorTransform)
@@ -236,7 +236,7 @@ final class PlacementManager {
             if result.entity.components[CollisionComponent.self]?.filter.group != PlaneAnchor.verticalCollisionGroup {
                 // If the raycast hit a horizontal plane, use that result with a small, fixed offset.
                 originFromPointOnPlaneTransform = originFromUprightDeviceAnchorTransform
-                originFromPointOnPlaneTransform?.translation = result.position + [0.0, PlacementManager.placedObjectsOffsetOnPlanes, 0.0]
+                originFromPointOnPlaneTransform?.translation = result.position + [0.0, PlacementManager.placedToysOffsetOnPlanes, 0.0]
             }
         }
         
@@ -256,44 +256,44 @@ final class PlacementManager {
         }
     }
     
-    // MARK: 바라보고 있는 오브젝트 하이라이트
+    // MARK: 바라보고 있는 Toy 하이라이트
     @MainActor
-    private func checkWhichObjectDeviceIsPointingAt(_ deviceAnchor: DeviceAnchor) async {
+    private func checkWhichToyDeviceIsPointingAt(_ deviceAnchor: DeviceAnchor) async {
         let origin: SIMD3<Float> = raycastOrigin.transformMatrix(relativeTo: nil).translation
         let direction: SIMD3<Float> = -raycastOrigin.transformMatrix(relativeTo: nil).zAxis
-        let collisionMask = PlacedObject.collisionGroup
+        let collisionMask = PlacedToy.collisionGroup
         
         if let result = rootEntity.scene?.raycast(origin: origin, direction: direction, query: .nearest, mask: collisionMask).first {
             
-            if let pointedAtObject = persistenceManager.object(for: result.entity) {
-                setHighlightedObject(pointedAtObject)
+            if let pointedAtToy = persistenceManager.toy(for: result.entity) {
+                setHighlightedToy(pointedAtToy)
             } else {
-                setHighlightedObject(nil)
+                setHighlightedToy(nil)
             }
         } else {
-            setHighlightedObject(nil)
+            setHighlightedToy(nil)
         }
     }
     
     @MainActor
-    func setHighlightedObject(_ objectToHighlight: PlacedObject?) {
-        guard placementState.highlightedObject != objectToHighlight else {
+    func setHighlightedToy(_ toyToHighlight: PlacedToy?) {
+        guard placementState.highlightedToy != toyToHighlight else {
             return
         }
         
-        if let oldHighlighted = placementState.highlightedObject {
+        if let oldHighlighted = placementState.highlightedToy {
             oldHighlighted.renderContent.components.remove(HoverEffectComponent.self)
         }
         
-        placementState.highlightedObject = objectToHighlight
+        placementState.highlightedToy = toyToHighlight
         
-        // 이전 오브젝트 하이라이트 해제
+        // 이전 Toy 하이라이트 해제
         deleteButton?.removeFromParent()
         
-        guard let objectToHighlight else { return }
+        guard let toyToHighlight else { return }
         
-        // Position and attach the UI to the newly highlighted object.
-        let extents = objectToHighlight.extents
+        // Position and attach the UI to the newly highlighted toy.
+        let extents = toyToHighlight.extents
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
         let topCenter: SIMD3<Float> = [0, extents.y * 2, 0]
         deleteButton?.position = topLeftCorner
@@ -302,23 +302,23 @@ final class PlacementManager {
         switch mixedImmersiveState?.mixedImmersiveMode {
         case .editing:
             if let deleteButton {
-                objectToHighlight.uiOrigin.addChild(deleteButton)
-                deleteButton.scale = 1 / objectToHighlight.scale
+                toyToHighlight.uiOrigin.addChild(deleteButton)
+                deleteButton.scale = 1 / toyToHighlight.scale
             }
         case .viewing:
-            //            if let fullInfoCard, placementState.infoCardPresentedObject == objectToHighlight, fullInfoCard.parent != objectToHighlight.uiOrigin {
-            //                objectToHighlight.uiOrigin.addChild(fullInfoCard)
-            //                fullInfoCard.scale = 1 / objectToHighlight.scale
+            //            if let fullInfoCard, placementState.infoCardPresentedToy == toyToHighlight, fullInfoCard.parent != toyToHighlight.uiOrigin {
+            //                toyToHighlight.uiOrigin.addChild(fullInfoCard)
+            //                fullInfoCard.scale = 1 / toyToHighlight.scale
             //
             //                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
             //                infoCardAlreadyOriented = true
             //            }
             if let fullInfoCard,
-               placementState.infoCardPresentedObject == objectToHighlight,
-               fullInfoCard.parent != objectToHighlight {
+               placementState.infoCardPresentedToy == toyToHighlight,
+               fullInfoCard.parent != toyToHighlight {
                 
-                objectToHighlight.addChild(fullInfoCard)
-                fullInfoCard.scale = 1 / objectToHighlight.scale
+                toyToHighlight.addChild(fullInfoCard)
+                fullInfoCard.scale = 1 / toyToHighlight.scale
                 fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
                 infoCardAlreadyOriented = true
             }
@@ -332,7 +332,7 @@ final class PlacementManager {
         )
         
         let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
-        objectToHighlight.components.set(hoverEffect)
+        toyToHighlight.components.set(hoverEffect)
     }
     
     func processPlaneDetectionUpdates() async {
@@ -341,71 +341,71 @@ final class PlacementManager {
         }
     }
     
-    // MARK: 오브젝트 배치 및 고정
+    // MARK: Toy 배치 및 고정
     @MainActor
-    func placeSelectedObject() {
-        // Ensure there’s a placeable object.
-        guard let objectToPlace = placementState.objectToPlace else { return }
+    func placeSelectedToy() {
+        // Ensure there’s a placeable toy.
+        guard let toyToPlace = placementState.toyToPlace else { return }
         
-        let object = objectToPlace.materialize()
-        object.position = placementLocation.position
-        object.orientation = placementLocation.orientation
+        let toy = toyToPlace.materialize()
+        toy.position = placementLocation.position
+        toy.orientation = placementLocation.orientation
         
         Task {
-            await persistenceManager.attachObjectToWorldAnchor(object)
+            await persistenceManager.attachToyToWorldAnchor(toy)
         }
-        placementState.userPlacedAnObject = true
+        placementState.userPlacedAToy = true
         
-        deselectCurrentObject()
+        deselectCurrentToy()
     }
     
     @MainActor
-    func checkIfAnchoredObjectsNeedToBeDetached() async {
-        // Check whether objects should be detached from their world anchor.
-        // This runs at 10 Hz to ensure that objects are quickly detached from their world anchor
+    func checkIfAnchoredToysNeedToBeDetached() async {
+        // Check whether toys should be detached from their world anchor.
+        // This runs at 10 Hz to ensure that toys are quickly detached from their world anchor
         // as soon as they are moved - otherwise a world anchor update could overwrite the
-        // object’s position.
-        await run(function: persistenceManager.checkIfAnchoredObjectsNeedToBeDetached, withFrequency: 10)
+        // toy’s position.
+        await run(function: persistenceManager.checkIfAnchoredToysNeedToBeDetached, withFrequency: 10)
     }
     
     @MainActor
-    func checkIfMovingObjectsCanBeAnchored() async {
-        // Check whether objects can be reanchored.
-        // This runs at 2 Hz - objects should be reanchored eventually but it’s not time critical.
-        await run(function: persistenceManager.checkIfMovingObjectsCanBeAnchored, withFrequency: 2)
+    func checkIfMovingToysCanBeAnchored() async {
+        // Check whether toys can be reanchored.
+        // This runs at 2 Hz - toys should be reanchored eventually but it’s not time critical.
+        await run(function: persistenceManager.checkIfMovingToysCanBeAnchored, withFrequency: 2)
     }
     
     // MARK: 드래그 처리 함수
     @MainActor
     func updateDrag(value: EntityTargetValue<DragGesture.Value>) {
-        if let currentDrag, currentDrag.draggedObject !== value.entity {
+        if let currentDrag, currentDrag.draggedToy !== value.entity {
             // Make sure any previous drag ends before starting a new one.
             print("A new drag started but the previous one never ended - ending that one now.")
             endDrag()
         }
         
-        // At the start of the drag gesture, remember which object is being manipulated.
+        // At the start of the drag gesture, remember which toy is being manipulated.
         if currentDrag == nil {
-            guard let object = persistenceManager.object(for: value.entity) else {
-                print("Unable to start drag - failed to identify the dragged object.")
+            guard let toy = persistenceManager.toy(for: value.entity) else {
+                print("Unable to start drag - failed to identify the dragged toy.")
                 return
             }
             
-            object.isBeingDragged = true
-            currentDrag = DragState(objectToDrag: object)
-            placementState.userDraggedAnObject = true
+            toy.isBeingDragged = true
+            currentDrag = DragState(toyToDrag: toy)
+            placementState.userDraggedAnToy = true
         }
         
-        // Update the dragged object’s position.
+        // Update the dragged toy’s position.
         if let currentDrag {
-            currentDrag.draggedObject.position = currentDrag.initialPosition + value.convert(value.translation3D, from: .local, to: rootEntity)
+            currentDrag.draggedToy.position = currentDrag.initialPosition + value.convert(value.translation3D, from: .local, to: rootEntity)
             
-            // If possible, snap the dragged object to a nearby horizontal plane.
-            let maxDistance = PlacementManager.snapToPlaneDistanceForDraggedObjects
-            if let projectedTransform = PlaneProjector.project(point: currentDrag.draggedObject.transform.matrix,
+            // If possible, snap the dragged toy to a nearby horizontal plane.
+            let maxDistance = PlacementManager.snapToPlaneDistanceForDraggedToys
+            if let projectedTransform = PlaneProjector.project(point: currentDrag.draggedToy.transform.matrix,
                                                                ontoHorizontalPlaneIn: planeAnchorHandler.planeAnchors,
                                                                withMaxDistance: maxDistance) {
-                currentDrag.draggedObject.position = projectedTransform.translation
+                currentDrag.draggedToy.position = projectedTransform.translation
             }
         }
     }
@@ -413,13 +413,13 @@ final class PlacementManager {
     @MainActor
     func endDrag() {
         guard let currentDrag else { return }
-        currentDrag.draggedObject.isBeingDragged = false
+        currentDrag.draggedToy.isBeingDragged = false
         self.currentDrag = nil
     }
     
     @MainActor
-    func placedObject(for entity: Entity) -> PlacedObject? {
-        return persistenceManager.placedObject(for: entity)
+    func placedToy(for entity: Entity) -> PlacedToy? {
+        return persistenceManager.placedToy(for: entity)
     }
 }
 
