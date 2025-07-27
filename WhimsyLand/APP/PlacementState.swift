@@ -35,7 +35,7 @@ class PlacementState {
         return selectedToy != nil && shouldShowPreview && planeToProjectOnFound && !collisionDetected && !dragInProgress
     }
     
-    var infoCardPresentedObjectFileName: String {
-        return infoCardPresentedObject?.fileName ?? ""
+    var infoCardPresentedToyFileName: String {
+        return infoCardPresentedToy?.fileName ?? ""
     }
 }
