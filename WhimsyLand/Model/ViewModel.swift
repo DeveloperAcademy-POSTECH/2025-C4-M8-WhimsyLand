@@ -42,7 +42,7 @@ class ViewModel {
     var immersionStyle: ImmersionStyle = .mixed
     
     var mixedImmersiveState = MixedImmersiveState()
-    var extractedObject: String? = nil
+    var extractedToy: String? = nil
     var fullImmersiveContent: FullImmersiveContent = .none
     
     // MARK: - Navigation

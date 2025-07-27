@@ -4,7 +4,7 @@
 //
 //  Created by 제하맥프로 on 7/10/25.
 //
-//  앱이 몰입형 AR 환경에서 어떤 상태에 있고 사용자가 어떤 오브젝트를 사용할 수 있으며,
+//  앱이 몰입형 AR 환경에서 어떤 상태에 있고 사용자가 어떤 Toy를 사용할 수 있으며,
 //  센서/권한/에러 상태가 어떤지 이 모든 걸 조율해주는 클래스
 
 import Foundation
@@ -29,7 +29,7 @@ class MixedImmersiveState {
 
     func didLeaveMixedImmersiveSpace() {
         if let placementManager {
-            placementManager.saveWorldAnchorsObjectsMapToDisk()
+            placementManager.saveWorldAnchorsToysMapToDisk()
             arkitSession.stop()
         }
         placementManager = nil

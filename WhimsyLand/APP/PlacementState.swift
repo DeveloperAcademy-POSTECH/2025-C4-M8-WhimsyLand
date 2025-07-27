@@ -12,27 +12,27 @@ import RealityKit
 @Observable
 class PlacementState {
 
-    var selectedObject: PlaceableObject? = nil
-    var infoCardPresentedObject: PlacedObject? = nil
-    var highlightedObject: PlacedObject? = nil
-    var objectToPlace: PlaceableObject? { isPlacementPossible ? selectedObject : nil }
-    var userDraggedAnObject = false
+    var selectedToy: PlaceableToy? = nil
+    var infoCardPresentedToy: PlacedToy? = nil
+    var highlightedToy: PlacedToy? = nil
+    var toyToPlace: PlaceableToy? { isPlacementPossible ? selectedToy : nil }
+    var userDraggedAnToy = false
 
     var planeToProjectOnFound = false
 
     var activeCollisions = 0
     var collisionDetected: Bool { activeCollisions > 0 }
     var dragInProgress = false
-    var userPlacedAnObject = false
+    var userPlacedAToy = false
     var deviceAnchorPresent = false
     var planeAnchorsPresent = false
 
     var shouldShowPreview: Bool {
-        return deviceAnchorPresent && planeAnchorsPresent && !dragInProgress && highlightedObject == nil
+        return deviceAnchorPresent && planeAnchorsPresent && !dragInProgress && highlightedToy == nil
     }
 
     var isPlacementPossible: Bool {
-        return selectedObject != nil && shouldShowPreview && planeToProjectOnFound && !collisionDetected && !dragInProgress
+        return selectedToy != nil && shouldShowPreview && planeToProjectOnFound && !collisionDetected && !dragInProgress
     }
     
     var infoCardPresentedObjectFileName: String {

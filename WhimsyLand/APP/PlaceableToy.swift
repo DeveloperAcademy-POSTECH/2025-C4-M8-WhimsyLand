@@ -1,5 +1,5 @@
 //
-//  PlaceableObject.swift
+//  PlaceableToy.swift
 //  WhimsyLand
 //
 //  Created by changhyen yun on 7/9/25.
@@ -27,9 +27,9 @@ private enum PreviewMaterials {
     static let inactive = UnlitMaterial(color: .gray.withAlphaComponent(0.1))
 }
 
-// MARK: - PlaceableObject
+// MARK: - PlaceableToy
 @MainActor
-class PlaceableObject {
+class PlaceableToy {
     let descriptor: ModelDescriptor
     var previewEntity: Entity
     private var renderContent: ModelEntity
@@ -53,9 +53,9 @@ class PlaceableObject {
         }
     }
 
-    func materialize() -> PlacedObject {
+    func materialize() -> PlacedToy {
         let shapes = previewEntity.components[CollisionComponent.self]!.shapes
-        return PlacedObject(descriptor: descriptor, renderContentToClone: renderContent, shapes: shapes)
+        return PlacedToy(descriptor: descriptor, renderContentToClone: renderContent, shapes: shapes)
     }
 
     func matchesCollisionEvent(event: CollisionEvents.Began) -> Bool {
@@ -72,8 +72,8 @@ class PlaceableObject {
 }
 
 
-// MARK: - PlacedObject
-class PlacedObject: Entity {
+// MARK: - PlacedToy
+class PlacedToy: Entity {
     let fileName: String
     
     // 객체를 표시하기 위한 3D model
@@ -122,7 +122,7 @@ class PlacedObject: Entity {
         let physicsBodyComponent = PhysicsBodyComponent(shapes: shapes, mass: 1.0, material: physicsMaterial, mode: .static)
         components.set(physicsBodyComponent)
         components.set(CollisionComponent(shapes: shapes, isStatic: false,
-                                          filter: CollisionFilter(group: PlacedObject.collisionGroup, mask: .all)))
+                                          filter: CollisionFilter(group: PlacedToy.collisionGroup, mask: .all)))
         addChild(renderContent)
         addChild(uiOrigin)
         uiOrigin.position.y = extents.y / 2 // 객체 중앙 UI 원점 위치

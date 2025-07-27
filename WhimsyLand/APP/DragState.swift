@@ -9,13 +9,13 @@
 import Foundation
 
 struct DragState {
-    var draggedObject: PlacedObject
+    var draggedToy: PlacedToy
     var initialPosition: SIMD3<Float>
     
     @MainActor
-    init(objectToDrag: PlacedObject) {
-        draggedObject = objectToDrag
-        initialPosition = objectToDrag.position
+    init(toyToDrag: PlacedToy) {
+        draggedToy = toyToDrag
+        initialPosition = toyToDrag.position
     }
 }
 

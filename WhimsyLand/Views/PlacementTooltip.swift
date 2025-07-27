@@ -24,7 +24,7 @@ struct PlacementTooltip: View {
         if placementState.collisionDetected {
             return "공간이 비어있지 않아요!"
         }
-        if !placementState.userPlacedAnObject {
+        if !placementState.userPlacedAToy {
             return "탭하여 배치하세요"
         }
         return nil

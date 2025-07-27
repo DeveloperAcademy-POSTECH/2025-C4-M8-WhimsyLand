@@ -10,7 +10,7 @@ import SwiftUI
 struct ToyDetail: View {
     @Environment(ViewModel.self) private var model
     @Environment(ToyModel.self) private var toyModel
-    @Environment(PlaceableItemStore.self) var placeableItemStore
+    @Environment(PlaceableToyStore.self) var placeableToyStore
     @Environment(\.dismissWindow) var dismissWindow
     
     var body: some View {
@@ -27,9 +27,9 @@ struct ToyDetail: View {
                         InfoCard(title: "주인", value: item.module?.owner ?? "")
                         InfoCard(title: "재료", value: item.module?.material ?? "")
                         Button("꺼내서 조작하기") {
-                            // 테스트용: 첫 번째 PlaceableObject 가져오기
-                            if let first = placeableItemStore.placeableObjectsByFileName.values.first {
-                                model.mixedImmersiveState.placementManager?.selectObject(first)
+                            // 테스트용: 첫 번째 PlaceableToy 가져오기
+                            if let first = placeableToyStore.placeableToysByFileName.values.first {
+                                model.mixedImmersiveState.placementManager?.selectToy(first)
                                 print("👉 \(first.descriptor.fileName)를 선택함")
                             }
                             dismissWindow(id: model.ToyDetailViewID)
@@ -37,7 +37,7 @@ struct ToyDetail: View {
                         .buttonStyle(.bordered)
                         .disabled(model.currentImmersiveMode != .mixed)
                         
-                        EnterFullButton(item: item)
+                        EnterFullButton(toyItem: item)
                             .environment(model)
                     }
                     .frame(maxWidth: 400, alignment: .leading)

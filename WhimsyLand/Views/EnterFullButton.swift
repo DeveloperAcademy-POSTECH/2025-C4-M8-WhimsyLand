@@ -9,7 +9,7 @@ import SwiftUI
 struct EnterFullButton: View {
     @Environment(ViewModel.self) private var model
 
-    var item: ToyItem
+    var toyItem: ToyItem
     
     var body : some View {
         Button("시작하기") {
@@ -17,7 +17,7 @@ struct EnterFullButton: View {
                 Task {
                     await model.switchToImmersiveMode(.full)
                     
-                    if let fullInfoCardContent = item.fullInfoCardContent?.fullImmersiveContent {
+                    if let fullInfoCardContent = toyItem.fullInfoCardContent?.fullImmersiveContent {
                         model.switchFullImmersiveContent(fullInfoCardContent)
                     }
                     else {
@@ -28,6 +28,6 @@ struct EnterFullButton: View {
         }
         .buttonStyle(.bordered)
         .padding(.top, 34)
-        .disabled(item.fullInfoCardContent == nil)
+        .disabled(toyItem.fullInfoCardContent == nil)
     }
 }

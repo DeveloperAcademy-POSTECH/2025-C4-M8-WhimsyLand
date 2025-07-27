@@ -1,5 +1,5 @@
 //
-//  ObjectPlacementEditView.swift
+//  ToyPlacementEditView.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/11/25.
@@ -9,9 +9,9 @@ import RealityKit
 import SwiftUI
 
 @MainActor
-struct ObjectPlacementEditView: View {
+struct ToyPlacementEditView: View {
     var mixedImmersiveState: MixedImmersiveState
-    var placeableItemStore: PlaceableItemStore
+    var placeableToyStore: PlaceableToyStore
     
     @Environment(PlacementManager.self) var placementManager
     
@@ -27,7 +27,7 @@ struct ObjectPlacementEditView: View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
             placementManager.mixedImmersiveState = mixedImmersiveState
-            placementManager.placeableItemStore = placeableItemStore
+            placementManager.placeableToyStore = placeableToyStore
             
             if let placementTooltipAttachment = attachments.entity(for: Attachments.placementTooltip) {
                 placementManager.addPlacementTooltip(placementTooltipAttachment)
@@ -52,11 +52,11 @@ struct ObjectPlacementEditView: View {
             let placementState = placementManager.placementState
             
             if let placementTooltip = attachments.entity(for: Attachments.placementTooltip) {
-                placementTooltip.isEnabled = (placementState.selectedObject != nil && placementState.shouldShowPreview)
+                placementTooltip.isEnabled = (placementState.selectedToy != nil && placementState.shouldShowPreview)
             }
             
-            if let selectedObject = placementState.selectedObject {
-                selectedObject.isPreviewActive = placementState.isPlacementPossible
+            if let selectedToy = placementState.selectedToy {
+                selectedToy.isPreviewActive = placementState.isPlacementPossible
             }
         } attachments: {
             Attachment(id: Attachments.placementTooltip) {
@@ -66,7 +66,7 @@ struct ObjectPlacementEditView: View {
             Attachment(id: Attachments.deleteButton) {
                 DeleteButton {
                     Task {
-                        await placementManager.removeHighlightedObject()
+                        await placementManager.removeHighlightedToy()
                     }
                 }
             }
@@ -81,26 +81,26 @@ struct ObjectPlacementEditView: View {
             await placementManager.processPlaneDetectionUpdates()
         }
         .task {
-            await placementManager.checkIfAnchoredObjectsNeedToBeDetached()
+            await placementManager.checkIfAnchoredToysNeedToBeDetached()
         }
         .task {
-            await placementManager.checkIfMovingObjectsCanBeAnchored()
+            await placementManager.checkIfMovingToysCanBeAnchored()
         }
         .gesture(SpatialTapGesture().targetedToAnyEntity().onEnded { event in
-            if event.entity.components[CollisionComponent.self]?.filter.group == PlaceableObject.previewCollisionGroup {
-                placementManager.placeSelectedObject()
+            if event.entity.components[CollisionComponent.self]?.filter.group == PlaceableToy.previewCollisionGroup {
+                placementManager.placeSelectedToy()
             }
         })
         .gesture(DragGesture()
             .targetedToAnyEntity()
-            .handActivationBehavior(.pinch) // Prevent moving objects by direct touch.
+            .handActivationBehavior(.pinch) // Prevent moving toys by direct touch.
             .onChanged { value in
-                if value.entity.components[CollisionComponent.self]?.filter.group == PlacedObject.collisionGroup {
+                if value.entity.components[CollisionComponent.self]?.filter.group == PlacedToy.collisionGroup {
                     placementManager.updateDrag(value: value)
                 }
             }
             .onEnded { value in
-                if value.entity.components[CollisionComponent.self]?.filter.group == PlacedObject.collisionGroup {
+                if value.entity.components[CollisionComponent.self]?.filter.group == PlacedToy.collisionGroup {
                     placementManager.endDrag()
                 }
             }

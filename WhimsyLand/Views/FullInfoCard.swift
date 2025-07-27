@@ -14,29 +14,29 @@ struct FullInfoCard: View {
     @Environment(PlacementManager.self) var manager
     @Environment(ToyModel.self) var toyModel
     
-    var itemFileName: String {
-        manager.placementState.infoCardPresentedObjectFileName
+    var toyItemFileName: String {
+        manager.placementState.infoCardPresentedToyFileName
     }
-    var item: ToyItem? {
-        toyModel.items.first { $0.ImageName == itemFileName }
+    var toyItem: ToyItem? {
+        toyModel.items.first { $0.ImageName == toyItemFileName }
     }
     
     var body: some View {
-        if let item = item {
+        if let toyItem = toyItem {
             VStack(alignment: .center) {
-                Text(item.module?.name ?? "")
+                Text(toyItem.module?.name ?? "")
                     .font(.pretendard(.semibold, size: 42))
-                Text(item.fullInfoCardContent?.description ?? "")
+                Text(toyItem.fullInfoCardContent?.description ?? "")
                     .font(.pretendard(.regular, size: 24))
                     .padding(.vertical, 1)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                 HStack(spacing: 16) {
-                    EnterFullButton(item: item)
+                    EnterFullButton(toyItem: toyItem)
                         .environment(model)
                     
                     Button(action: {
-                        manager.placementState.infoCardPresentedObject = nil
+                        manager.placementState.infoCardPresentedToy = nil
                         manager.infoCardAlreadyOriented = false
                     }) {
                         Image(systemName: "xmark")
