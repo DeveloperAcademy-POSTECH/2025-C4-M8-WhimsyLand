@@ -295,7 +295,7 @@ final class PlacementManager {
         // Position and attach the UI to the newly highlighted object.
         let extents = objectToHighlight.extents
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
-        let topCenter: SIMD3<Float> = [0, extents.y * 2, 0]
+        let topCenter: SIMD3<Float> = [0, extents.y * 3, 0]
         deleteButton?.position = topLeftCorner
         fullInfoCard?.position = topCenter
         
