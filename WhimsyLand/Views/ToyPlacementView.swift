@@ -1,5 +1,5 @@
 //
-//  ObjectPlacementView.swift
+//  ToyPlacementView.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/22/25.
@@ -9,9 +9,9 @@ import SwiftUI
 import RealityKit
 
 @MainActor
-struct ObjectPlacementView: View {
+struct ToyPlacementView: View {
     var mixedImmersiveState: MixedImmersiveState
-    var placeableItemStore: PlaceableItemStore
+    var placeableToyStore: PlaceableToyStore
     
     @Environment(PlacementManager.self) var placementManager
     @Environment(ViewModel.self) var model
@@ -24,7 +24,7 @@ struct ObjectPlacementView: View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
             placementManager.mixedImmersiveState = mixedImmersiveState
-            placementManager.placeableItemStore = placeableItemStore
+            placementManager.placeableToyStore = placeableToyStore
 
             if let infoCardAttachment = attachments.entity(for: Attachments.infoCard) {
                 placementManager.fullInfoCard = infoCardAttachment
@@ -51,16 +51,16 @@ struct ObjectPlacementView: View {
         }
         .gesture(SpatialTapGesture().targetedToAnyEntity().onEnded { event in
             let tappedEntity = event.entity
-            if let tappedObject = placementManager.placedObject(for: tappedEntity) {
-                if placementManager.placementState.infoCardPresentedObject == tappedObject {
-                    placementManager.placementState.infoCardPresentedObject = nil
+            if let tappedToy = placementManager.placedToy(for: tappedEntity) {
+                if placementManager.placementState.infoCardPresentedToy == tappedToy {
+                    placementManager.placementState.infoCardPresentedToy = nil
                 } else {
-                    placementManager.placementState.infoCardPresentedObject = tappedObject
+                    placementManager.placementState.infoCardPresentedToy = tappedToy
                 }
                 
-                placementManager.setHighlightedObject(tappedObject)
+                placementManager.setHighlightedToy(tappedToy)
             } else {
-                print("tappedObject를 찾을 수 없음")
+                print("tappedToy를 찾을 수 없음")
             }
         })
         .onAppear {

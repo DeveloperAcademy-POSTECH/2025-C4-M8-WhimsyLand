@@ -19,7 +19,7 @@ struct WhimsyLandApp: App {
     
     // item에 따라 다른 immersion 스타일
     @State private var houseImmersionStyle: ImmersionStyle = .full
-    @State private var placeableItemStore = PlaceableItemStore()
+    @State private var placeableToyStore = PlaceableToyStore()
     @State private var modelLoader = ModelLoader()
     
     // 사용자가 immersionStyle을 조절하기 위한 변수
@@ -28,12 +28,12 @@ struct WhimsyLandApp: App {
     var body: some Scene {
         WindowGroup(id: model.HomeViewID) {
             HomeView()
-                .environment(placeableItemStore)
+                .environment(placeableToyStore)
                 .environment(model)
                 .environment(toyModel)
                 .task {
-                    await modelLoader.loadObjects()
-                    placeableItemStore.setPlaceableObjects(modelLoader.placeableObjects)
+                    await modelLoader.loadToys()
+                    placeableToyStore.setPlaceableToys(modelLoader.placeableToys)
                 }
                 .task {
                     await model.mixedImmersiveState.monitorSessionEvents()
@@ -46,7 +46,7 @@ struct WhimsyLandApp: App {
             ToyDetail()
                 .environment(model)
                 .environment(toyModel)
-                .environment(placeableItemStore)
+                .environment(placeableToyStore)
         }
         .windowStyle(.plain)
         .defaultWindowPlacement { content, context in
@@ -60,10 +60,10 @@ struct WhimsyLandApp: App {
                 FullImmersiveView()
                     .environment(model)
             } else {
-                // .mixed 또는 다른 경우 모두 ObjectPlacementSwitcherView 표시
-                ObjectPlacementSwitcherView(
+                // .mixed 또는 다른 경우 모두 ToyPlacementSwitcherView 표시
+                ToyPlacementSwitcherView(
                     mixedImmersiveState: model.mixedImmersiveState,
-                    placeableItemStore: placeableItemStore
+                    placeableToyStore: placeableToyStore
                 )
                 .environment(model)
             }

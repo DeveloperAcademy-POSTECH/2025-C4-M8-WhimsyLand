@@ -17,7 +17,7 @@ struct HomeView: View {
     @Environment(\.openImmersiveSpace) private var openImmersiveSpace
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) private var model
-    @Environment(PlaceableItemStore.self) var placeableItemStore
+    @Environment(PlaceableToyStore.self) var placeableToyStore
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var isDetailActive = false
@@ -111,7 +111,7 @@ struct HomeView: View {
             .padding(32)
             .navigationDestination(isPresented: $isDetailActive){
                 ListView()
-                    .environment(placeableItemStore)
+                    .environment(placeableToyStore)
                     .environment(model)
             }
             .onAppear{

@@ -13,7 +13,7 @@ import RealityKit
 final class ModelLoader {
     private var didStartLoading = false
     private(set) var progress: Float = 0.0
-    private(set) var placeableObjects = [PlaceableObject]()
+    private(set) var placeableToys = [PlaceableToy]()
     private var fileCount: Int = 0
     private var filesLoaded: Int = 0
     
@@ -36,7 +36,7 @@ final class ModelLoader {
         }
     }
     
-    func loadObjects() async {
+    func loadToys() async {
         // Only allow one loading operation at any given time.
         guard !didStartLoading else { return }
         didStartLoading.toggle()
@@ -53,14 +53,14 @@ final class ModelLoader {
         await withTaskGroup(of: Void.self) { group in
             for usdz in usdzFiles {
                 group.addTask {
-                    await self.loadObject(usdz)
+                    await self.loadToy(usdz)
                     await self.updateProgress()
                 }
             }
         }
     }
     
-    func loadObject(_ fileName: String) async {
+    func loadToy(_ fileName: String) async {
         var modelEntity: ModelEntity
         var previewEntity: Entity
         do {
@@ -74,11 +74,11 @@ final class ModelLoader {
             fatalError("Failed to load model \(fileName)")
         }
         
-        // Set a collision component for the model so the app can detect whether the preview overlaps with existing placed objects.
+        // Set a collision component for the model so the app can detect whether the preview overlaps with existing placed toys.
         do {
             let shape = try await ShapeResource.generateConvex(from: modelEntity.model!.mesh)
             previewEntity.components.set(CollisionComponent(shapes: [shape], isStatic: false,
-                                                            filter: CollisionFilter(group: PlaceableObject.previewCollisionGroup, mask: .all)))
+                                                            filter: CollisionFilter(group: PlaceableToy.previewCollisionGroup, mask: .all)))
             
             // Ensure the preview only accepts indirect input (for tap gestures).
             let previewInput = InputTargetComponent(allowedInputTypes: [.indirect])
@@ -88,7 +88,7 @@ final class ModelLoader {
         }
         
         let descriptor = ModelDescriptor(fileName: fileName, displayName: modelEntity.displayName)
-        placeableObjects.append(PlaceableObject(descriptor: descriptor, renderContent: modelEntity, previewEntity: previewEntity))
+        placeableToys.append(PlaceableToy(descriptor: descriptor, renderContent: modelEntity, previewEntity: previewEntity))
     }
 }
 

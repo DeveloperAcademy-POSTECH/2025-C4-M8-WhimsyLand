@@ -15,7 +15,7 @@ struct ListView: View {
     
     @Environment(ViewModel.self) var model
     @Environment(ToyModel.self) var toyModel
-    @Environment(PlaceableItemStore.self) var placeableItemStore
+    @Environment(PlaceableToyStore.self) var placeableToyStore
     
     @State private var searchText = ""
     
@@ -34,7 +34,7 @@ struct ListView: View {
                     // 아이템을 3 x 3 리스트 형태
                     ForEach(toyModel.items) { item in
                             ToyCard(imageName: item.ImageName, label: item.label) {
-                                placeableItemStore.selectedFileName = item.ModelName
+                                placeableToyStore.selectedFileName = item.ModelName
                                 toyModel.selectedItem = item
                             
                                 if !toyModel.isSecondaryWindowShown {

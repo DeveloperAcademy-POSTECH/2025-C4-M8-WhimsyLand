@@ -17,7 +17,7 @@ struct DeleteButton: View {
         } label: {
             Image(systemName: "trash")
         }
-        .accessibilityLabel("Delete object")
+        .accessibilityLabel("Delete toy")
         .glassBackgroundEffect()
     }
 }

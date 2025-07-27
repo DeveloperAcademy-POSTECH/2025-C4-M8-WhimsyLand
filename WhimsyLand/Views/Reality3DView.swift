@@ -11,11 +11,11 @@ import RealityKit
 import RealityKitContent
 
 struct Reality3DView: View {
-    let objectName: String
+    let toyName: String
 
     var body: some View {
         RealityView { content in
-            if let entity = try? await Entity(named: objectName, in: realityKitContentBundle) {
+            if let entity = try? await Entity(named: toyName, in: realityKitContentBundle) {
                 content.add(entity)
             }
         }
