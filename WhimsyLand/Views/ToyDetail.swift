@@ -27,10 +27,11 @@ struct ToyDetail: View {
                         InfoCard(title: "주인", value: item.module?.owner ?? "")
                         InfoCard(title: "재료", value: item.module?.material ?? "")
                         Button("꺼내서 조작하기") {
-                            // 테스트용: 첫 번째 PlaceableToy 가져오기
-                            if let first = placeableToyStore.placeableToysByFileName.values.first {
-                                model.mixedImmersiveState.placementManager?.selectToy(first)
-                                print("👉 \(first.descriptor.fileName)를 선택함")
+                            if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
+                                model.mixedImmersiveState.placementManager?.selectToy(toy)
+                                print("👉 \(toy.descriptor.fileName)를 선택함")
+                            } else {
+                                print("⚠️ 대응하는 PlaceableToy를 찾을 수 없습니다.")
                             }
                             dismissWindow(id: model.ToyDetailViewID)
                         }
@@ -62,7 +63,7 @@ struct ToyDetail: View {
             toyModel.isSecondaryWindowShown = false
         }
     }
-
+    
     private struct InfoCard: View {
         let title: String
         let value: String

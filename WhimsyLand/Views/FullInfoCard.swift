@@ -18,7 +18,7 @@ struct FullInfoCard: View {
         manager.placementState.infoCardPresentedToyFileName
     }
     var toyItem: ToyItem? {
-        toyModel.items.first { $0.ImageName == toyItemFileName }
+        toyModel.items.first { $0.ModelName == toyItemFileName }
     }
     
     var body: some View {
