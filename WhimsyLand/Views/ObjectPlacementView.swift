@@ -15,29 +15,37 @@ struct ObjectPlacementView: View {
     
     @Environment(PlacementManager.self) var placementManager
     @Environment(ViewModel.self) var model
+    @Environment(ToyModel.self) var toyModel
     
     private enum Attachments {
         case infoCard
     }
-
+    
     var body: some View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
             placementManager.mixedImmersiveState = mixedImmersiveState
             placementManager.placeableItemStore = placeableItemStore
-
+            
             if let infoCardAttachment = attachments.entity(for: Attachments.infoCard) {
                 placementManager.fullInfoCard = infoCardAttachment
             }
-
+            
             Task {
                 await placementManager.runARKitSession()
             }
         } attachments: {
             Attachment(id: Attachments.infoCard) {
-                FullInfoCard()
-                    .environment(placementManager)
-                    .environment(model)
+                let fileName = placementManager.placementState.infoCardPresentedObjectFileName
+                
+                if let item = toyModel.items.first(where: { $0.ImageName == fileName }),
+                   item.fullInfoCardContent != nil {
+                    FullInfoCard()
+                        .environment(placementManager)
+                        .environment(model)
+                } else {
+                    EmptyView()
+                }
             }
         }
         .task {
@@ -59,8 +67,6 @@ struct ObjectPlacementView: View {
                 }
                 
                 placementManager.setHighlightedObject(tappedObject)
-            } else {
-                print("tappedObject를 찾을 수 없음")
             }
         })
         .onAppear {

@@ -16,12 +16,18 @@ struct EnterFullButton: View {
             if model.immersiveSpaceState != .inTransition {
                 Task {
                     await model.switchToImmersiveMode(.full)
-                    // 여기서 full 이 어떤 full 을 보여줄지 item 으로 결정하기
+                    
+                    if let fullInfoCardContent = item.fullInfoCardContent?.fullImmersiveContent {
+                        model.switchFullImmersiveContent(fullInfoCardContent)
+                    }
+                    else {
+                        model.switchFullImmersiveContent(.none)
+                    }
                 }
             }
-            print("선택한 item name : \(item.ImageName)")
         }
         .buttonStyle(.bordered)
-        //.disabled(item.fullModule == nil) // 여기서 만약 item이 full 에 대한 정보를 갖고 있지 않으면 disable 하도록 하기
+        .padding(.top, 34)
+        .disabled(item.fullInfoCardContent == nil)
     }
 }

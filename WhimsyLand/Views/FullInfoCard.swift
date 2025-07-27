@@ -12,57 +12,51 @@ struct FullInfoCard: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) var model
     @Environment(PlacementManager.self) var manager
+    @Environment(ToyModel.self) var toyModel
     
-    let toyModel = ToyModel()
-    var item: ToyItem {
-        toyModel.items[2]
+    var itemFileName: String {
+        manager.placementState.infoCardPresentedObjectFileName
+    }
+    var item: ToyItem? {
+        toyModel.items.first { $0.ImageName == itemFileName }
     }
     
     var body: some View {
-        VStack(alignment: .center) {
-            Text(item.module?.name ?? "")
-                .font(.pretendard(.semibold, size: 42))
-            Text(item.fullInfoCardContent?.description ?? "")
-                .font(.pretendard(.regular, size: 24))
-                .padding(.vertical, 1)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-            HStack(spacing: 16) {
-                Button {
-                  if model.immersiveSpaceState != .inTransition {
-                    Task {
-                        await model.switchToImmersiveMode(.full)
+        if let item = item {
+            VStack(alignment: .center) {
+                Text(item.module?.name ?? "")
+                    .font(.pretendard(.semibold, size: 42))
+                Text(item.fullInfoCardContent?.description ?? "")
+                    .font(.pretendard(.regular, size: 24))
+                    .padding(.vertical, 1)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                HStack(spacing: 16) {
+                    EnterFullButton(item: item)
+                        .environment(model)
+                    
+                    Button(action: {
+                        manager.placementState.infoCardPresentedObject = nil
+                        manager.infoCardAlreadyOriented = false
+                    }) {
+                        Image(systemName: "xmark")
+                            .font(.pretendard(.semibold, size: 18))
                     }
-                  }
-              
-                } label: {
-                    Text("시작하기")
-                        .font(.pretendard(.semibold, size: 24))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Circle()
+                    )
+                    .buttonStyle(.plain)
+                    .background(.ultraThinMaterial, in: Circle()
+                    )
+                    .padding(.top, 34)
                 }
-                .buttonStyle(.bordered)
-                .padding(.top, 34)
-
-                Button(action: {
-                    manager.placementState.infoCardPresentedObject = nil
-                    manager.infoCardAlreadyOriented = false
-                }) {
-                    Image(systemName: "xmark")
-                        .font(.pretendard(.semibold, size: 18))
-                }
-                .frame(width: 44, height: 44)
-                .contentShape(Circle()
-                )
-                .buttonStyle(.plain)
-                .background(.ultraThinMaterial, in: Circle()
-                )
-                .padding(.top, 34)
             }
+            .padding(.vertical, 44)
+            .padding(.horizontal, 100)
+            .glassBackgroundEffect()
+        } else {
+            EmptyView()
         }
-        .padding(.vertical, 44)
-        .padding(.horizontal, 100)
-        .glassBackgroundEffect()
     }
 }
 

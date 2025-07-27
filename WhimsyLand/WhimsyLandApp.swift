@@ -57,8 +57,9 @@ struct WhimsyLandApp: App {
         
         ImmersiveSpace(id: model.ImmersiveId) {
             if model.currentImmersiveMode == .full {
-                FullImmersiveView()
+                FullImmersiveSwitcherView()
                     .environment(model)
+                    .environment(toyModel)
             } else {
                 // .mixed 또는 다른 경우 모두 ObjectPlacementSwitcherView 표시
                 ObjectPlacementSwitcherView(
@@ -66,6 +67,7 @@ struct WhimsyLandApp: App {
                     placeableItemStore: placeableItemStore
                 )
                 .environment(model)
+                .environment(toyModel)
             }
         }
         .immersionStyle(selection: $model.immersionStyle, in: .mixed, .full)

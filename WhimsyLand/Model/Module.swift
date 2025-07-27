@@ -141,4 +141,12 @@ enum FullInfoCardContent: String, Identifiable, CaseIterable, Equatable {
 """
         }
     }
+    
+    var fullImmersiveContent : FullImmersiveContent {
+        switch self {
+        case .RagHouse: return .ragHouse
+        case .TreeHouse: return .treeHouse
+        case .BrickHouse: return .brickHouse
+        }
+    }
 }

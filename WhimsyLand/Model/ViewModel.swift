@@ -13,6 +13,13 @@ enum ImmersiveMode {
     case full       // 내부 탐색 공간
 }
 
+enum FullImmersiveContent {
+    case none
+    case ragHouse
+    case treeHouse
+    case brickHouse
+}
+
 /// The data that the app uses to configure its views.
 @MainActor
 @Observable
@@ -36,6 +43,7 @@ class ViewModel {
     
     var mixedImmersiveState = MixedImmersiveState()
     var extractedObject: String? = nil
+    var fullImmersiveContent: FullImmersiveContent = .none
     
     // MARK: - Navigation
     var navigationPath: [Module] = []
@@ -57,6 +65,13 @@ class ViewModel {
         case .none: break
         }
     }
+    
+    func switchFullImmersiveContent(
+        _ content: FullImmersiveContent
+    ) {
+        fullImmersiveContent = content
+    }
+        
     
     // App이 갑자기 종료되었을 때, immersive 상태를 관리하는 함수
     func handleAppDidDeactivate(dismiss: @escaping () async -> Void) {
