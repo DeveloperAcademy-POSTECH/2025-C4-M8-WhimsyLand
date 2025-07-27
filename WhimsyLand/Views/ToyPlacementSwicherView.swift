@@ -12,15 +12,18 @@ struct ToyPlacementSwitcherView: View {
     var placeableToyStore: PlaceableToyStore
     @State private var placementManager = PlacementManager()
     @Environment(ViewModel.self) var model
-    
+    @Environment(ToyModel.self) var toyModel
+
     var body: some View {
         Group {
             if mixedImmersiveState.mixedImmersiveMode == .editing {
                 ToyPlacementEditView(mixedImmersiveState: mixedImmersiveState, placeableToyStore: placeableToyStore)
                     .environment(placementManager)
+                    .environment(toyModel)
             } else {
                 ToyPlacementView(mixedImmersiveState: mixedImmersiveState, placeableToyStore: placeableToyStore)
                     .environment(placementManager)
+                    .environment(toyModel)
             }
         }
     }

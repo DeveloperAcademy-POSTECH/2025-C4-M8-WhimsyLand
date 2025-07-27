@@ -15,11 +15,12 @@ struct ToyPlacementView: View {
     
     @Environment(PlacementManager.self) var placementManager
     @Environment(ViewModel.self) var model
+    @Environment(ToyModel.self) var toyModel
     
     private enum Attachments {
         case infoCard
     }
-
+    
     var body: some View {
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
@@ -29,15 +30,22 @@ struct ToyPlacementView: View {
             if let infoCardAttachment = attachments.entity(for: Attachments.infoCard) {
                 placementManager.fullInfoCard = infoCardAttachment
             }
-
+            
             Task {
                 await placementManager.runARKitSession()
             }
         } attachments: {
             Attachment(id: Attachments.infoCard) {
-                FullInfoCard()
-                    .environment(placementManager)
-                    .environment(model)
+                let fileName = placementManager.placementState.infoCardPresentedToyFileName
+                
+                if let item = toyModel.items.first(where: { $0.ImageName == fileName }),
+                   item.fullInfoCardContent != nil {
+                    FullInfoCard()
+                        .environment(placementManager)
+                        .environment(model)
+                } else {
+                    EmptyView()
+                }
             }
         }
         .task {
@@ -57,10 +65,7 @@ struct ToyPlacementView: View {
                 } else {
                     placementManager.placementState.infoCardPresentedToy = tappedToy
                 }
-                
                 placementManager.setHighlightedToy(tappedToy)
-            } else {
-                print("tappedToy를 찾을 수 없음")
             }
         })
         .onAppear {

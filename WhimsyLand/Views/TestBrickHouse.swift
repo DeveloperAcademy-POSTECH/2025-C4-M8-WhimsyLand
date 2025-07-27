@@ -1,5 +1,5 @@
 //
-//  FullImmersiveView.swift
+//  TestBrickHouse.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/22/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import RealityKit
 import RealityKitContent
 
-struct FullImmersiveView: View {
+struct TestBrickHouse: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) private var model
     
@@ -21,7 +21,7 @@ struct FullImmersiveView: View {
                 if let skull = immersiveContentEntity.findEntity(named: "Skull") {
                     
                     let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
-                        color: .yellow,
+                        color: .white,
                         strength: 0.8
                     )
                     let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
@@ -52,7 +52,7 @@ struct FullImmersiveView: View {
                     }
                 }
             } label: {
-                Text("나가기")
+                Text("셋째 돼지 집 나가기")
                     .font(.title2)
                     .padding(16)
                     .background(.ultraThinMaterial)
