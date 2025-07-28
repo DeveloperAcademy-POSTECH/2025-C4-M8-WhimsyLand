@@ -61,7 +61,7 @@ struct WhimsyLandApp: App {
         .windowResizability(.contentSize)
         
         WindowGroup(id: model.ToyDetailViewID){
-            ToyDetail()
+            ToyDetailView()
                 .environment(model)
                 .environment(toyModel)
                 .environment(placeableToyStore)
