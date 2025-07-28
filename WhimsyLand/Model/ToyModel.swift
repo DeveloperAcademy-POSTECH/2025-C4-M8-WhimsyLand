@@ -26,8 +26,7 @@ struct ToyItem: Identifiable, Codable, Hashable {
 class ToyModel {
     
     var selectedItem: ToyItem? = nil
-    var isSecondaryWindowShown: Bool = false
-    
+   
     var items: [ToyItem] = [
         ToyItem(ImageName: "RagHouse",label: "첫째 돼지집", ModelName: "RagHouse"),
         ToyItem(ImageName: "TreeHouse",label: "둘째 돼지집", ModelName: "TreeHouse"),
@@ -42,6 +41,8 @@ class ToyModel {
         ToyItem(ImageName: "Grass",label: "풀1", ModelName: "Grass"),
         ToyItem(ImageName: "Grass2",label: "풀2", ModelName: "Grass2"),
         ToyItem(ImageName: "Firewood",label: "장작나무", ModelName: "Firewood"),
-        ToyItem(ImageName: "OX",label: "도끼", ModelName: "OX"),
+        ToyItem(ImageName: "Ox",label: "도끼", ModelName: "Ox"),
+        ToyItem(ImageName: "Pond",label: "연못", ModelName: "Pond"),
+        ToyItem(ImageName: "Stone",label: "돌멩이", ModelName: "Stone"),
     ]
 }

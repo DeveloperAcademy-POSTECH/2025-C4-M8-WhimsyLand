@@ -79,7 +79,7 @@ struct ToyPreview: View {
                   let scaleFactor = targetSizeInMeters / maxOriginalDimension
                   
                   entity.scale = [scaleFactor, scaleFactor, scaleFactor]
-                  entity.position =  [0.21, -0.13, 0]
+                  entity.position =  [0.21, 0.09, -0.01]
                   
                   enableGesturesRecursively(for: entity)
                   
