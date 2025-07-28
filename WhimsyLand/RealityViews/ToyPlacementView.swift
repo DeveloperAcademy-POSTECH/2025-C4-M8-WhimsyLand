@@ -65,7 +65,7 @@ struct ToyPlacementView: View {
                 } else {
                     placementManager.placementState.infoCardPresentedToy = tappedToy
                 }
-                placementManager.setHighlightedToy(tappedToy)
+                placementManager.setTappedToy(tappedToy)
             }
         })
         .onAppear {
