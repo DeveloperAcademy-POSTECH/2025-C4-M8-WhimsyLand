@@ -42,9 +42,14 @@ final class ModelLoader {
         didStartLoading.toggle()
         
         // Get a list of all USDZ files in this app’s main bundle and attempt to load them.
+        let supportedExtensions = ["usdz", "usdc"]
         var usdzFiles: [String] = []
-        if let urls = Bundle.main.urls(forResourcesWithExtension: "usdz", subdirectory: nil) {
-            usdzFiles = urls.map { $0.deletingPathExtension().lastPathComponent }
+        
+        for ext in supportedExtensions {
+            if let urls = Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) {
+                let names = urls.map { $0.deletingPathExtension().lastPathComponent }
+                usdzFiles.append(contentsOf: names)
+            }
         }
         
         assert(!usdzFiles.isEmpty, "Add USDZ files to this Xcode project.")
@@ -71,7 +76,8 @@ final class ModelLoader {
             try await previewEntity = Entity(named: fileName)
             previewEntity.name = "Preview of \(modelEntity.name)"
         } catch {
-            fatalError("Failed to load model \(fileName)")
+            print("❌ Failed to load model: \(fileName), error: \(error)")
+            return
         }
         
         // Set a collision component for the model so the app can detect whether the preview overlaps with existing placed toys.
@@ -79,8 +85,6 @@ final class ModelLoader {
             let shape = try await ShapeResource.generateConvex(from: modelEntity.model!.mesh)
             previewEntity.components.set(CollisionComponent(shapes: [shape], isStatic: false,
                                                             filter: CollisionFilter(group: PlaceableToy.previewCollisionGroup, mask: .all)))
-            
-            // Ensure the preview only accepts indirect input (for tap gestures).
             let previewInput = InputTargetComponent(allowedInputTypes: [.indirect])
             previewEntity.components[InputTargetComponent.self] = previewInput
         } catch {
