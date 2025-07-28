@@ -42,18 +42,34 @@ enum Module: String, Identifiable, CaseIterable, Equatable {
 }
 
 enum ToyModule: String, Identifiable, CaseIterable, Equatable {
-    case RagHouse, TreeHouse, BrickHouse, Fence1, Fence2, Tree1, Tree2, Tree3
+    case RagHouse, TreeHouse, BrickHouse,
+         Fence1, Fence2,
+         Tree1, Tree2, Tree3,
+         RedFlower, BlueFlower,
+         Firewood,
+         Grass, Grass2,
+         Pond,
+         Stone,
+         Ox
     var id: String { rawValue.capitalized }
     var name: String {
         switch self {
         case .RagHouse: return "첫째 돼지의 집"
         case .TreeHouse: return "둘째 돼지의 집"
         case .BrickHouse: return "셋째 돼지의 집"
-        case .Fence1: return "울타리 1"
-        case .Fence2: return "울타리 2"
-        case .Tree1: return "나무 1"
-        case .Tree2: return "나무 2"
-        case .Tree3: return "나무 3"
+        case .Fence1: return "나무 울타리"
+        case .Fence2: return "튼튼 울타리"
+        case .Tree1: return "작은 나무"
+        case .Tree2: return "풍성 나무"
+        case .Tree3: return "튼튼 나무"
+        case .RedFlower: return "붉은 백합"
+        case .BlueFlower: return "물망초"
+        case .Firewood: return "통나무"
+        case .Grass: return "솔잎풀"
+        case .Grass2: return "넓잎풀"
+        case .Pond: return "연못"
+        case .Stone: return "돌"
+        case .Ox: return "둘째 돼지의 도끼"
         }
     }
     var overview: String {
@@ -61,11 +77,19 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .RagHouse: return "바람에 쉽게 날아가는 가장 약한 구조의 집"
         case .TreeHouse: return "바람에 날아가지 않지만 불에 약한 집"
         case .BrickHouse: return "바람과 불에 강한 튼튼한 집"
-        case .Fence1: return "기본 울타리"
-        case .Fence2: return "나름 튼튼한 울타리"
-        case .Tree1: return "얇은 형태의 나무"
-        case .Tree2: return "중간 크기의 나무"
-        case .Tree3: return "풍성한 나무"
+        case .Fence1: return "바람에 잘 흔들리는 가늘고 긴 잎의 나무"
+        case .Fence2: return "통나무를 다듬어 만든 튼튼한 울타리"
+        case .Tree1: return "바람에 잘 흔들리는 가늘고 긴 잎의 나무"
+        case .Tree2: return "짙은 초록 잎을 가진 나무"
+        case .Tree3: return "짧고 두꺼운 가지를 가진 나무"
+        case .RedFlower: return "선명한 붉은 꽃잎의 백합꽃"
+        case .BlueFlower: return "파란 쌍둥이 꽃이 나란히 피어 있는 귀여운 들꽃"
+        case .Firewood: return "둘째 돼지의 오두막집에 사용된 나무"
+        case .Grass: return "잎 끝이 뾰족한 풀"
+        case .Grass2: return "풍성한 잎으로 공간을 채워주는 풀"
+        case .Pond: return "작은 물이 고여 있는 연못"
+        case .Stone: return "아무렇게나 쌓기 좋은 돌"
+        case .Ox: return "둘째 돼지가 통나무를 자를 때 사용한 손도끼"
         }
     }
     var owner: String {
@@ -73,11 +97,19 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .RagHouse: return "첫째 돼지"
         case .TreeHouse: return "둘째 돼지"
         case .BrickHouse: return "셋째 돼지"
-        case .Fence1: return "기본 울타리"
-        case .Fence2: return "나름 튼튼한 울타리"
-        case .Tree1: return "얇은 형태의 나무"
-        case .Tree2: return "중간 크기의 나무"
-        case .Tree3: return "풍성한 나무"
+        case .Fence1: return "없음"
+        case .Fence2: return "없음"
+        case .Tree1: return "없음"
+        case .Tree2: return "없음"
+        case .Tree3: return "없음"
+        case .RedFlower: return "없음"
+        case .BlueFlower: return "없음"
+        case .Firewood: return "없음"
+        case .Grass: return "없음"
+        case .Grass2: return "없음"
+        case .Pond: return "없음"
+        case .Stone: return "없음"
+        case .Ox: return "둘째 돼지"
         }
     }
     var material: String {
@@ -85,11 +117,19 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .RagHouse: return "지푸라기"
         case .TreeHouse: return "나무"
         case .BrickHouse: return "벽돌"
-        case .Fence1: return "기본 울타리"
-        case .Fence2: return "나름 튼튼한 울타리"
-        case .Tree1: return "얇은 형태의 나무"
-        case .Tree2: return "중간 크기의 나무"
-        case .Tree3: return "풍성한 나무"
+        case .Fence1: return "나뭇가지, 못"
+        case .Fence2: return "통나무, 못"
+        case .Tree1: return "나무"
+        case .Tree2: return "나무"
+        case .Tree3: return "나무"
+        case .RedFlower: return "꽃"
+        case .BlueFlower: return "꽃"
+        case .Firewood: return "참나무"
+        case .Grass: return "풀"
+        case .Grass2: return "풀"
+        case .Pond: return "작은 조약돌, 물, 수중식물"
+        case .Stone: return "돌"
+        case .Ox: return "참나무, 도끼날"
         }
     }
     var description: String {
@@ -102,6 +142,14 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .Tree1: return "금방 부러질것 같은 양상한 나무"
         case .Tree2: return "어느정도 단단해 보이는 나무"
         case .Tree3: return "크기도 굵기도 튼튼해 보이는 나무"
+        case .RedFlower: return ""
+        case .BlueFlower: return ""
+        case .Firewood: return ""
+        case .Grass: return ""
+        case .Grass2: return ""
+        case .Pond: return ""
+        case .Stone: return ""
+        case .Ox: return ""
         }
     }
     var callToAction: String {
@@ -114,6 +162,14 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .Tree1: return "어디에나 잘어울리는 작은 나무 배치해보세요"
         case .Tree2: return "어디에나 잘어울리는 중간 크기 나무 배치해보세요"
         case .Tree3: return "중심에 되는 풍성한 나무를 배치해보세요"
+        case .RedFlower: return ""
+        case .BlueFlower: return ""
+        case .Firewood: return ""
+        case .Grass: return ""
+        case .Grass2: return ""
+        case .Pond: return ""
+        case .Stone: return ""
+        case .Ox: return ""
         }
     }
 }

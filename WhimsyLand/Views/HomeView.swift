@@ -110,7 +110,6 @@ struct HomeView: View {
         .glassBackgroundEffect()
         .onAppear{
             currentSize = .medium
-            viewModel.isListWindowShown = false
             
             if viewModel.isSecondaryWindowShown {
                 dismissWindow(id: viewModel.ToyDetailViewID)
@@ -118,6 +117,7 @@ struct HomeView: View {
             
             if viewModel.isListWindowShown {
                 dismissWindow(id: viewModel.ListViewID)
+                viewModel.isListWindowShown = false
             }
         }
         .onChange(of: isDetailActive) {

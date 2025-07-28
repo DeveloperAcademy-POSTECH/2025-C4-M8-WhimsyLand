@@ -52,7 +52,6 @@ struct ListView: View {
                             if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
                                 viewModel.mixedImmersiveState.placementManager?.selectToy(toy)
                             }
-                            
                             if viewModel.isSecondaryWindowShown != true {
                                 openWindow(id: viewModel.ToyDetailViewID)
                                 viewModel.isSecondaryWindowShown = true
