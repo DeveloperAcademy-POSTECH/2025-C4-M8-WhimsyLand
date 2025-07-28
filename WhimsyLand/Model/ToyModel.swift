@@ -37,5 +37,11 @@ class ToyModel {
         ToyItem(ImageName: "Tree1",label: "나무 1", ModelName: "Tree1"),
         ToyItem(ImageName: "Tree2",label: "나무 2", ModelName: "Tree2"),
         ToyItem(ImageName: "Tree3",label: "나무 3", ModelName: "Tree3"),
+        ToyItem(ImageName: "BlueFlower",label: "파란꽃", ModelName: "BlueFlower"),
+        ToyItem(ImageName: "RedFlower",label: "빨간꽃", ModelName: "RedFlower"),
+        ToyItem(ImageName: "Grass",label: "풀1", ModelName: "Grass"),
+        ToyItem(ImageName: "Grass2",label: "풀2", ModelName: "Grass2"),
+        ToyItem(ImageName: "Firewood",label: "장작나무", ModelName: "Firewood"),
+        ToyItem(ImageName: "OX",label: "도끼", ModelName: "OX"),
     ]
 }
