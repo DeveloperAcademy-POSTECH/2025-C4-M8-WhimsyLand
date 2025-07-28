@@ -14,52 +14,55 @@ struct ToyDetail: View {
     @Environment(\.dismissWindow) var dismissWindow
     
     var body: some View {
-        ZStack {
+        HStack {
             if let item = toyModel.selectedItem {
-                
-                VStack(alignment: .leading, spacing: 20) {
-                    Text(item.module?.name ?? "")
-                        .font(.pretendard(.bold,size: 34))
-                    Divider()
-                    Text(item.module?.overview ?? "")
-                        .font(.pretendard(.regular, size: 26))
-                    HStack(spacing: 20) {
-                        InfoCard(title: "주인", value: item.module?.owner ?? "")
-                        InfoCard(title: "재료", value: item.module?.material ?? "")
-                        Button("꺼내서 조작하기") {
-                            if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
-                                model.mixedImmersiveState.placementManager?.selectToy(toy)
-                                print("👉 \(toy.descriptor.fileName)를 선택함")
-                            } else {
-                                print("⚠️ 대응하는 PlaceableToy를 찾을 수 없습니다.")
+                HStack {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text(item.module?.name ?? "")
+                            .font(.pretendard(.bold,size: 34))
+                        Divider()
+                        Text(item.module?.overview ?? "")
+                            .font(.pretendard(.regular, size: 26))
+                        HStack(spacing: 20) {
+                            InfoCard(title: "주인", value: item.module?.owner ?? "")
+                            InfoCard(title: "재료", value: item.module?.material ?? "")
+                            Button("꺼내서 조작하기") {
+                                if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
+                                    model.mixedImmersiveState.placementManager?.selectToy(toy)
+                                    print("👉 \(toy.descriptor.fileName)를 선택함")
+                                } else {
+                                    print("⚠️ 대응하는 PlaceableToy를 찾을 수 없습니다.")
+                                }
+                                dismissWindow(id: model.ToyDetailViewID)
                             }
-                            dismissWindow(id: model.ToyDetailViewID)
+                            .buttonStyle(.bordered)
+                            //.disabled(model.currentImmersiveMode != .mixed)
+                            
+                            EnterFullButton(toyItem: item)
+                                .environment(model)
                         }
-                        .buttonStyle(.bordered)
-                        .disabled(model.currentImmersiveMode != .mixed)
+                        .frame(maxWidth: 400, alignment: .leading)
                         
-                        EnterFullButton(toyItem: item)
-                            .environment(model)
+                        Text(item.module?.description ?? "")
+                            .font(.pretendard(.light, size: 24))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: 608)
+                        
+                        Text(item.module?.callToAction ?? "")
+                            .font(.pretendard(.semibold, size: 26))
+                        Spacer()
                     }
-                    .frame(maxWidth: 400, alignment: .leading)
+                    .padding(40)
+                    .frame(width: 608)
                     
-                    Text(item.module?.description ?? "")
-                        .font(.pretendard(.light, size: 24))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: 608)
-                    
-                    Text(item.module?.callToAction ?? "")
-                        .font(.pretendard(.semibold, size: 26))
-                    Spacer()
                 }
-                .padding(40)
-                .frame(width: 980, height: 491)
-                .glassBackgroundEffect()
-                .cornerRadius(46)
-                
                 ToyPreview(modelName: item.ModelName)
             }
-        }.onDisappear{
+        }
+        .frame(width: 980, height: 451)
+        .glassBackgroundEffect()
+        .cornerRadius(46)
+        .onDisappear{
             toyModel.isSecondaryWindowShown = false
         }
     }
