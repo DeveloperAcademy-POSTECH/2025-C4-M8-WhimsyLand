@@ -49,9 +49,8 @@ struct ListView: View {
                             toyModel.selectedItem = item
                             
                             // 선택한 아이템 현실공간으로 꺼내오기
-                            if let first = placeableToyStore.placeableToysByFileName.values.first {
-                                viewModel.mixedImmersiveState.placementManager?.selectToy(first)
-                                print("👉 \(first.descriptor.fileName)를 선택함")
+                            if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
+                                viewModel.mixedImmersiveState.placementManager?.selectToy(toy)
                             }
                             
                             if viewModel.isSecondaryWindowShown != true {
