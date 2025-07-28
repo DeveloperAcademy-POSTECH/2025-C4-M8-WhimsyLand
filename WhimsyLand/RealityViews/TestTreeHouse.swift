@@ -1,22 +1,22 @@
 //
-//  TestBrickHouse.swift
+//  TestTreeHouse.swift
 //  WhimsyLand
 //
-//  Created by 제하맥프로 on 7/22/25.
+//  Created by 제하맥프로 on 7/27/25.
 //
 
 import SwiftUI
 import RealityKit
 import RealityKitContent
 
-struct TestBrickHouse: View {
+struct TestTreeHouse: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) private var model
     
     var body: some View {
         RealityView { content in
             // Add the initial RealityKit content
-            if let immersiveContentEntity = try? await Entity(named: "Immersive", in: realityKitContentBundle) {
+            if let immersiveContentEntity = try? await Entity(named: "TestImmersive", in: realityKitContentBundle) {
                 
                 if let skull = immersiveContentEntity.findEntity(named: "Skull") {
                     
@@ -52,7 +52,7 @@ struct TestBrickHouse: View {
                     }
                 }
             } label: {
-                Text("셋째 돼지 집 나가기")
+                Text("둘째 돼지 집 나가기")
                     .font(.title2)
                     .padding(16)
                     .background(.ultraThinMaterial)
