@@ -29,9 +29,6 @@ struct ToyDetail: View {
                         Button("꺼내서 조작하기") {
                             if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
                                 model.mixedImmersiveState.placementManager?.selectToy(toy)
-                                print("👉 \(toy.descriptor.fileName)를 선택함")
-                            } else {
-                                print("⚠️ 대응하는 PlaceableToy를 찾을 수 없습니다.")
                             }
                             dismissWindow(id: model.ToyDetailViewID)
                         }
