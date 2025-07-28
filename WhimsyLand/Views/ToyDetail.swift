@@ -42,16 +42,9 @@ struct ToyDetail: View {
                         EnterFullButton(toyItem: item)
                             .environment(viewModel)
                     }
-                    .frame(maxWidth: 400, alignment: .leading)
+                    .padding(40)
+                    .frame(width: 608)
                     
-                    Text(item.module?.description ?? "")
-                        .font(.pretendard(.light, size: 24))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: 608)
-                    
-                    Text(item.module?.callToAction ?? "")
-                        .font(.pretendard(.semibold, size: 26))
-                    Spacer()
                 }
                 .padding(40)
                 .glassBackgroundEffect()
