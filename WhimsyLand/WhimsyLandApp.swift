@@ -39,7 +39,6 @@ struct WhimsyLandApp: App {
                     await model.mixedImmersiveState.monitorSessionEvents()
                 }
         }
-        .windowStyle(.automatic)
         .windowResizability(.contentSize)
         
         WindowGroup(id: model.ListViewID) {
@@ -67,6 +66,7 @@ struct WhimsyLandApp: App {
                 .environment(placeableToyStore)
         }
         .defaultSize(width: 980, height: 491)
+        .windowResizability(.contentSize)
         .defaultWindowPlacement { content, context in
             guard let contentWindow = context.windows.first(where: { $0.id == model.ListViewID }) else { return WindowPlacement(nil)
             }
