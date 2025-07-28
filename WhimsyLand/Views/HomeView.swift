@@ -18,6 +18,7 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) var dismissWindow
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     
     @State private var isDetailActive = false
     @State private var currentSize: FrameSize = .medium
@@ -117,6 +118,18 @@ struct HomeView: View {
             
             if viewModel.isListWindowShown {
                 dismissWindow(id: viewModel.ListViewID)
+            }
+        }
+        .onChange(of: isDetailActive) {
+            if !isDetailActive {
+                viewModel.mixedImmersiveState.mixedImmersiveMode = .viewing
+            }
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase != .active {
+                Task {
+                    viewModel.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
+                }
             }
         }
     }
