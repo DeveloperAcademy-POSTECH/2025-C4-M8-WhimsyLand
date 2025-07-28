@@ -26,7 +26,11 @@ enum FullImmersiveContent {
 class ViewModel {
     // MARK: - Window
     let HomeViewID = "HomeView"
-    let ToyDetailViewID = "Toy"
+    let ListViewID = "ListView"
+    let ToyDetailViewID = "ToyDetailView"
+    
+    var isListWindowShown: Bool = false
+    var isSecondaryWindowShown: Bool = false
     
     // MARK: - immersive
     let ImmersiveId = "Immersive"
@@ -44,12 +48,6 @@ class ViewModel {
     var mixedImmersiveState = MixedImmersiveState()
     var extractedToy: String? = nil
     var fullImmersiveContent: FullImmersiveContent = .none
-    
-    // MARK: - Navigation
-    var navigationPath: [Module] = []
-    
-    // MARK: - threeLittlePigs
-    var isShowBrickHouse = false
     
     func switchToImmersiveMode(
         _ mode: ImmersiveMode
@@ -71,8 +69,14 @@ class ViewModel {
     ) {
         fullImmersiveContent = content
     }
-        
     
+    // MARK: - Navigation
+    var navigationPath: [Module] = []
+    
+    // MARK: - threeLittlePigs
+    var isShowBrickHouse = false
+    
+   
     // App이 갑자기 종료되었을 때, immersive 상태를 관리하는 함수
     func handleAppDidDeactivate(dismiss: @escaping () async -> Void) {
         print("앱 종료 함수 호출됨")

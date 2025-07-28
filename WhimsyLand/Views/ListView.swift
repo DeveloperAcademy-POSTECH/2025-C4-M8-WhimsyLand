@@ -9,11 +9,10 @@ import SwiftUI
 import RealityKit
 
 struct ListView: View {
-    @Environment(\.openImmersiveSpace) var openImmersiveSpace
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
     
-    @Environment(ViewModel.self) var model
+    @Environment(ViewModel.self) var viewModel
     @Environment(ToyModel.self) var toyModel
     @Environment(PlaceableToyStore.self) var placeableToyStore
     
@@ -22,6 +21,18 @@ struct ListView: View {
     var body: some View {
         
         VStack {
+            HStack{
+                Button(action: {
+                    openWindow(id: viewModel.HomeViewID)
+                }){
+                    Image(systemName: "chevron.left")
+                        .padding(14)
+                }.frame(width: 44, height: 44)
+                
+                Text("아이템 \(toyModel.items.count)개")
+                    .font(.pretendard(.bold, size: 29))
+                Spacer()
+            }.padding([.top, .leading], 24)
             Spacer()
             
             // Book Grid
@@ -33,15 +44,21 @@ struct ListView: View {
                 ], spacing: 30) {
                     // 아이템을 3 x 3 리스트 형태
                     ForEach(toyModel.items) { item in
-                            ToyCard(imageName: item.ImageName, label: item.label) {
-                                placeableToyStore.selectedFileName = item.ModelName
-                                toyModel.selectedItem = item
+                        ToyCard(imageName: item.ImageName, label: item.label) {
+                            placeableToyStore.selectedFileName = item.ModelName
+                            toyModel.selectedItem = item
                             
-                                if !toyModel.isSecondaryWindowShown {
-                                    openWindow(id: model.ToyDetailViewID)
-                                toyModel.isSecondaryWindowShown = true
-                                }
+                            // 선택한 아이템 현실공간으로 꺼내오기
+                            if let first = placeableToyStore.placeableToysByFileName.values.first {
+                                viewModel.mixedImmersiveState.placementManager?.selectToy(first)
+                                print("👉 \(first.descriptor.fileName)를 선택함")
                             }
+                            
+                            if viewModel.isSecondaryWindowShown != true {
+                                openWindow(id: viewModel.ToyDetailViewID)
+                                viewModel.isSecondaryWindowShown = true
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal, 40)
@@ -50,18 +67,13 @@ struct ListView: View {
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)
         .onAppear {
-            model.mixedImmersiveState.mixedImmersiveMode = .editing
+            viewModel.mixedImmersiveState.mixedImmersiveMode = .editing
+            viewModel.isListWindowShown = true
+            dismissWindow(id: viewModel.HomeViewID)
         }
         .onDisappear{
-            dismissWindow(id:model.ToyDetailViewID)
+            dismissWindow(id:viewModel.ToyDetailViewID)
+            viewModel.isListWindowShown = false
         }
-        .navigationTitle("") // 우회방법으로 제목 커스텀 함
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("아이템 \(toyModel.items.count)개")
-                    .font(.pretendard(.bold, size: 29))
-            }
-        }
-       
     }
 }

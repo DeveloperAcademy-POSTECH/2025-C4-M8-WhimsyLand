@@ -8,37 +8,39 @@
 import SwiftUI
 
 struct ToyDetail: View {
-    @Environment(ViewModel.self) private var model
+    @Environment(ViewModel.self) private var viewModel
     @Environment(ToyModel.self) private var toyModel
-    @Environment(PlaceableToyStore.self) var placeableToyStore
     @Environment(\.dismissWindow) var dismissWindow
+    @Environment(\.openWindow) var openWindow
     
     var body: some View {
-        ZStack {
+        VStack {
             if let item = toyModel.selectedItem {
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    Text(item.module?.name ?? "")
-                        .font(.pretendard(.bold,size: 34))
+                    HStack{
+                        Button(action: {
+                            if viewModel.isListWindowShown == false {
+                                openWindow(id: viewModel.HomeViewID)
+                            }
+                            dismissWindow(id: viewModel.ToyDetailViewID)
+                        }){
+                            Image(systemName: "xmark")
+                                .aspectRatio(contentMode: .fit)
+                        }.frame(width: 44, height: 44)
+                        
+                        Text(item.module?.name ?? "")
+                            .font(.pretendard(.bold,size: 34))
+                    }
                     Divider()
                     Text(item.module?.overview ?? "")
                         .font(.pretendard(.regular, size: 26))
                     HStack(spacing: 20) {
                         InfoCard(title: "주인", value: item.module?.owner ?? "")
                         InfoCard(title: "재료", value: item.module?.material ?? "")
-                        Button("꺼내서 조작하기") {
-                            // 테스트용: 첫 번째 PlaceableToy 가져오기
-                            if let first = placeableToyStore.placeableToysByFileName.values.first {
-                                model.mixedImmersiveState.placementManager?.selectToy(first)
-                                print("👉 \(first.descriptor.fileName)를 선택함")
-                            }
-                            dismissWindow(id: model.ToyDetailViewID)
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(model.currentImmersiveMode != .mixed)
                         
                         EnterFullButton(toyItem: item)
-                            .environment(model)
+                            .environment(viewModel)
                     }
                     .frame(maxWidth: 400, alignment: .leading)
                     
@@ -52,14 +54,13 @@ struct ToyDetail: View {
                     Spacer()
                 }
                 .padding(40)
-                .frame(width: 980, height: 491)
                 .glassBackgroundEffect()
                 .cornerRadius(46)
                 
                 ToyPreview(modelName: item.ModelName)
             }
         }.onDisappear{
-            toyModel.isSecondaryWindowShown = false
+            viewModel.isSecondaryWindowShown = false
         }
     }
 

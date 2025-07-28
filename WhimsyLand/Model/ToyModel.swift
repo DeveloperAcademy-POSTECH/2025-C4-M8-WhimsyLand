@@ -26,12 +26,11 @@ struct ToyItem: Identifiable, Codable, Hashable {
 class ToyModel {
     
     var selectedItem: ToyItem? = nil
-    var isSecondaryWindowShown: Bool = false
-    
+   
     var items: [ToyItem] = [
-        ToyItem(ImageName: "RagHouse",label: "첫째 돼지집", ModelName: "Firewood"),
-        ToyItem(ImageName: "TreeHouse",label: "둘째 돼지집", ModelName: "Cube"),
-        ToyItem(ImageName: "BrickHouse",label: "셋째 돼지집", ModelName: "Cylinder"),
+        ToyItem(ImageName: "RagHouse",label: "첫째 돼지집", ModelName: "RagHouse"),
+        ToyItem(ImageName: "TreeHouse",label: "둘째 돼지집", ModelName: "TreeHouse"),
+        ToyItem(ImageName: "BrickHouse",label: "셋째 돼지집", ModelName: "BrickHouse"),
         ToyItem(ImageName: "Fence1",label: "울타리 1", ModelName: "Fence1"),
         ToyItem(ImageName: "Fence2",label: "울타리 2", ModelName: "Fence2"),
         ToyItem(ImageName: "Tree1",label: "나무 1", ModelName: "Tree1"),
@@ -42,6 +41,8 @@ class ToyModel {
         ToyItem(ImageName: "Grass",label: "풀1", ModelName: "Grass"),
         ToyItem(ImageName: "Grass2",label: "풀2", ModelName: "Grass2"),
         ToyItem(ImageName: "Firewood",label: "장작나무", ModelName: "Firewood"),
-        ToyItem(ImageName: "OX",label: "도끼", ModelName: "OX"),
+        ToyItem(ImageName: "Ox",label: "도끼", ModelName: "Ox"),
+        ToyItem(ImageName: "Pond",label: "연못", ModelName: "Pond"),
+        ToyItem(ImageName: "Stone",label: "돌멩이", ModelName: "Stone"),
     ]
 }
