@@ -10,13 +10,13 @@ import SwiftUI
 
 @MainActor
 struct ToyPlacementEditView: View {
-    var mixedImmersiveState: MixedImmersiveState
-    var placeableToyStore: PlaceableToyStore
-    
     @Environment(PlacementManager.self) var placementManager
     
     @State private var collisionBeganSubscription: EventSubscription? = nil
     @State private var collisionEndedSubscription: EventSubscription? = nil
+    
+    var mixedImmersiveState: MixedImmersiveState
+    var placeableToyStore: PlaceableToyStore
     
     private enum Attachments {
         case placementTooltip
@@ -24,6 +24,7 @@ struct ToyPlacementEditView: View {
     }
     
     var body: some View {
+        
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
             placementManager.mixedImmersiveState = mixedImmersiveState
