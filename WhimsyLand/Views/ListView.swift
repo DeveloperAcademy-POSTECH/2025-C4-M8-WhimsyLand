@@ -53,7 +53,6 @@ struct ListView: View {
                                 viewModel.mixedImmersiveState.placementManager?.selectToy(first)
                                 print("👉 \(first.descriptor.fileName)를 선택함")
                             }
-                            
                             if viewModel.isSecondaryWindowShown != true {
                                 openWindow(id: viewModel.ToyDetailViewID)
                                 viewModel.isSecondaryWindowShown = true
