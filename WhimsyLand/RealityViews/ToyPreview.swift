@@ -34,5 +34,4 @@ struct ToyPreview: View {
         }
         .dragRotation(yawLimit: .degrees(360), pitchLimit: .degrees(360))
     }
-    
 }
