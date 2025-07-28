@@ -63,7 +63,7 @@ struct ToyDetail: View {
             viewModel.isSecondaryWindowShown = false
         }
     }
-
+    
     private struct InfoCard: View {
         let title: String
         let value: String

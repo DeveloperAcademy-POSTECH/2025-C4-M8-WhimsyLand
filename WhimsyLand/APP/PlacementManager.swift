@@ -88,7 +88,7 @@ final class PlacementManager {
     func addPlacementTooltip(_ tooltip: Entity) {
         placementTooltip = tooltip
         placementLocation.addChild(tooltip)
-        tooltip.position = [0.0, 0.05, 0.1]
+        tooltip.position = [0.0, 0.05, 0.15]
     }
     
     // Toy 삭제 함수
@@ -295,37 +295,53 @@ final class PlacementManager {
         // Position and attach the UI to the newly highlighted toy.
         let extents = toyToHighlight.extents
         let topLeftCorner: SIMD3<Float> = [-extents.x / 2, (extents.y / 2) + 0.02, 0]
-        let topCenter: SIMD3<Float> = [0, extents.y * 3, 0]
         deleteButton?.position = topLeftCorner
-        fullInfoCard?.position = topCenter
         
-        switch mixedImmersiveState?.mixedImmersiveMode {
-        case .editing:
+        if mixedImmersiveState?.mixedImmersiveMode == .editing {
             if let deleteButton {
                 toyToHighlight.uiOrigin.addChild(deleteButton)
                 deleteButton.scale = 1 / toyToHighlight.scale
             }
-        case .viewing:
-            if let fullInfoCard,
-               placementState.infoCardPresentedToy == toyToHighlight,
-               fullInfoCard.parent != toyToHighlight {
-                
-                toyToHighlight.addChild(fullInfoCard)
-                fullInfoCard.scale = 1 / toyToHighlight.scale
-                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
-                infoCardAlreadyOriented = true
-            }
-        default:
-            print("mixedImmersiveMode is neither .editing nor .viewing")
         }
         
         let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
-            color: .red, // 디자이너와 협의 후 수정 필요
-            strength: 1.0
+            color: .white, // 디자이너와 협의 후 수정 필요
+            strength: 0.8
         )
         
         let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
         toyToHighlight.components.set(hoverEffect)
+    }
+    
+    @MainActor
+    func setTappedToy(_ ToyToPresentInfoCard: PlacedToy?) {
+        guard placementState.infoCardPresentedToy != ToyToPresentInfoCard else {
+            return
+        }
+        
+        placementState.infoCardPresentedToy = ToyToPresentInfoCard
+        
+        // 이전 Toy의 fullInfoCard 해제
+        fullInfoCard?.removeFromParent()
+        
+        guard let ToyToPresentInfoCard else { return }
+        
+        // Position and attach the UI to the newly highlighted toy.
+        let extents = ToyToPresentInfoCard.extents
+        let topCenter: SIMD3<Float> = [0, extents.y * 1 + 0.2, 0]
+        fullInfoCard?.position = topCenter
+        
+        if mixedImmersiveState?.mixedImmersiveMode == .viewing{
+            if let fullInfoCard,
+               placementState.infoCardPresentedToy == ToyToPresentInfoCard,
+               fullInfoCard.parent != ToyToPresentInfoCard {
+                
+                ToyToPresentInfoCard.addChild(fullInfoCard)
+                fullInfoCard.scale = 1 / ToyToPresentInfoCard.scale
+                fullInfoCard.look(at: deviceLocation.position(relativeTo: nil))
+                infoCardAlreadyOriented = true
+            }
+        }
     }
     
     func processPlaneDetectionUpdates() async {
