@@ -39,7 +39,25 @@ struct WhimsyLandApp: App {
                     await model.mixedImmersiveState.monitorSessionEvents()
                 }
         }
-        .windowStyle(.plain)
+        .windowStyle(.automatic)
+        .windowResizability(.contentSize)
+        
+        WindowGroup(id: model.ListViewID) {
+            ListView()
+                .frame(minWidth: 1020, maxWidth: 1020,
+                       minHeight: 678, maxHeight: .infinity)
+                .environment(placeableToyStore)
+                .environment(model)
+                .environment(toyModel)
+                .task {
+                    await modelLoader.loadToys()
+                    placeableToyStore.setPlaceableToys(modelLoader.placeableToys)
+                }
+                .task {
+                    await model.mixedImmersiveState.monitorSessionEvents()
+                }
+        }
+        .defaultSize(width:1020,  height: 678)
         .windowResizability(.contentSize)
         
         WindowGroup(id: model.ToyDetailViewID){
@@ -48,9 +66,9 @@ struct WhimsyLandApp: App {
                 .environment(toyModel)
                 .environment(placeableToyStore)
         }
-        .windowStyle(.plain)
+        .defaultSize(width: 980, height: 491)
         .defaultWindowPlacement { content, context in
-            guard let contentWindow = context.windows.first(where: { $0.id == model.HomeViewID }) else { return WindowPlacement(nil)
+            guard let contentWindow = context.windows.first(where: { $0.id == model.ListViewID }) else { return WindowPlacement(nil)
             }
             return WindowPlacement(.trailing(contentWindow))
         }
