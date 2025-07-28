@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct EnterFullButton: View {
-    @Environment(ViewModel.self) private var model
+    @Environment(ViewModel.self) private var viewModel
 //    아래 주석 참고.
 //    아래 코드도 테스트시 활성화
 //    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
@@ -17,9 +17,9 @@ struct EnterFullButton: View {
     
     var body : some View {
         Button("시작하기") {
-            if model.immersiveSpaceState != .inTransition {
+            if viewModel.immersiveSpaceState != .inTransition {
                 Task {
-                    await model.switchToImmersiveMode(.full)
+                    await viewModel.switchToImmersiveMode(.full)
                     // 테스트를 위한 임시 코드
                     // Simulator 환경일 때, ToyDetail에서 바로 full 로 진입하고 싶으면 사용
                     // 단, Full을 탈출할때 처리 함수가 구현이 안되어있으므로
@@ -36,10 +36,10 @@ struct EnterFullButton: View {
 //                    }
                     //
                     if let fullImmersiveContent = toyItem.fullInfoCardContent?.fullImmersiveContent {
-                        model.switchFullImmersiveContent(fullImmersiveContent)
+                        viewModel.switchFullImmersiveContent(fullImmersiveContent)
                     }
                     else {
-                        model.switchFullImmersiveContent(.none)
+                        viewModel.switchFullImmersiveContent(.none)
                     }
                 }
             }
