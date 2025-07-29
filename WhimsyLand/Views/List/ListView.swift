@@ -11,7 +11,7 @@ import RealityKit
 struct ListView: View {
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
-    
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(ViewModel.self) var viewModel
     @Environment(ToyModel.self) var toyModel
     @Environment(PlaceableToyStore.self) var placeableToyStore
@@ -52,6 +52,7 @@ struct ListView: View {
                             if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
                                 viewModel.mixedImmersiveState.placementManager?.selectToy(toy)
                             }
+
                             if viewModel.isSecondaryWindowShown != true {
                                 openWindow(id: viewModel.ToyDetailViewID)
                                 viewModel.isSecondaryWindowShown = true
@@ -67,11 +68,20 @@ struct ListView: View {
         .onAppear {
             viewModel.mixedImmersiveState.mixedImmersiveMode = .editing
             viewModel.isListWindowShown = true
+            
             dismissWindow(id: viewModel.HomeViewID)
         }
         .onDisappear{
             dismissWindow(id:viewModel.ToyDetailViewID)
             viewModel.isListWindowShown = false
         }
+//        .onChange(of: scenePhase) {
+//            if scenePhase != .active {
+//                Task {
+//                    print("HomeView ScenePhase is not active")
+//                    viewModel.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
+//                }
+//            }
+//        }
     }
 }

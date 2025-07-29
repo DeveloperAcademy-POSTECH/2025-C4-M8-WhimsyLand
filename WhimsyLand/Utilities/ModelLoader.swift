@@ -69,6 +69,7 @@ final class ModelLoader {
         var modelEntity: ModelEntity
         var previewEntity: Entity
         do {
+            print("loadToy함수 호출됨")
             // Load the USDZ as a ModelEntity.
             try await modelEntity = ModelEntity(named: fileName)
             

@@ -96,6 +96,8 @@ struct HomeView: View {
         .onAppear{
             viewModel.currentSize = .medium
             
+            viewModel.isHomeWindowShown = true
+            
             if viewModel.isSecondaryWindowShown {
                 dismissWindow(id: viewModel.ToyDetailViewID)
             }
@@ -105,6 +107,9 @@ struct HomeView: View {
                 viewModel.isListWindowShown = false
             }
         }
+        .onDisappear{
+            viewModel.isHomeWindowShown = false
+        }
         .onChange(of: isDetailActive) {
             if !isDetailActive {
                 viewModel.mixedImmersiveState.mixedImmersiveMode = .viewing
@@ -113,6 +118,7 @@ struct HomeView: View {
         .onChange(of: scenePhase) {
             if scenePhase != .active {
                 Task {
+                    print("HomeView ScenePhase is not active")
                     viewModel.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
                 }
             }

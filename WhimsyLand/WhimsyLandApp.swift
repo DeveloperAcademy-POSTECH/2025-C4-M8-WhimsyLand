@@ -53,13 +53,13 @@ struct WhimsyLandApp: App {
                 .environment(placeableToyStore)
                 .environment(model)
                 .environment(toyModel)
-                .task {
-                    await modelLoader.loadToys()
-                    placeableToyStore.setPlaceableToys(modelLoader.placeableToys)
-                }
-                .task {
-                    await model.mixedImmersiveState.monitorSessionEvents()
-                }
+//                .task {
+//                    await modelLoader.loadToys()
+//                    placeableToyStore.setPlaceableToys(modelLoader.placeableToys)
+//                }
+//                .task {
+//                    await model.mixedImmersiveState.monitorSessionEvents()
+//                }
         }
         .defaultSize(width:1020,  height: 678)
         .windowResizability(.contentSize)
@@ -113,9 +113,10 @@ struct WhimsyLandApp: App {
                         print("⚠️ Mixed Immersive 공간 진입 보류: 권한 미획득 or 미지원")
                     }
                 }
-            } else if scenePhase != .active {
-                model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
             }
+//            } else if scenePhase != .active {
+//                model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
+//            }
         }
     }
 }

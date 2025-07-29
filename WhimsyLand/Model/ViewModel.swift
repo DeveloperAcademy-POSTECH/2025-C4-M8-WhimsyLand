@@ -40,6 +40,7 @@ class ViewModel {
     let ListViewID = "ListView"
     let ToyDetailViewID = "ToyDetailView"
     
+    var isHomeWindowShown: Bool = false
     var isListWindowShown: Bool = false
     var isSecondaryWindowShown: Bool = false
     
