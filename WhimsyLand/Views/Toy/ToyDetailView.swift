@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ToyDetail: View {
+struct ToyDetailView: View {
     @Environment(ViewModel.self) private var viewModel
     @Environment(ToyModel.self) private var toyModel
     @Environment(\.dismissWindow) var dismissWindow

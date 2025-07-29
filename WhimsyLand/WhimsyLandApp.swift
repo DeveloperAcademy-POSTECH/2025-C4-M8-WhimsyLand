@@ -39,6 +39,7 @@ struct WhimsyLandApp: App {
                     await model.mixedImmersiveState.monitorSessionEvents()
                 }
         }
+        .windowStyle(.plain)
         .windowResizability(.contentSize)
         
         WindowGroup(id: model.ListViewID) {
@@ -60,7 +61,7 @@ struct WhimsyLandApp: App {
         .windowResizability(.contentSize)
         
         WindowGroup(id: model.ToyDetailViewID){
-            ToyDetail()
+            ToyDetailView()
                 .environment(model)
                 .environment(toyModel)
                 .environment(placeableToyStore)

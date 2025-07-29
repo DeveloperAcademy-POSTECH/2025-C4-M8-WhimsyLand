@@ -53,7 +53,7 @@ struct TestBrickHouse: View {
                 }
             } label: {
                 Text("셋째 돼지 집 나가기")
-                    .font(.title2)
+                    .font(.pretendard(.regular, size: 24))
                     .padding(16)
                     .background(.ultraThinMaterial)
                     .cornerRadius(24)
