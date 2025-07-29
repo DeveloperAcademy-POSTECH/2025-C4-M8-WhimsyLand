@@ -20,6 +20,17 @@ enum FullImmersiveContent {
     case brickHouse
 }
 
+enum FrameSize {
+    case small, medium
+}
+
+enum ImmersiveSpaceState {
+    case closed
+    case inTransition
+    case open
+}
+
+
 /// The data that the app uses to configure its views.
 @MainActor
 @Observable
@@ -32,15 +43,28 @@ class ViewModel {
     var isListWindowShown: Bool = false
     var isSecondaryWindowShown: Bool = false
     
+    var currentSize: FrameSize = .medium
+    
+    // TODO : extension으로 가능 ?
+    var frameWidth: CGFloat {
+        switch currentSize {
+        case .small: return 274
+        case .medium: return 1067
+        }
+    }
+    
+    // TODO : extension으로 가능 ?
+    var frameHeight: CGFloat {
+        switch currentSize {
+        case .small: return 439
+        case .medium: return 353
+        }
+    }
+    
     // MARK: - immersive
     let ImmersiveId = "Immersive"
     
-    enum ImmersiveSpaceState {
-        case closed
-        case inTransition
-        case open
-    }
-    
+
     var immersiveSpaceState = ImmersiveSpaceState.closed
     var currentImmersiveMode: ImmersiveMode = .none
     var immersionStyle: ImmersionStyle = .mixed

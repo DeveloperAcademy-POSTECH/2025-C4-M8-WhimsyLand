@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-// TODO : 별도 파일로 빼기
-enum FrameSize {
-    case small, medium
-}
-
 struct HomeView: View {
     
     @Environment(ViewModel.self) private var viewModel
@@ -21,27 +16,10 @@ struct HomeView: View {
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     
     @State private var isDetailActive = false
-    @State private var currentSize: FrameSize = .medium
-    
-    // TODO : extension으로 가능 ?
-    private var frameWidth: CGFloat {
-        switch currentSize {
-        case .small: return 274
-        case .medium: return 1067
-        }
-    }
-    
-    // TODO : extension으로 가능 ?
-    private var frameHeight: CGFloat {
-        switch currentSize {
-        case .small: return 439
-        case .medium: return 353
-        }
-    }
     
     var body: some View {
         Group{
-            if currentSize == .small {
+            if viewModel.currentSize == .small {
                 VStack {
                     Image("ThreeLittlePigs")
                         .resizable()
@@ -59,7 +37,7 @@ struct HomeView: View {
                         Spacer()
                         
                         Button(action: {
-                            currentSize = .medium
+                            viewModel.currentSize = .medium
                         }) {
                             Image(systemName: "arrow.up.left.and.arrow.down.right")
                                 .frame(width: 22, height: 22)
@@ -68,7 +46,7 @@ struct HomeView: View {
                     }
                     .frame(width: 210, height: 44)
                     
-                }.frame(width:  frameWidth, height: frameHeight)
+                }.frame(width:  viewModel.frameWidth, height: viewModel.frameHeight)
 
             }else {
                 HStack{
@@ -101,7 +79,7 @@ struct HomeView: View {
                             Spacer()
                             
                             Button(action: {
-                                currentSize = .small
+                                viewModel.currentSize = .small
                             }) {
                                 Image(systemName: "arrow.up.left.and.arrow.down.right")
                                     .frame(width: 44, height: 44)
@@ -110,13 +88,13 @@ struct HomeView: View {
                         }
                     }
                 }
-                .frame(width:  frameWidth, height: frameHeight)
+                .frame(width:  viewModel.frameWidth, height: viewModel.frameHeight)
                 .padding(32)
             }
         }
         .glassBackgroundEffect()
         .onAppear{
-            currentSize = .medium
+            viewModel.currentSize = .medium
             
             if viewModel.isSecondaryWindowShown {
                 dismissWindow(id: viewModel.ToyDetailViewID)

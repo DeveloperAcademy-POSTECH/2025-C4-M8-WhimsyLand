@@ -1,5 +1,5 @@
 //
-//  ToyDetail.swift
+//  ToyDetailView.swift
 //  WhimsyLand
 //
 //  Created by KIM, SoonJoo on 7/14/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ToyDetail: View {
+struct ToyDetailView: View {
     @Environment(ViewModel.self) private var viewModel
     @Environment(ToyModel.self) private var toyModel
     @Environment(\.dismissWindow) var dismissWindow
@@ -37,6 +37,7 @@ struct ToyDetail: View {
                     HStack(spacing: 20) {
                         InfoCard(title: "주인", value: item.module?.owner ?? "")
                         InfoCard(title: "재료", value: item.module?.material ?? "")
+                        
                         EnterFullButton(toyItem: item)
                             .environment(viewModel)
                     }
@@ -47,7 +48,7 @@ struct ToyDetail: View {
                     
                     Text(item.module?.callToAction ?? "")
                         .font(.pretendard(.semibold, size: 26))
-                    Spacer()
+//                    Spacer()
                 }
                 .padding(40)
         ToyPreview(modelName: item.ModelName)
