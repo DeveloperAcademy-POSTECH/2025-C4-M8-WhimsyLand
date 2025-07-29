@@ -50,14 +50,14 @@ struct ToyDetailView: View {
                     Spacer()
                 }
                 .padding(40)
-        ToyPreview(modelName: item.ModelName)
-    }
+                ToyPreview(modelName: item.ModelName)
+            }
         }
-    .padding(40)
-    .frame(width: 980, height: 491)
-    .glassBackgroundEffect()
-    .cornerRadius(46)
-    .onDisappear{
+        .padding(40)
+        .frame(width: 980, height: 491)
+        .glassBackgroundEffect()
+        .cornerRadius(46)
+        .onDisappear{
             viewModel.isSecondaryWindowShown = false
         }
     }

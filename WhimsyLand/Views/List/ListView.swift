@@ -68,20 +68,11 @@ struct ListView: View {
         .onAppear {
             viewModel.mixedImmersiveState.mixedImmersiveMode = .editing
             viewModel.isListWindowShown = true
-            
             dismissWindow(id: viewModel.HomeViewID)
         }
         .onDisappear{
             dismissWindow(id:viewModel.ToyDetailViewID)
             viewModel.isListWindowShown = false
         }
-//        .onChange(of: scenePhase) {
-//            if scenePhase != .active {
-//                Task {
-//                    print("HomeView ScenePhase is not active")
-//                    viewModel.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
-//                }
-//            }
-//        }
     }
 }
