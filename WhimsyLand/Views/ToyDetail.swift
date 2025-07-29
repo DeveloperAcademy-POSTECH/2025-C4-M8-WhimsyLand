@@ -14,11 +14,10 @@ struct ToyDetail: View {
     @Environment(\.openWindow) var openWindow
     
     var body: some View {
-        VStack {
+        HStack {
             if let item = toyModel.selectedItem {
-                
-                VStack(alignment: .leading, spacing: 20) {
-                    HStack{
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 40) {
                         Button(action: {
                             if viewModel.isListWindowShown == false {
                                 openWindow(id: viewModel.HomeViewID)
@@ -42,16 +41,23 @@ struct ToyDetail: View {
                             .environment(viewModel)
                     }
                     .padding(40)
-                    .frame(width: 608)
+                    Text(item.module?.description ?? "")
+                        .font(.pretendard(.light, size: 24))
+                        .fixedSize(horizontal: false, vertical: true)
                     
+                    Text(item.module?.callToAction ?? "")
+                        .font(.pretendard(.semibold, size: 26))
+                    Spacer()
                 }
                 .padding(40)
-                .glassBackgroundEffect()
-                .cornerRadius(46)
-                
-                ToyPreview(modelName: item.ModelName)
-            }
-        }.onDisappear{
+        ToyPreview(modelName: item.ModelName)
+    }
+        }
+    .padding(40)
+    .frame(width: 980, height: 491)
+    .glassBackgroundEffect()
+    .cornerRadius(46)
+    .onDisappear{
             viewModel.isSecondaryWindowShown = false
         }
     }

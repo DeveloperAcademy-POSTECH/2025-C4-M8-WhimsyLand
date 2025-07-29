@@ -46,26 +46,30 @@ struct HomeView: View {
                     Image("ThreeLittlePigs")
                         .resizable()
                         .frame(width: 210, height: 315)
+                    
                     HStack{
                         Button(action: {
                             isDetailActive = true
                             openWindow(id: viewModel.ListViewID)
                         }){
                             Text("아이템 배치하기")
-                                .font(.pretendard(.semibold, size: 18))
+                                .font(.pretendard(.semibold, size: 16))
                         }.frame(width: 150, height: 44)
+                        
+                        Spacer()
                         
                         Button(action: {
                             currentSize = .medium
                         }) {
                             Image(systemName: "arrow.up.left.and.arrow.down.right")
                                 .frame(width: 22, height: 22)
-                                .padding(11)
-                            
-                        }.frame(width: 44, height: 44)
-                    }.padding(.top, 16)
+                        }
+                        .frame(width: 44, height: 44)
+                    }
+                    .frame(width: 210, height: 44)
+                    
                 }.frame(width:  frameWidth, height: frameHeight)
-                    .padding(32)
+
             }else {
                 HStack{
                     Image("ThreeLittlePigs")
@@ -80,6 +84,8 @@ struct HomeView: View {
                             .font(.pretendard(.regular, size: 24))
                             .lineLimit(nil)
                             .padding(.top, 16)
+                        
+                        Spacer()
                         
                         HStack{
                             Button(action: {
@@ -105,6 +111,7 @@ struct HomeView: View {
                     }
                 }
                 .frame(width:  frameWidth, height: frameHeight)
+                .padding(32)
             }
         }
         .glassBackgroundEffect()
