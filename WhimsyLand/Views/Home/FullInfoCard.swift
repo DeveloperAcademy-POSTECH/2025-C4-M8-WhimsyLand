@@ -8,14 +8,12 @@
 import SwiftUI
 
 struct FullInfoCard: View {
-    @Environment(\.openImmersiveSpace) private var openImmersiveSpace
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(ViewModel.self) var model
-    @Environment(PlacementManager.self) var manager
+    @Environment(ViewModel.self) var viewModel
+    @Environment(PlacementManager.self) var placementManager
     @Environment(ToyModel.self) var toyModel
     
     var toyItemFileName: String {
-        manager.placementState.infoCardPresentedToyFileName
+        placementManager.placementState.infoCardPresentedToyFileName
     }
     var toyItem: ToyItem? {
         toyModel.items.first { $0.ModelName == toyItemFileName }
@@ -33,11 +31,11 @@ struct FullInfoCard: View {
                     .lineSpacing(4)
                 HStack(spacing: 16) {
                     EnterFullButton(toyItem: toyItem)
-                        .environment(model)
+                        .environment(viewModel)
                     
                     Button(action: {
-                        manager.placementState.infoCardPresentedToy = nil
-                        manager.infoCardAlreadyOriented = false
+                        placementManager.placementState.infoCardPresentedToy = nil
+                        placementManager.infoCardAlreadyOriented = false
                     }) {
                         Image(systemName: "xmark")
                             .font(.pretendard(.semibold, size: 18))
