@@ -305,7 +305,7 @@ final class PlacementManager {
         }
         
         let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
-            color: .white, // 디자이너와 협의 후 수정 필요
+            color: .white,
             strength: 0.8
         )
         
