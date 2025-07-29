@@ -32,10 +32,14 @@ struct WhimsyLandApp: App {
                 .environment(model)
                 .environment(toyModel)
                 .task {
+                    
                     await modelLoader.loadToys()
                     placeableToyStore.setPlaceableToys(modelLoader.placeableToys)
-                }
-                .task {
+                    
+                    if model.mixedImmersiveState.allRequiredProvidersAreSupported {
+                        await model.mixedImmersiveState.requestWorldSensingAuthorization()
+                    }
+                    
                     await model.mixedImmersiveState.monitorSessionEvents()
                 }
         }
