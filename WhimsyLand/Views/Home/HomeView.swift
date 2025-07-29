@@ -13,6 +13,7 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) var dismissWindow
+    
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     
     @State private var isDetailActive = false
@@ -47,7 +48,7 @@ struct HomeView: View {
                     .frame(width: 210, height: 44)
                     
                 }.frame(width:  viewModel.frameWidth, height: viewModel.frameHeight)
-
+                
             }else {
                 HStack{
                     Image("ThreeLittlePigs")
@@ -96,6 +97,7 @@ struct HomeView: View {
         .onAppear{
             viewModel.currentSize = .medium
             
+            viewModel.mixedImmersiveState.mixedImmersiveMode = .viewing
             viewModel.isHomeWindowShown = true
             
             if viewModel.isSecondaryWindowShown {
@@ -109,19 +111,6 @@ struct HomeView: View {
         }
         .onDisappear{
             viewModel.isHomeWindowShown = false
-        }
-        .onChange(of: isDetailActive) {
-            if !isDetailActive {
-                viewModel.mixedImmersiveState.mixedImmersiveMode = .viewing
-            }
-        }
-        .onChange(of: scenePhase) {
-            if scenePhase != .active {
-                Task {
-                    print("HomeView ScenePhase is not active")
-                    viewModel.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
-                }
-            }
         }
     }
 }
