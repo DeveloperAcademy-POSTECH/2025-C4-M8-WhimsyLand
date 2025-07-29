@@ -39,6 +39,7 @@ struct WhimsyLandApp: App {
                     await model.mixedImmersiveState.monitorSessionEvents()
                 }
         }
+        .windowStyle(.plain)
         .windowResizability(.contentSize)
         
         WindowGroup(id: model.ListViewID) {
