@@ -321,8 +321,12 @@ final class PlacementManager {
         
         placementState.infoCardPresentedToy = ToyToPresentInfoCard
         
+        if let previousParent = fullInfoCard?.parent, previousParent != ToyToPresentInfoCard {
+            previousParent.removeChild(fullInfoCard!)
+        }
+        
         // 이전 Toy의 fullInfoCard 해제
-        fullInfoCard?.removeFromParent()
+        // fullInfoCard?.removeFromParent()
         
         guard let ToyToPresentInfoCard else { return }
         
