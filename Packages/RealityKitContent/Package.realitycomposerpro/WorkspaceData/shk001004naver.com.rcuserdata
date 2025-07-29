@@ -6,7 +6,8 @@
     "Grass2.usdc",
     "Grass.usdc",
     "RedFlower.usdc",
-    "BlueFlower.usdc"
+    "BlueFlower.usdc",
+    "Woodhouse.usdc"
   ],
   "recentIdentifiers" : {
 
@@ -176,5 +177,5 @@
   "sceneViewportBackgroundColors" : {
 
   },
-  "selectedSceneRelativePath" : "RedFlower.usdc"
+  "selectedSceneRelativePath" : "Woodhouse.usdc"
 }
