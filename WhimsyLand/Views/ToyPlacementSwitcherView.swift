@@ -1,5 +1,5 @@
 //
-//  ToyPlacementSwicherView.swift
+//  ToyPlacementSwitcherView.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/22/25.
