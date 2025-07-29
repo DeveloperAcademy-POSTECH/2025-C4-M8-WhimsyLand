@@ -94,16 +94,19 @@ struct WhimsyLandApp: App {
             if scenePhase == .active {
                 Task {
                     await model.mixedImmersiveState.queryWorldSensingAuthorization()
-                    if model.mixedImmersiveState.canEnterMixedImmersiveSpace {
-                        await model.switchToImmersiveMode(.mixed)
-                        if model.immersiveSpaceState == .closed {
-                            let result = await openImmersiveSpace(id: model.ImmersiveId)
-                            if case .opened = result {
-                                model.immersiveSpaceState = .open
-                            }
-                        }
-                    } else {
+                    
+                    guard model.mixedImmersiveState.canEnterMixedImmersiveSpace else {
                         print("⚠️ Mixed Immersive 공간 진입 보류: 권한 미획득 or 미지원")
+                        return
+                    }
+                    
+                    await model.switchToImmersiveMode(.mixed)
+                    
+                    guard model.immersiveSpaceState == .closed else { return }
+                    
+                    let result = await openImmersiveSpace(id: model.ImmersiveId)
+                    if case .opened = result {
+                        model.immersiveSpaceState = .open
                     }
                 }
             }
