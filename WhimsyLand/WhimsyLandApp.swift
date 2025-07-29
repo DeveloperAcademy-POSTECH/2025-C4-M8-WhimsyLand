@@ -53,13 +53,6 @@ struct WhimsyLandApp: App {
                 .environment(placeableToyStore)
                 .environment(model)
                 .environment(toyModel)
-//                .task {
-//                    await modelLoader.loadToys()
-//                    placeableToyStore.setPlaceableToys(modelLoader.placeableToys)
-//                }
-//                .task {
-//                    await model.mixedImmersiveState.monitorSessionEvents()
-//                }
         }
         .defaultSize(width:1020,  height: 678)
         .windowResizability(.contentSize)
@@ -70,7 +63,7 @@ struct WhimsyLandApp: App {
                 .environment(toyModel)
                 .environment(placeableToyStore)
         }
-//        .defaultSize(width: 980, height: 510)
+        //        .defaultSize(width: 980, height: 510)
         .windowStyle(.plain)
         .defaultWindowPlacement { content, context in
             guard let contentWindow = context.windows.first(where: { $0.id == model.ListViewID }) else { return WindowPlacement(nil)
@@ -114,9 +107,9 @@ struct WhimsyLandApp: App {
                     }
                 }
             }
-//            } else if scenePhase != .active {
-//                model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
-//            }
+            //            } else if scenePhase != .active {
+            //                model.handleAppDidDeactivate(dismiss: dismissImmersiveSpace.callAsFunction)
+            //            }
         }
     }
 }
