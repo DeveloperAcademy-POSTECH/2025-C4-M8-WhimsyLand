@@ -77,7 +77,7 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .RagHouse: return "바람에 쉽게 날아가는 가장 약한 구조의 집"
         case .TreeHouse: return "바람에 날아가지 않지만 불에 약한 집"
         case .BrickHouse: return "바람과 불에 강한 튼튼한 집"
-        case .Fence1: return "바람에 잘 흔들리는 가늘고 긴 잎의 나무"
+        case .Fence1: return "가느다란 나뭇가지들을 엮어 만든 울타리"
         case .Fence2: return "통나무를 다듬어 만든 튼튼한 울타리"
         case .Tree1: return "바람에 잘 흔들리는 가늘고 긴 잎의 나무"
         case .Tree2: return "짙은 초록 잎을 가진 나무"
@@ -87,8 +87,8 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .Firewood: return "둘째 돼지의 오두막집에 사용된 나무"
         case .Grass: return "잎 끝이 뾰족한 풀"
         case .Grass2: return "풍성한 잎으로 공간을 채워주는 풀"
-        case .Pond: return "작은 물이 고여 있는 연못"
-        case .Stone: return "아무렇게나 쌓기 좋은 돌"
+        case .Pond: return "잔잔한 물결의 작은 연못"
+        case .Stone: return "자연스럽게 깎인 형태의 회색 돌"
         case .Ox: return "둘째 돼지가 통나무를 자를 때 사용한 손도끼"
         }
     }
@@ -127,7 +127,7 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
         case .Firewood: return "참나무"
         case .Grass: return "풀"
         case .Grass2: return "풀"
-        case .Pond: return "작은 조약돌, 물, 수중식물"
+        case .Pond: return "자갈, 물, 연꽃"
         case .Stone: return "돌"
         case .Ox: return "참나무, 도끼날"
         }
