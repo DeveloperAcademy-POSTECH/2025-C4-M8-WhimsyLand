@@ -10,7 +10,6 @@ import RealityKit
 import RealityKitContent
 
 struct TestBrickHouse: View {
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) private var model
     
     var body: some View {
@@ -79,30 +78,6 @@ struct TestBrickHouse: View {
                 _ = value.entity.applyTapForBehaviors()
             })
         )
-        .overlay(alignment: .topTrailing) {
-            Button {
-                Task {
-                    if model.immersiveSpaceState != .inTransition {
-                        Task {
-                            await model.switchToImmersiveMode(.mixed)
-                        }
-                    }
-                }
-            } label: {
-                Text("셋째 돼지 집 나가기")
-                    .font(.pretendard(.regular, size: 24))
-                    .padding(16)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(24)
-            }
-            .padding(40)
-        }
     }
 }
-
-//#Preview {
-//    TestBrickHouse()
-//        .environment(ViewModel())
-//        .environment(ToyModel())
-//}
 

@@ -1,5 +1,5 @@
 //
-//  ToyDetail.swift
+//  ToyDetailView.swift
 //  WhimsyLand
 //
 //  Created by KIM, SoonJoo on 7/14/25.
@@ -41,14 +41,13 @@ struct ToyDetailView: View {
                         EnterFullButton(toyItem: item)
                             .environment(viewModel)
                     }
-                    .padding(40)
+                    .padding(.vertical, 20)
                     Text(item.module?.description ?? "")
                         .font(.pretendard(.light, size: 24))
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(item.module?.callToAction ?? "")
                         .font(.pretendard(.semibold, size: 26))
-                    Spacer()
                 }
                 .padding(40)
         ToyPreview(modelName: item.ModelName)
