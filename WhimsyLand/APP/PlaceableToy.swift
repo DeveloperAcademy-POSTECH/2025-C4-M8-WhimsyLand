@@ -33,7 +33,6 @@ class PlaceableToy {
     init(descriptor: ModelDescriptor, renderContent: ModelEntity, previewEntity: Entity) {
         self.descriptor = descriptor
         self.previewEntity = previewEntity
-        //self.previewEntity.applyMaterial(PreviewMaterials.active)
         self.renderContent = renderContent
     }
 
