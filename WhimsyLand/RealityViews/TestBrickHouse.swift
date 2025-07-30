@@ -15,10 +15,9 @@ struct TestBrickHouse: View {
     var body: some View {
         RealityView(
             make: { content, attachments in
-                // Add the initial RealityKit content
                 if let immersiveContentEntity = try? await Entity(named: "Immersive", in: realityKitContentBundle) {
                     
-                    if let skull = immersiveContentEntity.findEntity(named: "Skull") {
+                    if let firewood = immersiveContentEntity.findEntity(named: "firewood") {
                         
                         let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
                             color: .white,
@@ -26,17 +25,14 @@ struct TestBrickHouse: View {
                         )
                         let hoverEffect = HoverEffectComponent(.highlight(highlightStyle))
                         
-                        skull.components.set(hoverEffect)
+                        firewood.components.set(hoverEffect)
                     }
                     
                     content.add(immersiveContentEntity)
-                    
-                    // Put skybox here.  See example in World project available at
-                    // https://developer.apple.com/
                 }
                 
                 if let exitButtonAttachment = attachments.entity(for: "exitButtonView") { // ID로 어태치먼트 가져오기
-                    exitButtonAttachment.transform.translation = [0, 1.5, 0] // X, Y, Z (미터 단위)
+                    exitButtonAttachment.transform.translation = [0.5, 1.5, -0.2] // X, Y, Z (미터 단위)
                     
                     content.add(exitButtonAttachment)
                 }
@@ -72,7 +68,6 @@ struct TestBrickHouse: View {
                 }
             }
         )
-        // 이 부분이 중요합니다! RealityComposerPro에서 제스쳐랑 애니메이션 다 구현하는 상황에서는 RealityView에 제스쳐 코드 작성해야합니다.
         .gesture(TapGesture().targetedToAnyEntity()
             .onEnded({ value in
                 _ = value.entity.applyTapForBehaviors()
