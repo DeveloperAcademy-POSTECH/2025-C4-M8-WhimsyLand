@@ -325,9 +325,6 @@ final class PlacementManager {
             previousParent.removeChild(fullInfoCard!)
         }
         
-        // 이전 Toy의 fullInfoCard 해제
-        // fullInfoCard?.removeFromParent()
-        
         guard let ToyToPresentInfoCard else { return }
         
         // Position and attach the UI to the newly highlighted toy.
