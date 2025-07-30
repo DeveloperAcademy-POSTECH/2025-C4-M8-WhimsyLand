@@ -42,7 +42,7 @@ enum Module: String, Identifiable, CaseIterable, Equatable {
 }
 
 enum ToyModule: String, Identifiable, CaseIterable, Equatable {
-    case RagHouse, TreeHouse, BrickHouse,
+    case FirstHouse, SecondHouse, ThirdHouse,
          Fence1, Fence2,
          Tree1, Tree2, Tree3,
          RedFlower, BlueFlower,
@@ -54,9 +54,9 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     var id: String { rawValue.capitalized }
     var name: String {
         switch self {
-        case .RagHouse: return "첫째 돼지의 집"
-        case .TreeHouse: return "둘째 돼지의 집"
-        case .BrickHouse: return "셋째 돼지의 집"
+        case .FirstHouse: return "첫째 돼지의 집"
+        case .SecondHouse: return "둘째 돼지의 집"
+        case .ThirdHouse: return "셋째 돼지의 집"
         case .Fence1: return "나무 울타리"
         case .Fence2: return "튼튼 울타리"
         case .Tree1: return "작은 나무"
@@ -74,9 +74,9 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     }
     var overview: String {
         switch self {
-        case .RagHouse: return "바람에 쉽게 날아가는 가장 약한 구조의 집"
-        case .TreeHouse: return "바람에 날아가지 않지만 불에 약한 집"
-        case .BrickHouse: return "바람과 불에 강한 튼튼한 집"
+        case .FirstHouse: return "바람에 쉽게 날아가는 가장 약한 구조의 집"
+        case .SecondHouse: return "바람에 날아가지 않지만 불에 약한 집"
+        case .ThirdHouse: return "바람과 불에 강한 튼튼한 집"
         case .Fence1: return "가느다란 나뭇가지들을 엮어 만든 울타리"
         case .Fence2: return "통나무를 다듬어 만든 튼튼한 울타리"
         case .Tree1: return "바람에 잘 흔들리는 가늘고 긴 잎의 나무"
@@ -94,9 +94,9 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     }
     var owner: String {
         switch self {
-        case .RagHouse: return "첫째 돼지"
-        case .TreeHouse: return "둘째 돼지"
-        case .BrickHouse: return "셋째 돼지"
+        case .FirstHouse: return "첫째 돼지"
+        case .SecondHouse: return "둘째 돼지"
+        case .ThirdHouse: return "셋째 돼지"
         case .Fence1: return "없음"
         case .Fence2: return "없음"
         case .Tree1: return "없음"
@@ -114,9 +114,9 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     }
     var material: String {
         switch self {
-        case .RagHouse: return "지푸라기"
-        case .TreeHouse: return "나무"
-        case .BrickHouse: return "벽돌"
+        case .FirstHouse: return "지푸라기"
+        case .SecondHouse: return "나무"
+        case .ThirdHouse: return "벽돌"
         case .Fence1: return "나뭇가지, 못"
         case .Fence2: return "통나무, 못"
         case .Tree1: return "나무"
@@ -134,9 +134,9 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     }
     var description: String {
         switch self {
-        case .RagHouse: return "첫째 돼지는 일을 빨리 끝내고 놀고 싶어 지푸라기로 급하게 집을 지었어요. 하지만 늑대가 불자마자 집은 날아가 버리고 말았죠."
-        case .TreeHouse: return "둘째 돼지는 일을 잘 안 하잖아요. 그래서 나무로 집을 지었어요. 하지만 늑대가 불을 질러 다 타버리고 말았죠"
-        case .BrickHouse: return "셋째 돼지는 근면 성실하여 오랜기간동안 튼튼한 벽돌 집을 지었어요 늑대가 과연 어떻게 할까요?"
+        case .FirstHouse: return "첫째 돼지는 일을 빨리 끝내고 놀고 싶어 지푸라기로 급하게 집을 지었어요. 하지만 늑대가 불자마자 집은 날아가 버리고 말았죠."
+        case .SecondHouse: return "둘째 돼지는 일을 잘 안 하잖아요. 그래서 나무로 집을 지었어요. 하지만 늑대가 불을 질러 다 타버리고 말았죠"
+        case .ThirdHouse: return "셋째 돼지는 근면 성실하여 오랜기간동안 튼튼한 벽돌 집을 지었어요 늑대가 과연 어떻게 할까요?"
         case .Fence1: return "2중 구조의 가장 기본이 되는 울타리"
         case .Fence2: return "3중 구조의 튼튼한 울타리"
         case .Tree1: return "금방 부러질것 같은 양상한 나무"
@@ -154,9 +154,9 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
     }
     var callToAction: String {
         switch self {
-        case .RagHouse: return "첫째 돼지 집에서 아기 돼지 삼형제의 이야기를 들어보세요"
-        case .TreeHouse: return "둘째 돼지 집에서 내부를 구경해보세요"
-        case .BrickHouse: return "셋째 돼지 집에서 소품을 만져보세요"
+        case .FirstHouse: return "첫째 돼지 집에서 아기 돼지 삼형제의 이야기를 들어보세요"
+        case .SecondHouse: return "둘째 돼지 집에서 내부를 구경해보세요"
+        case .ThirdHouse: return "셋째 돼지 집에서 소품을 만져보세요"
         case .Fence1: return "원하는 공간에 기본 울타리를 배치해보세요"
         case .Fence2: return "원하는 공간에 나름 튼튼한 울타리를 배치해보세요"
         case .Tree1: return "어디에나 잘어울리는 작은 나무 배치해보세요"

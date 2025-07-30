@@ -31,6 +31,7 @@ struct ListView: View {
                 
                 Text("아이템 \(toyModel.items.count)개")
                     .font(.pretendard(.bold, size: 29))
+                    .padding(.leading, 16)
                 Spacer()
             }.padding([.top, .leading], 24)
             Spacer()
@@ -61,7 +62,7 @@ struct ListView: View {
                     }
                 }
                 .padding(.horizontal, 40)
-            }
+            }.padding(.top, 32)
         }
         .cornerRadius(20)
         .persistentSystemOverlays(.hidden)

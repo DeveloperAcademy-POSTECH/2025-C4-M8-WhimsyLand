@@ -28,9 +28,9 @@ class ToyModel {
     var selectedItem: ToyItem? = nil
    
     var items: [ToyItem] = [
-        ToyItem(ImageName: "RagHouse",label: "첫째 돼지집", ModelName: "RagHouse"),
-        ToyItem(ImageName: "TreeHouse",label: "둘째 돼지집", ModelName: "TreeHouse"),
-        ToyItem(ImageName: "BrickHouse",label: "셋째 돼지집", ModelName: "BrickHouse"),
+        ToyItem(ImageName: "FirstHouse",label: "첫째 돼지집", ModelName: "FirstHouse"),
+        ToyItem(ImageName: "SecondHouse",label: "둘째 돼지집", ModelName: "SecondHouse"),
+        ToyItem(ImageName: "ThirdHouse",label: "셋째 돼지집", ModelName: "ThirdHouse"),
         ToyItem(ImageName: "Fence1",label: "울타리 1", ModelName: "Fence1"),
         ToyItem(ImageName: "Fence2",label: "울타리 2", ModelName: "Fence2"),
         ToyItem(ImageName: "Tree1",label: "나무 1", ModelName: "Tree1"),
