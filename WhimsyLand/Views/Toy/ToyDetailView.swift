@@ -50,11 +50,12 @@ struct ToyDetailView: View {
                         .font(.pretendard(.semibold, size: 26))
                 }
                 .padding(40)
+                .frame(width: 608)
         ToyPreview(modelName: item.ModelName)
     }
         }
     .padding(40)
-    .frame(width: 980, height: 491)
+    .frame(width: 980, height: 491,alignment: .leading)
     .glassBackgroundEffect()
     .cornerRadius(46)
     .onDisappear{
