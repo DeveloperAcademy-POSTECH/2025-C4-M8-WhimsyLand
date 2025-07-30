@@ -11,7 +11,6 @@ import RealityKit
 struct ListView: View {
     @Environment(\.openWindow) var openWindow
     @Environment(\.dismissWindow) var dismissWindow
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(ViewModel.self) var viewModel
     @Environment(ToyModel.self) var toyModel
     @Environment(PlaceableToyStore.self) var placeableToyStore
