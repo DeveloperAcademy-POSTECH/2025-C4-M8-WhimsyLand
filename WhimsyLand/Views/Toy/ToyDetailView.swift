@@ -49,7 +49,7 @@ struct ToyDetailView: View {
                 }
                 .padding(40)
                 .frame(width: 608, alignment: .leading)
-//                .glassBackgroundEffect()
+              
         ToyPreview(modelName: item.ModelName)
                     .frame(width: 360, alignment: .trailing)
     }
