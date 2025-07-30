@@ -109,6 +109,5 @@ class MixedImmersiveState {
                 print("An unknown event occured \(event)")
             }
         }
-        print("⛔️ 모니터링 중지됨")
     }
 }
