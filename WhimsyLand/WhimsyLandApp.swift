@@ -62,11 +62,16 @@ struct WhimsyLandApp: App {
         
         WindowGroup(id: model.ToyDetailViewID){
             ToyDetailView()
+//                .frame
+//                    minWidth: 680, maxWidth: 980,
+//                       minHeight:240, maxHeight: 480,
+
                 .environment(model)
                 .environment(toyModel)
                 .environment(placeableToyStore)
         }
-        .defaultSize(width: 980, height: 510)
+        .defaultSize(width: 980, height: 440)
+//        .windowResizability(.contentSize)
         .windowStyle(.plain)
         .defaultWindowPlacement { content, context in
             guard let contentWindow = context.windows.first(where: { $0.id == model.ListViewID }) else { return WindowPlacement(nil)
