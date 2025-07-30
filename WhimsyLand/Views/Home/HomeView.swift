@@ -10,11 +10,8 @@ import SwiftUI
 struct HomeView: View {
     
     @Environment(ViewModel.self) private var viewModel
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) var dismissWindow
-    
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     
     @State private var isDetailActive = false
     
