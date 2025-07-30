@@ -37,8 +37,6 @@ struct ToyDetailView: View {
                     HStack(spacing: 20) {
                         InfoCard(title: "주인", value: item.module?.owner ?? "")
                         InfoCard(title: "재료", value: item.module?.material ?? "")
-                        EnterFullButton(toyItem: item)
-                            .environment(viewModel)
                     }
                     .padding(.vertical, 20)
                     Text(item.module?.description ?? "")
