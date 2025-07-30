@@ -37,11 +37,9 @@ struct ToyDetailView: View {
                     HStack(spacing: 20) {
                         InfoCard(title: "주인", value: item.module?.owner ?? "")
                         InfoCard(title: "재료", value: item.module?.material ?? "")
-                        
-                        EnterFullButton(toyItem: item)
-                            .environment(viewModel)
                     }
                     .padding(.vertical, 20)
+                    .frame(width: 400)
                     Text(item.module?.description ?? "")
                         .font(.pretendard(.light, size: 24))
                         .fixedSize(horizontal: false, vertical: true)
@@ -50,14 +48,13 @@ struct ToyDetailView: View {
                         .font(.pretendard(.semibold, size: 26))
                 }
                 .padding(40)
-                .frame(width: 608)
+                .frame(width: 608, alignment: .leading)
+              
         ToyPreview(modelName: item.ModelName)
+                    .frame(width: 360, alignment: .trailing)
     }
         }
-    .padding(40)
-    .frame(width: 980, height: 491, alignment: .leading)
     .glassBackgroundEffect()
-    .cornerRadius(46)
     .onDisappear{
             viewModel.isSecondaryWindowShown = false
         }
