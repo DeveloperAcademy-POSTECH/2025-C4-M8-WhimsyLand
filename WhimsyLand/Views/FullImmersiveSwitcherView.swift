@@ -16,15 +16,15 @@ struct FullImmersiveSwitcherView: View {
             switch viewModel.fullImmersiveContent{
             case .none:
                 EmptyView()
-            case .ragHouse:
+            case .FirstHouse:
                 TestRagHouse()
                     .environment(viewModel)
                     .environment(toyModel)
-            case .treeHouse:
+            case .SecondHouse:
                 TestTreeHouse()
                     .environment(viewModel)
                     .environment(toyModel)
-            case .brickHouse:
+            case .ThirdHouse:
                 TestBrickHouse()
                     .environment(viewModel)
                     .environment(toyModel)

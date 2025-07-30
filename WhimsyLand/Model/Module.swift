@@ -175,7 +175,7 @@ enum ToyModule: String, Identifiable, CaseIterable, Equatable {
 }
 
 enum FullInfoCardContent: String, Identifiable, CaseIterable, Equatable {
-    case /*RagHouse, TreeHouse, */BrickHouse
+    case /*FirstHouse, SecondHouse, */ThirdHouse
     var id: String { rawValue.capitalized }
     var description: String {
         switch self {
@@ -184,12 +184,12 @@ enum FullInfoCardContent: String, Identifiable, CaseIterable, Equatable {
 //            늘 놀고 싶어 하는 첫째 돼지의 재미난 동화책이 가득해요.
 //            ‘아기돼지 삼형제’ 이야기를 함께 읽어볼까요?
 //"""
-//        case .TreeHouse: return """
+//        case .SecondHouse: return """
 //            둘째 돼지는 조금 더 튼튼하게, 나무로 집을 지었어요.
 //            하지만 바람 앞에선 아직 부족했죠.
 //            둘째 돼지의 슬픈 사연을 감상해 보세요!
 //"""
-        case .BrickHouse: return
+        case .ThirdHouse: return
             """
             셋째 돼지는 늑대의 침입을 대비해 튼튼히 지었어요.
             방 안을 천천히 탐색해보며 즐겨보세요.
@@ -200,9 +200,9 @@ enum FullInfoCardContent: String, Identifiable, CaseIterable, Equatable {
     
     var fullImmersiveContent : FullImmersiveContent {
         switch self {
-//        case .RagHouse: return .ragHouse
-//        case .TreeHouse: return .treeHouse
-        case .BrickHouse: return .brickHouse
+//        case .FirstHouse: return .ragHouse
+//        case .SecondHouse: return .treeHouse
+        case .ThirdHouse: return .ThirdHouse
         }
     }
 }

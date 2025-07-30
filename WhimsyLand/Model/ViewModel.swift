@@ -15,9 +15,9 @@ enum ImmersiveMode {
 
 enum FullImmersiveContent {
     case none
-    case ragHouse
-    case treeHouse
-    case brickHouse
+    case FirstHouse
+    case SecondHouse
+    case ThirdHouse
 }
 
 enum FrameSize {
