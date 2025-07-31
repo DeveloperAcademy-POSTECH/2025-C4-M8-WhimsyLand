@@ -10,7 +10,6 @@ import RealityKit
 import RealityKitContent
 
 struct TestTreeHouse: View {
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(ViewModel.self) private var model
     
     var body: some View {

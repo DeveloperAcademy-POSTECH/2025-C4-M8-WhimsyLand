@@ -10,7 +10,6 @@ import SwiftUI
 struct HomeView: View {
     
     @Environment(ViewModel.self) private var viewModel
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) var dismissWindow
     
@@ -46,7 +45,7 @@ struct HomeView: View {
                     .frame(width: 210, height: 44)
                     
                 }.frame(width:  viewModel.frameWidth, height: viewModel.frameHeight)
-
+                
             }else {
                 HStack{
                     Image("ThreeLittlePigs")
@@ -95,6 +94,9 @@ struct HomeView: View {
         .onAppear{
             viewModel.currentSize = .medium
             
+            viewModel.mixedImmersiveState.mixedImmersiveMode = .viewing
+            viewModel.isHomeWindowShown = true
+            
             if viewModel.isSecondaryWindowShown {
                 dismissWindow(id: viewModel.ToyDetailViewID)
             }
@@ -103,6 +105,9 @@ struct HomeView: View {
                 dismissWindow(id: viewModel.ListViewID)
                 viewModel.isListWindowShown = false
             }
+        }
+        .onDisappear{
+            viewModel.isHomeWindowShown = false
         }
     }
 }

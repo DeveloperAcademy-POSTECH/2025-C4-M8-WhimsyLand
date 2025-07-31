@@ -8,26 +8,25 @@
 import SwiftUI
 
 struct FullImmersiveSwitcherView: View {
-    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
-    @Environment(ViewModel.self) private var model
+    @Environment(ViewModel.self) private var viewModel
     @Environment(ToyModel.self) var toyModel
     
     var body: some View {
         Group {
-            switch model.fullImmersiveContent{
+            switch viewModel.fullImmersiveContent{
             case .none:
                 EmptyView()
-            case .ragHouse:
+            case .FirstHouse:
                 TestRagHouse()
-                    .environment(model)
+                    .environment(viewModel)
                     .environment(toyModel)
-            case .treeHouse:
+            case .SecondHouse:
                 TestTreeHouse()
-                    .environment(model)
+                    .environment(viewModel)
                     .environment(toyModel)
-            case .brickHouse:
+            case .ThirdHouse:
                 TestBrickHouse()
-                    .environment(model)
+                    .environment(viewModel)
                     .environment(toyModel)
             }
         }

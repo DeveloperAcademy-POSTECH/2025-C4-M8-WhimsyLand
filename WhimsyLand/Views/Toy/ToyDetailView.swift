@@ -52,7 +52,7 @@ struct ToyDetailView: View {
               
         ToyPreview(modelName: item.ModelName)
                     .frame(width: 360, alignment: .trailing)
-    }
+              }
         }
     .glassBackgroundEffect()
     .onDisappear{

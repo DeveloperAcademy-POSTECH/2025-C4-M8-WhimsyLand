@@ -10,18 +10,19 @@ import RealityKit
 
 @MainActor
 struct ToyPlacementView: View {
+    @Environment(PlacementManager.self) var placementManager
+    @Environment(ViewModel.self) var viewModel
+    @Environment(ToyModel.self) var toyModel
+    
     var mixedImmersiveState: MixedImmersiveState
     var placeableToyStore: PlaceableToyStore
-    
-    @Environment(PlacementManager.self) var placementManager
-    @Environment(ViewModel.self) var model
-    @Environment(ToyModel.self) var toyModel
     
     private enum Attachments {
         case infoCard
     }
     
     var body: some View {
+        
         RealityView { content, attachments in
             content.add(placementManager.rootEntity)
             placementManager.mixedImmersiveState = mixedImmersiveState
@@ -42,7 +43,7 @@ struct ToyPlacementView: View {
                    item.fullInfoCardContent != nil {
                     FullInfoCard()
                         .environment(placementManager)
-                        .environment(model)
+                        .environment(viewModel)
                 } else {
                     EmptyView()
                 }
