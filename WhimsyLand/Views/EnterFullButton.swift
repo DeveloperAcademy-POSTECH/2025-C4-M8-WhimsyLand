@@ -27,8 +27,9 @@ struct EnterFullButton: View {
                     //
                     // Full을 열기 위해서 해야할 일
                     // (1) 버튼 활성화를 위해서 Views/ToyDetail.swift에서
-                    //      .disabled(viewModel.currentImmersiveMode != .mixed)
-                    //      위의 코드를 주석 처리해야됨.
+                    //     EnterFullButton(toyItem: item)
+                    //          .environment(viewModel)
+                    //      위의 코드를 추가해야됨.
                     // (2) 환경변수가 필요하므로 Views/EnterFullButton.swift(현재파일)에서
                     //      13번째 줄의 openImmersiveSpace 를 주석 해제
                     // (3) immersiveSpace를 열기 위해 아래 코드를 주석 해제
