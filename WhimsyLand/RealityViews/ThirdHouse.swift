@@ -1,5 +1,5 @@
 //
-//  TestBrickHouse.swift
+//  ThirdHouse.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/22/25.
@@ -9,8 +9,9 @@ import SwiftUI
 import RealityKit
 import RealityKitContent
 
-struct TestBrickHouse: View {
+struct ThirdHouse: View {
     @Environment(ViewModel.self) private var model
+    @State private var session: SpatialTrackingSession?
     
     var body: some View {
         RealityView(
@@ -32,9 +33,26 @@ struct TestBrickHouse: View {
                 }
                 
                 if let exitButtonAttachment = attachments.entity(for: "exitButtonView") { // ID로 어태치먼트 가져오기
-                    exitButtonAttachment.transform.translation = [0.5, 1.5, -0.2] // X, Y, Z (미터 단위)
+                    exitButtonAttachment.transform.translation = [0.3, 1.5, -0.3] // X, Y, Z (미터 단위)
                     
                     content.add(exitButtonAttachment)
+                }
+                
+                let session = SpatialTrackingSession()
+                let configuration = SpatialTrackingSession.Configuration(tracking: [.hand])
+                _ = await session.run(configuration)
+                self.session = session
+                
+                let handAnchor = AnchorEntity(.hand(.left, location: .palm), trackingMode: .continuous)
+                
+                if let gauntletEntity = try? await Entity(named: "pighand_L", in: realityKitContentBundle) {
+                   
+                    //Child the gauntlet scene to the handAnchor.
+                    handAnchor.addChild(gauntletEntity)
+                    
+                    // Add the handAnchor to the RealityView scene.
+                    content.add(handAnchor)
+                   
                 }
                 
             }, update: { content, attachments in
@@ -68,6 +86,7 @@ struct TestBrickHouse: View {
                 }
             }
         )
+        .upperLimbVisibility(.hidden)
         .gesture(TapGesture().targetedToAnyEntity()
             .onEnded({ value in
                 _ = value.entity.applyTapForBehaviors()

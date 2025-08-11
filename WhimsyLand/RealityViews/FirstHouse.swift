@@ -1,15 +1,14 @@
 //
-//  TestTreeHouse.swift
+//  FirstHouse.swift
 //  WhimsyLand
 //
 //  Created by 제하맥프로 on 7/27/25.
 //
-
 import SwiftUI
 import RealityKit
 import RealityKitContent
 
-struct TestTreeHouse: View {
+struct FirstHouse: View {
     @Environment(ViewModel.self) private var model
     
     var body: some View {
@@ -51,7 +50,7 @@ struct TestTreeHouse: View {
                     }
                 }
             } label: {
-                Text("둘째 돼지 집 나가기")
+                Text("첫째 돼지 집 나가기")
                     .font(.pretendard(.regular, size: 24))
                     .padding(16)
                     .background(.ultraThinMaterial)

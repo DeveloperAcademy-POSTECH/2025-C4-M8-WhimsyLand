@@ -17,15 +17,15 @@ struct FullImmersiveSwitcherView: View {
             case .none:
                 EmptyView()
             case .FirstHouse:
-                TestRagHouse()
+                FirstHouse()
                     .environment(viewModel)
                     .environment(toyModel)
             case .SecondHouse:
-                TestTreeHouse()
+                SecondHouse()
                     .environment(viewModel)
                     .environment(toyModel)
             case .ThirdHouse:
-                TestBrickHouse()
+                ThirdHouse()
                     .environment(viewModel)
                     .environment(toyModel)
             }
