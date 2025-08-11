@@ -7,7 +7,6 @@
 
 import SwiftUI
 import RealityKit
-import RealityKitContent
 
 struct ThirdHouse: View {
     @Environment(ViewModel.self) private var model
@@ -16,7 +15,7 @@ struct ThirdHouse: View {
     var body: some View {
         RealityView(
             make: { content, attachments in
-                if let immersiveContentEntity = try? await Entity(named: "Immersive", in: realityKitContentBundle) {
+                if let immersiveContentEntity = try? await Entity(named: "Immersive") {
                     
                     if let firewood = immersiveContentEntity.findEntity(named: "firewood") {
                         
@@ -45,7 +44,7 @@ struct ThirdHouse: View {
                 
                 let handAnchor = AnchorEntity(.hand(.left, location: .palm), trackingMode: .continuous)
                 
-                if let gauntletEntity = try? await Entity(named: "pighand_L", in: realityKitContentBundle) {
+                if let gauntletEntity = try? await Entity(named: "pighand_L") {
                    
                     //Child the gauntlet scene to the handAnchor.
                     handAnchor.addChild(gauntletEntity)
