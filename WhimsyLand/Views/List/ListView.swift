@@ -49,7 +49,7 @@ struct ListView: View {
                             toyModel.selectedItem = item
                             
                             // 선택한 아이템 현실공간으로 꺼내오기
-                            if let toy = placeableToyStore.placeableToysByFileName[item.ModelName] {
+                            if let toy = placeableToyStore.placeableToysByFileName[item.SpatialModelName] {
                                 viewModel.mixedImmersiveState.placementManager?.selectToy(toy)
                             }
 
