@@ -4,6 +4,8 @@
 <dict>
 	<key>NSWorldSensingUsageDescription</key>
 	<string>Scan your environment to allow accurate object placement.</string>
+	<key>NSHandsTrackingUsageDescription</key>
+	<string>Hand Tracking is required for this sample</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Bold.otf</string>
