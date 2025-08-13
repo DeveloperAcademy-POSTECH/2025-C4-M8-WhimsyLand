@@ -305,7 +305,7 @@ final class PlacementManager {
         }
         
         let highlightStyle = HoverEffectComponent.HighlightHoverEffectStyle(
-            color: .white, // 디자이너와 협의 후 수정 필요
+            color: .white,
             strength: 0.8
         )
         
@@ -321,8 +321,9 @@ final class PlacementManager {
         
         placementState.infoCardPresentedToy = ToyToPresentInfoCard
         
-        // 이전 Toy의 fullInfoCard 해제
-        fullInfoCard?.removeFromParent()
+        if let previousParent = fullInfoCard?.parent, previousParent != ToyToPresentInfoCard {
+            previousParent.removeChild(fullInfoCard!)
+        }
         
         guard let ToyToPresentInfoCard else { return }
         

@@ -21,12 +21,6 @@ struct ModelDescriptor: Identifiable, Hashable {
     }
 }
 
-// MARK: PreviewMaterials
-private enum PreviewMaterials {
-    static let active = UnlitMaterial(color: .gray.withAlphaComponent(0.5))
-    static let inactive = UnlitMaterial(color: .gray.withAlphaComponent(0.1))
-}
-
 // MARK: - PlaceableToy
 @MainActor
 class PlaceableToy {
@@ -39,14 +33,12 @@ class PlaceableToy {
     init(descriptor: ModelDescriptor, renderContent: ModelEntity, previewEntity: Entity) {
         self.descriptor = descriptor
         self.previewEntity = previewEntity
-        self.previewEntity.applyMaterial(PreviewMaterials.active)
         self.renderContent = renderContent
     }
 
     var isPreviewActive: Bool = true {
         didSet {
             if oldValue != isPreviewActive {
-                previewEntity.applyMaterial(isPreviewActive ? PreviewMaterials.active : PreviewMaterials.inactive)
                 // 드래그 제스처가 이미 배치된 객체와 간섭을 방지하기 위해 input target만 동작함
                 previewEntity.components[InputTargetComponent.self]?.allowedInputTypes = isPreviewActive ? .indirect : []
             }

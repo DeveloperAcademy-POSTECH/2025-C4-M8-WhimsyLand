@@ -15,9 +15,9 @@ enum ImmersiveMode {
 
 enum FullImmersiveContent {
     case none
-    case ragHouse
-    case treeHouse
-    case brickHouse
+    case FirstHouse
+    case SecondHouse
+    case ThirdHouse
 }
 
 enum FrameSize {
@@ -40,6 +40,7 @@ class ViewModel {
     let ListViewID = "ListView"
     let ToyDetailViewID = "ToyDetailView"
     
+    var isHomeWindowShown: Bool = false
     var isListWindowShown: Bool = false
     var isSecondaryWindowShown: Bool = false
     
@@ -97,13 +98,8 @@ class ViewModel {
     // MARK: - Navigation
     var navigationPath: [Module] = []
     
-    // MARK: - threeLittlePigs
-    var isShowBrickHouse = false
-    
-   
     // App이 갑자기 종료되었을 때, immersive 상태를 관리하는 함수
     func handleAppDidDeactivate(dismiss: @escaping () async -> Void) {
-        print("앱 종료 함수 호출됨")
         guard immersiveSpaceState == .open
         else { return }
         
@@ -117,5 +113,6 @@ class ViewModel {
             
             currentImmersiveMode = .none
         }
+        print("앱 종료 요청 : immersive 닫기 완료")
     }
 }

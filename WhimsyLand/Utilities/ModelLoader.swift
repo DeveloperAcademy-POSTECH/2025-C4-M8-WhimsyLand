@@ -76,7 +76,7 @@ final class ModelLoader {
             try await previewEntity = Entity(named: fileName)
             previewEntity.name = "Preview of \(modelEntity.name)"
         } catch {
-            print("❌ Failed to load model: \(fileName), error: \(error)")
+            print("Failed to load model: \(fileName), error: \(error)")
             return
         }
         
