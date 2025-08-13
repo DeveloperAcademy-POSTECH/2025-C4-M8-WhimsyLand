@@ -1,0 +1,670 @@
+#usda 1.0
+(
+    defaultPrim = "Root"
+    metersPerUnit = 1
+    upAxis = "Y"
+)
+
+def Xform "Root"
+{
+    reorder nameChildren = ["Sphere_Left", "Sphere_Right", "GridMaterial", "Onfire"]
+    def "firewood" (
+        active = true
+        customData = {
+            float3 rotationEulerHint = (-1.5707964, 0, 0)
+        }
+        references = @firewood.usdz@
+    )
+    {
+        reorder nameChildren = ["Fire", "scene", "_materials", "env_light", "RCP_BehaviorsContainer", "OnTap"]
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1.4, 1.4, 1.4)
+        float3 xformOp:translate = (0.08532071, -0.08577211, -2.4972112)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def RealityKitComponent "RCP_BehaviorsContainer"
+        {
+            rel behaviors = </Root/firewood/OnTap>
+            uniform token info:id = "RCP.BehaviorsContainer"
+        }
+
+        def Preliminary_Behavior "OnTap"
+        {
+            rel actions = </Root/firewood/OnTap/Action>
+            uniform bool exclusive
+            rel triggers = </Root/firewood/OnTap/Trigger>
+
+            def Preliminary_Trigger "Trigger"
+            {
+                rel affectedObjects = </Root/firewood>
+                token info:id = "TapGesture"
+            }
+
+            def Preliminary_Action "Action"
+            {
+                rel affectedObjects = </Root>
+                rel animationLibraryKey = </Root/Onfire>
+                rel animationLibraryKeyOverrideKey = </Root/firewood/OnTap/Trigger>
+                token info:id = "PlayTimeline"
+                int loops = 0
+                int performCount = 1
+                token type = "serial"
+            }
+        }
+
+        def Xform "Fire" (
+            customData = {
+                float3 rotationEulerHint = (1.5707964, 0, 0)
+            }
+        )
+        {
+            reorder nameChildren = ["VFXEmitter", "PointLight"]
+            float2 ui:nodegraph:node:pos = (40, 40)
+            int ui:nodegraph:node:stackingOrder = 2
+            quatf xformOp:orient = (0.70710677, 0.70710677, 0, 0)
+            float3 xformOp:scale = (0.71428573, 0.71428573, 0.71428573)
+            float3 xformOp:translate = (0.7903775, 0.3201785, 0.03414215)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def RealityKitComponent "VFXEmitter"
+            {
+                token info:id = "RealityKit.VFXEmitter"
+
+                def RealityKitStruct "currentState"
+                {
+                    token birthDirection = "Normal"
+                    token birthLocation = "Surface"
+                    float3 emissionDirection = (0, 1, 0)
+                    token emitterShape = "Plane"
+                    bool isLocal = 0
+                    bool isLocalFields = 0
+                    bool isSpawningEnabled = 1
+                    float3 shapeSize = (0.1, 0.1, 0.1)
+
+                    def RealityKitStruct "mainEmitter"
+                    {
+                        float birthRate = 200
+                        token blendMode = "Additive"
+                        float4 endColorA = (1, 0, 0, 1)
+                        float noiseAnimationSpeed = 20
+                        float noiseScale = 1
+                        float noiseStrength = 0.1
+                        token opacityOverLife = "GradualFadeInOut"
+                        double particleLifeSpan = 1
+                        float particleSize = 0.18
+                        float sizeMultiplierAtEndOfLifespan = 0.05
+                        float4 startColorA = (0.9940412, 0.43744677, 0, 1)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                        float3 vortexDirection = (0, 1, 0)
+                        float vortexStrength = 0
+                    }
+
+                    def RealityKitStruct "spawnedEmitter"
+                    {
+                        float birthRate = 3
+                        token blendMode = "Alpha"
+                        float colorEvolutionPower = 1
+                        float4 endColorA = (1, 0.98789287, 0.9569887, 0)
+                        bool isLightingEnabled = 0
+                        float noiseAnimationSpeed = 5
+                        float noiseScale = 4
+                        float noiseStrength = 1
+                        token opacityOverLife = "QuickFadeInOut"
+                        asset particleImage = @@
+                        double particleLifeSpan = 4
+                        float particleMass = 20
+                        float particleSize = 0.08
+                        float radialGravityStrength = 1
+                        float sizeMultiplierAtEndOfLifespan = 10
+                        float4 startColorA = (0.97540736, 0.9567703, 1, 0.33511373)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                        float vortexStrength = 0
+                    }
+                }
+            }
+
+            def RealityKitComponent "HierarchicalFade"
+            {
+                uniform token info:id = "RealityKit.HierarchicalFade"
+                float opacity = 0
+            }
+
+            def RealityKitComponent "PointLight"
+            {
+                float3 color = (1, 0.30945307, 0)
+                uniform token info:id = "RealityKit.PointLight"
+                float intensity = 0
+            }
+        }
+
+        over "env_light" (
+            active = false
+        )
+        {
+        }
+    }
+
+    def RealityKitTimeline "Onfire"
+    {
+        reorder nameChildren = ["Track", "Track2"]
+        def RealityKitTrack "Track"
+        {
+            def RealityKitAction "Show"
+            {
+                string actionKind = "show"
+                int blendLayer = 300
+                double duration = 1.0271368905043077
+                uniform token info:id = "43C169F9-CD41-45AE-9626-F46E52AF2369"
+                double startTime = 0
+                rel target = </Root/firewood/Fire>
+
+                def RealityKitStruct "timingFunction"
+                {
+                }
+            }
+        }
+
+        def RealityKitTrack "Track2"
+        {
+            def RealityKitAction "Transform_To"
+            {
+                string actionKind = "moveTo"
+                int blendLayer = 300
+                double duration = 1
+                uniform token info:id = "9C8DBFBF-04D1-46A3-B0CE-E2B325335813"
+                float3 position = (1.1777327, 0.10724667, -2.9512787)
+                quatf rotation = (1, 0, 0, 0)
+                float3 scale = (1, 1, 1)
+                double startTime = 0
+                rel target = </Root/PointLight>
+
+                def RealityKitStruct "transformMode"
+                {
+                    rel referenceEntity = </Root>
+                    token type = "parent"
+                }
+
+                def RealityKitStruct "timingFunction"
+                {
+                }
+            }
+        }
+    }
+
+    def Xform "PointLight"
+    {
+        float3 xformOp:translate = (1.1830115, -1.6509892, -2.966773)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def RealityKitComponent "PointLight"
+        {
+            float3 color = (1, 0.29901963, 0)
+            token info:id = "RealityKit.PointLight"
+            float intensity = 50000
+        }
+    }
+
+    def "ThirdHouseInside" (
+        active = true
+        references = @ThirdHouseInside.usdz@
+    )
+    {
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (-8.046627e-7, -8.381903e-8, -2.5670083)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+
+    def "door" (
+        active = true
+        references = @door.usdz@
+    )
+    {
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (4.172325e-7, -4.1909516e-9, -2.51996)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+
+    def "candle" (
+        active = true
+        references = @candle.usdz@
+    )
+    {
+        reorder nameChildren = ["Root", "_materials", "env_light", "Fire_3"]
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (6.519258e-8, -8.381903e-9, -2.6883512)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def Xform "Fire_3" (
+            customData = {
+                float3 rotationEulerHint = (0, 0, 0)
+            }
+        )
+        {
+            reorder nameChildren = ["VFXEmitter", "PointLight"]
+            float2 ui:nodegraph:node:pos = (100, 100)
+            int ui:nodegraph:node:stackingOrder = 5
+            quatf xformOp:orient = (0.70710677, 0.70710677, 0, 0)
+            float3 xformOp:scale = (0.9999993, 0.9999993, 0.9999993)
+            float3 xformOp:translate = (2.294665, -5.184176, 0.8122919)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def RealityKitComponent "VFXEmitter"
+            {
+                token info:id = "RealityKit.VFXEmitter"
+
+                def RealityKitStruct "currentState"
+                {
+                    token birthDirection = "Normal"
+                    token birthLocation = "Surface"
+                    int64 burstCount = 100
+                    float3 emissionDirection = (0, 1, 0)
+                    double emissionDuration = 1
+                    token emitterShape = "Point"
+                    bool isLocal = 0
+                    bool isLocalFields = 0
+                    bool isSpawningEnabled = 1
+                    float particleSpeed = 0.06
+                    float3 shapeSize = (0.001, 0.001, 0.001)
+
+                    def RealityKitStruct "mainEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Additive"
+                        float4 endColorA = (1, 0, 0, 1)
+                        bool isLightingEnabled = 0
+                        float noiseAnimationSpeed = 20
+                        float noiseScale = 1
+                        float noiseStrength = 0.1
+                        token opacityOverLife = "GradualFadeInOut"
+                        float particleAngle = 0
+                        double particleLifeSpan = 0.8
+                        float particleSize = 0.03
+                        float sizeMultiplierAtEndOfLifespan = 0.1
+                        float4 startColorA = (0.9940412, 0.43744677, 0, 1)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                        float3 vortexDirection = (0, 1, 0)
+                        float vortexStrength = 0
+                    }
+
+                    def RealityKitStruct "spawnedEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Alpha"
+                        float colorEvolutionPower = 1
+                        float4 endColorA = (1, 0.98789287, 0.9569887, 0)
+                        bool isLightingEnabled = 0
+                        token opacityOverLife = "QuickFadeInOut"
+                        asset particleImage = @@
+                        double particleLifeSpan = 4
+                        float particleMass = 20
+                        float particleSize = 0.01
+                        float sizeMultiplierAtEndOfLifespan = 8
+                        float4 startColorA = (0.97540736, 0.9567703, 1, 0.33511373)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                    }
+                }
+            }
+
+            def RealityKitComponent "HierarchicalFade"
+            {
+                uniform token info:id = "RealityKit.HierarchicalFade"
+                float opacity = 1
+            }
+
+            def RealityKitComponent "PointLight"
+            {
+                float attenuationFalloffExponent = 2
+                float attenuationRadius = 4
+                float3 color = (1, 0.30945307, 0)
+                uniform token info:id = "RealityKit.PointLight"
+                float intensity = 25000
+            }
+        }
+    }
+
+    def "candle_1" (
+        active = true
+        references = @candle.usdz@
+    )
+    {
+        reorder nameChildren = ["Root", "_materials", "env_light", "Fire_2"]
+        int ui:nodegraph:node:stackingOrder = 1
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (-1.5386628, 4.353933e-8, -2.647208)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def Xform "Fire_2" (
+            customData = {
+                float3 rotationEulerHint = (0, 0, 0)
+            }
+        )
+        {
+            reorder nameChildren = ["VFXEmitter", "PointLight"]
+            float2 ui:nodegraph:node:pos = (80, 80)
+            int ui:nodegraph:node:stackingOrder = 4
+            quatf xformOp:orient = (0.70710677, 0.70710677, 0, 0)
+            float3 xformOp:scale = (0.9999995, 0.9999995, 0.9999995)
+            float3 xformOp:translate = (2.2902024, -5.186002, 0.812292)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def RealityKitComponent "VFXEmitter"
+            {
+                token info:id = "RealityKit.VFXEmitter"
+
+                def RealityKitStruct "currentState"
+                {
+                    token birthDirection = "Normal"
+                    token birthLocation = "Surface"
+                    int64 burstCount = 100
+                    float3 emissionDirection = (0, 1, 0)
+                    double emissionDuration = 1
+                    token emitterShape = "Point"
+                    bool isLocal = 0
+                    bool isLocalFields = 0
+                    bool isSpawningEnabled = 1
+                    float particleSpeed = 0.06
+                    float3 shapeSize = (0.001, 0.001, 0.001)
+
+                    def RealityKitStruct "mainEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Additive"
+                        float4 endColorA = (1, 0, 0, 1)
+                        bool isLightingEnabled = 0
+                        float noiseAnimationSpeed = 20
+                        float noiseScale = 1
+                        float noiseStrength = 0.1
+                        token opacityOverLife = "GradualFadeInOut"
+                        float particleAngle = 0
+                        double particleLifeSpan = 0.8
+                        float particleSize = 0.03
+                        float sizeMultiplierAtEndOfLifespan = 0.1
+                        float4 startColorA = (0.9940412, 0.43744677, 0, 1)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                        float3 vortexDirection = (0, 1, 0)
+                        float vortexStrength = 0
+                    }
+
+                    def RealityKitStruct "spawnedEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Alpha"
+                        float colorEvolutionPower = 1
+                        float4 endColorA = (1, 0.98789287, 0.9569887, 0)
+                        bool isLightingEnabled = 0
+                        token opacityOverLife = "QuickFadeInOut"
+                        asset particleImage = @@
+                        double particleLifeSpan = 4
+                        float particleMass = 20
+                        float particleSize = 0.01
+                        float sizeMultiplierAtEndOfLifespan = 8
+                        float4 startColorA = (0.97540736, 0.9567703, 1, 0.33511373)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                    }
+                }
+            }
+
+            def RealityKitComponent "HierarchicalFade"
+            {
+                uniform token info:id = "RealityKit.HierarchicalFade"
+                float opacity = 1
+            }
+
+            def RealityKitComponent "PointLight"
+            {
+                float attenuationFalloffExponent = 2
+                float attenuationRadius = 4
+                float3 color = (1, 0.30945307, 0)
+                uniform token info:id = "RealityKit.PointLight"
+                float intensity = 25000
+            }
+        }
+    }
+
+    def "lamp" (
+        active = true
+        references = @lamp.usdz@
+    )
+    {
+        reorder nameChildren = ["Root", "_materials", "env_light", "Fire_4"]
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (4.172325e-7, 4.0978193e-8, -2.4583292)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def Xform "Fire_4" (
+            customData = {
+                float3 rotationEulerHint = (0, 0, 0)
+            }
+        )
+        {
+            reorder nameChildren = ["VFXEmitter", "PointLight"]
+            float2 ui:nodegraph:node:pos = (120, 120)
+            int ui:nodegraph:node:stackingOrder = 6
+            quatf xformOp:orient = (0.70710677, 0.70710677, 0, 0)
+            float3 xformOp:scale = (0.99999905, 0.99999905, 0.99999905)
+            float3 xformOp:translate = (1.5410234, -5.101584, 0.71506375)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def RealityKitComponent "VFXEmitter"
+            {
+                token info:id = "RealityKit.VFXEmitter"
+
+                def RealityKitStruct "currentState"
+                {
+                    token birthDirection = "Normal"
+                    token birthLocation = "Surface"
+                    int64 burstCount = 100
+                    float3 emissionDirection = (0, 1, 0)
+                    double emissionDuration = 1
+                    token emitterShape = "Point"
+                    bool isLocal = 0
+                    bool isLocalFields = 0
+                    bool isSpawningEnabled = 1
+                    float particleSpeed = 0.06
+                    float3 shapeSize = (0.001, 0.001, 0.001)
+
+                    def RealityKitStruct "mainEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Additive"
+                        float4 endColorA = (1, 0, 0, 1)
+                        bool isLightingEnabled = 0
+                        float noiseAnimationSpeed = 20
+                        float noiseScale = 1
+                        float noiseStrength = 0.1
+                        token opacityOverLife = "GradualFadeInOut"
+                        float particleAngle = 0
+                        double particleLifeSpan = 0.8
+                        float particleSize = 0.03
+                        float sizeMultiplierAtEndOfLifespan = 0.1
+                        float4 startColorA = (0.9940412, 0.43744677, 0, 1)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                        float3 vortexDirection = (0, 1, 0)
+                        float vortexStrength = 0
+                    }
+
+                    def RealityKitStruct "spawnedEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Alpha"
+                        float colorEvolutionPower = 1
+                        float4 endColorA = (1, 0.98789287, 0.9569887, 0)
+                        bool isLightingEnabled = 0
+                        token opacityOverLife = "QuickFadeInOut"
+                        asset particleImage = @@
+                        double particleLifeSpan = 4
+                        float particleMass = 20
+                        float particleSize = 0.01
+                        float sizeMultiplierAtEndOfLifespan = 8
+                        float4 startColorA = (0.97540736, 0.9567703, 1, 0.33511373)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                    }
+                }
+            }
+
+            def RealityKitComponent "HierarchicalFade"
+            {
+                uniform token info:id = "RealityKit.HierarchicalFade"
+                float opacity = 1
+            }
+
+            def RealityKitComponent "PointLight"
+            {
+                float attenuationFalloffExponent = 0.5
+                float attenuationRadius = 4
+                float3 color = (1, 0.30945307, 0)
+                uniform token info:id = "RealityKit.PointLight"
+                float intensity = 25000
+            }
+        }
+    }
+
+    def "candle_2" (
+        active = true
+        references = @candle.usdz@
+    )
+    {
+        reorder nameChildren = ["Root", "_materials", "env_light", "Fire_1"]
+        float2 ui:nodegraph:node:pos = (20, 20)
+        int ui:nodegraph:node:stackingOrder = 2
+        quatf xformOp:orient = (0.70710677, -0.70710677, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (-4.829467, 0.5786813, -4.8663764)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def Xform "Fire_1" (
+            customData = {
+                float3 rotationEulerHint = (0, 0, 0)
+            }
+        )
+        {
+            reorder nameChildren = ["VFXEmitter", "PointLight"]
+            float2 ui:nodegraph:node:pos = (60, 60)
+            int ui:nodegraph:node:stackingOrder = 3
+            quatf xformOp:orient = (0.70710677, 0.70710677, 0, 0)
+            float3 xformOp:scale = (0.9999995, 0.9999995, 0.9999995)
+            float3 xformOp:translate = (2.3016639, -5.1880484, 0.8206485)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def RealityKitComponent "VFXEmitter"
+            {
+                token info:id = "RealityKit.VFXEmitter"
+
+                def RealityKitStruct "currentState"
+                {
+                    token birthDirection = "Normal"
+                    token birthLocation = "Surface"
+                    int64 burstCount = 100
+                    float3 emissionDirection = (0, 1, 0)
+                    double emissionDuration = 1
+                    token emitterShape = "Point"
+                    bool isLocal = 0
+                    bool isLocalFields = 0
+                    bool isSpawningEnabled = 1
+                    float particleSpeed = 0.06
+                    float3 shapeSize = (0.001, 0.001, 0.001)
+
+                    def RealityKitStruct "mainEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Additive"
+                        float4 endColorA = (1, 0, 0, 1)
+                        bool isLightingEnabled = 0
+                        float noiseAnimationSpeed = 20
+                        float noiseScale = 1
+                        float noiseStrength = 0.1
+                        token opacityOverLife = "GradualFadeInOut"
+                        float particleAngle = 0
+                        double particleLifeSpan = 0.8
+                        float particleSize = 0.03
+                        float sizeMultiplierAtEndOfLifespan = 0.1
+                        float4 startColorA = (0.9940412, 0.43744677, 0, 1)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                        float3 vortexDirection = (0, 1, 0)
+                        float vortexStrength = 0
+                    }
+
+                    def RealityKitStruct "spawnedEmitter"
+                    {
+                        float birthRate = 10
+                        token blendMode = "Alpha"
+                        float colorEvolutionPower = 1
+                        float4 endColorA = (1, 0.98789287, 0.9569887, 0)
+                        bool isLightingEnabled = 0
+                        token opacityOverLife = "QuickFadeInOut"
+                        asset particleImage = @@
+                        double particleLifeSpan = 4
+                        float particleMass = 20
+                        float particleSize = 0.01
+                        float sizeMultiplierAtEndOfLifespan = 8
+                        float4 startColorA = (0.97540736, 0.9567703, 1, 0.33511373)
+                        bool useEndColor = 1
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                    }
+                }
+            }
+
+            def RealityKitComponent "HierarchicalFade"
+            {
+                uniform token info:id = "RealityKit.HierarchicalFade"
+                float opacity = 1
+            }
+
+            def RealityKitComponent "PointLight"
+            {
+                float attenuationFalloffExponent = 2
+                float attenuationRadius = 4
+                float3 color = (1, 0.30945307, 0)
+                uniform token info:id = "RealityKit.PointLight"
+                float intensity = 25000
+            }
+        }
+    }
+
+    def Xform "SpotLight" (
+        customData = {
+            float3 rotationEulerHint = (-0.25326705, 1.735984, 2.3841858e-7)
+        }
+    )
+    {
+        quatf xformOp:orient = (0.6411842, -0.08163227, 0.75692284, 0.09636752)
+        float3 xformOp:scale = (1.6424605, 1.6424603, 1.6424605)
+        float3 xformOp:translate = (8.104119, 1.688713, -0.32682663)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def RealityKitComponent "SpotLight"
+        {
+            token info:id = "RealityKit.SpotLight"
+            float intensity = 500000
+
+            def RealityKitStruct "Shadow"
+            {
+            }
+        }
+    }
+}
+
