@@ -41,16 +41,19 @@ struct ThirdHouse: View {
                 let configuration = SpatialTrackingSession.Configuration(tracking: [.hand])
                 _ = await session.run(configuration)
                 self.session = session
+
+                let rightHandAnchor = AnchorEntity(.hand(.right, location: .palm), trackingMode: .continuous)
+                let leftHandAnchor = AnchorEntity(.hand(.left, location: .palm), trackingMode: .continuous)
                 
-                let handAnchor = AnchorEntity(.hand(.left, location: .palm), trackingMode: .continuous)
-                
-                if let gauntletEntity = try? await Entity(named: "pighand_L") {
+                if let gauntletRightEntity = try? await Entity(named: "Pighand_R"), let gauntletLeftEntity = try? await Entity(named: "Pighand_L") {
                    
                     //Child the gauntlet scene to the handAnchor.
-                    handAnchor.addChild(gauntletEntity)
+                    rightHandAnchor.addChild(gauntletRightEntity)
+                    leftHandAnchor.addChild(gauntletLeftEntity)
                     
                     // Add the handAnchor to the RealityView scene.
-                    content.add(handAnchor)
+                    content.add(rightHandAnchor)
+                    content.add(leftHandAnchor)
                    
                 }
                 
@@ -93,4 +96,3 @@ struct ThirdHouse: View {
         )
     }
 }
-
